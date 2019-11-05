@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-text">size</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-text">size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Heap-操作"><span class="toc-text">Heap 操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-use-after-free"><span class="toc-text">Exploit : use after free</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用-Chunk-的回收特性"><span class="toc-text">利用 Chunk 的回收特性</span></a></li></ol></li></ol></li></ol>
 </div>
     
 </div>
@@ -211,7 +211,29 @@
 </ul>
 </li>
 </ul>
-
+<h3 id="Heap-操作"><a href="#Heap-操作" class="headerlink" title="Heap 操作"></a>Heap 操作</h3><ul>
+<li>p = malloc(size)<ul>
+<li>找出一个可用的 chunk，或从 top chunk 切一块下来</li>
+<li>如果这个 chunk 是回收的，要先从 bin 里面 unlink，即移出这个 linked list</li>
+<li>填好结构，并回传 chunk + 16</li>
+</ul>
+</li>
+<li>free(p)<ul>
+<li>检查一下该 chunk 内存地址前后的 chunk，是不是 not inuse</li>
+<li>如果有，则这些回收的 chunk 可以被合并成一块</li>
+<li>合并后的新 chunk，放进对应的 bin 中</li>
+</ul>
+</li>
+</ul>
+<h2 id="Exploit-use-after-free"><a href="#Exploit-use-after-free" class="headerlink" title="Exploit : use after free"></a>Exploit : use after free</h2><ul>
+<li>跟 chunk bin 等 heap 的内部操作没什么关系</li>
+<li>让程序里有两个指针指向同一块内存<ul>
+<li>一块是 structure，另一块是用作 data buffer</li>
+<li>利用对 buffer 的读写，修改或泄漏 structure 的内容</li>
+</ul>
+</li>
+</ul>
+<h3 id="利用-Chunk-的回收特性"><a href="#利用-Chunk-的回收特性" class="headerlink" title="利用 Chunk 的回收特性"></a>利用 Chunk 的回收特性</h3>
         
             <div class="donate-container">
     <div class="donate-button">
