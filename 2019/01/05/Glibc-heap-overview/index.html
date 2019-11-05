@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="聂小涛的博客">
+    <meta name="keyword" content="腾讯">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        Glibc heap overview - pumpkin9&#39;s Blog
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> Never give up </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>pumpkin9</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-text">size</span></a></li></ol></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> Never give up </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        Glibc heap overview
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-01-05 21:02:38</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#pwn" title="pwn">pwn</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#heap" title="heap">heap</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="Glibc-Heap"><a href="#Glibc-Heap" class="headerlink" title="Glibc Heap"></a>Glibc Heap</h1><ul>
+<li>负责维护动态分配内存的数据结构称为 heap</li>
+<li>libc 里面比较常用到的是 malloc 、free 、realloc<ul>
+<li>C++ 里的 new、delete，底层的操作仍是上述的几个</li>
+</ul>
+</li>
+<li>分配新内存空间、释放并回收不需要的部分，在分配内存的时候尽量避免<code>碎片化</code></li>
+</ul>
+<h2 id="Glibc-heap-实际操作概述"><a href="#Glibc-heap-实际操作概述" class="headerlink" title="Glibc heap 实际操作概述"></a>Glibc heap 实际操作概述</h2><ul>
+<li><code>glibc/malloc/malloc.c</code></li>
+<li>要做到堆内存的管理，需要知道<ul>
+<li>有哪些位置的堆内存是可以被分配的</li>
+<li>有哪些是因为 free 掉而可以回收的</li>
+<li>有哪些位置是使用中则不需要记录，使用它们的人应记住这些指针</li>
+</ul>
+</li>
+<li>整个 heap 的结构记录在一个 <code>struct malloc_state</code>中，称为 <code>main_arena</code></li>
+<li><code>malloc</code> 分配的堆内存结构体称为 chunk，会比要求的大小要大一点，因为需要记录一些维护 heap 用的额外信息</li>
+<li><code>arena</code> 跟 heap 分配的内存分开存放，heap overflow 无法直接去覆盖它的内容</li>
+<li>回收的 chunk 用 linked list 记录，称为 bin</li>
+<li>main_arena 中有很多个 bin，每个 bin 里存储的 chunk size 不同，目的是让 malloc 时可以尽快找到最适合大小的 chunk</li>
+<li>回收的 chunk 会依据 size 来决定应该放那个 linked list</li>
+<li><code>malloc</code> 时，优先从 bin 里面找出可以使用的 chunk，如果找不到才会真的分配新的内存给程序使用。分配时可以去找到足够大的 chunk 只切出需要的部分，剩下的部分形成新的 chunk<code>(last_remainder)</code>。</li>
+<li>找不到可用空间时会从 top chunk 分配，top chunk 是一个很大的 chunk，代表可使用但未分配的内存，malloc 分配时会从里面切一小块下来，剩下的部分重新设为 top</li>
+</ul>
+<h2 id="Chunk"><a href="#Chunk" class="headerlink" title="Chunk"></a>Chunk</h2><ul>
+<li><p>存放 chunk metadata 的 chunk 结构 （header）</p>
+</li>
+<li><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>&#123;</span></span><br><span class="line">  <span class="keyword">size_t</span> prev_size;</span><br><span class="line">  <span class="keyword">size_t</span> size;</span><br><span class="line">  malloc_chunk* fd;</span><br><span class="line">  malloc_chunk* bk;</span><br><span class="line">  malloc_chunk* fd_nextsize;</span><br><span class="line">  malloc_chunk* bk_nextsize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>64 bit</p>
+<ul>
+<li><code>mem = malloc(size) -&gt; chunk=mem-16; chunksize = (size+8)#16</code></li>
+<li>实际的 chunk 地址是 malloc 得到的地址 -16</li>
+<li>chunksize 是 size + 8 后向上对齐至 16 的倍数，因为要存放额外的信息</li>
+</ul>
+</li>
+<li><p>chunk 已回收（not inuse）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Size of previous chunk, if unallocated (P clear)  |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">`head:&apos; |             Size of chunk, in bytes                     |A|0|P|</span><br><span class="line">  mem-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Forward pointer to next chunk in list             |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Back pointer to previous chunk in list            |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Unused space (may be 0 bytes long)                .</span><br><span class="line">        .                                                               .</span><br><span class="line"> next   .                                                               |</span><br><span class="line">chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">`foot:&apos; |             Size of chunk, in bytes                           |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Size of next chunk, in bytes                |A|0|0|</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="chunk-header"><a href="#chunk-header" class="headerlink" title="chunk header"></a>chunk header</h3><ul>
+<li>size：这个 chunk 在内存里的大小，非 malloc size</li>
+<li>fd，bk：指向 bin 里的前一、后一个 chunk<ul>
+<li>一般来说 bin 是 double linked list</li>
+</ul>
+</li>
+<li>prev_size：前一个 chunksize，维护 heap 时可以得知 前一个chunk的位置</li>
+<li>概略来说，每个 chunk 可以看到四个相邻的 chunk<ul>
+<li><code>chunk+size</code> 内存空间的下一个chunk</li>
+<li><code>chunk - prev_size</code> 内存空间里的前一个 chunk</li>
+<li><code>fd,bk</code> double linked list(bin),在内存中不一定是在前或后</li>
+</ul>
+</li>
+</ul>
+<h3 id="size"><a href="#size" class="headerlink" title="size"></a>size</h3><ul>
+<li>size 位置 包含 chunk size 和 flag bits</li>
+<li>chunk size 把 size 最低位 3bits 归 0<ul>
+<li>fastbin &lt;= 128</li>
+<li>Small bin &lt; 1024</li>
+<li>Large bin</li>
+<li>Mmap &gt;= 0x20000</li>
+</ul>
+</li>
+<li>最低 bit 为 prev_inuse bit，用来表示 前一个 chunk 是不是在使用中<ul>
+<li>free 会 使得下一个 chunk 的 prev_inuse bit 被设为 0</li>
+</ul>
+</li>
+</ul>
+
+        
+            <div class="donate-container">
+    <div class="donate-button">
+        <button id="donate-button">赞赏</button>
+    </div>
+    <div class="donate-img-container hide" id="donate-img-container">
+        <img id="donate-img" src="" data-src="/img/donate.jpg">
+        <p> 感谢鼓励 </p>
+    </div>
+</div>
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+
+        <div id="lv-container">
+        </div>
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span>/</span>
+        
+        <span><a href="https://www.10000h.top"></a></span>
+        <span>/</span>
+        
+        <span><a href="https://niexiaotao.com"></a></span>
+        <span>/</span>
+        
+        <span><a href="#"></a></span>
+        <span>/</span>
+        
+    </p>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+</html>
