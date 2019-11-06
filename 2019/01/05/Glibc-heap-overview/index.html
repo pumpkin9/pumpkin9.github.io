@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-text">size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Heap-操作"><span class="toc-text">Heap 操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-use-after-free"><span class="toc-text">Exploit : use after free</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用-Chunk-的回收特性"><span class="toc-text">利用 Chunk 的回收特性</span></a></li></ol></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-text">size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Heap-操作"><span class="toc-text">Heap 操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-use-after-free"><span class="toc-text">Exploit : use after free</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用-Chunk-的回收特性"><span class="toc-text">利用 Chunk 的回收特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastbin-corruption"><span class="toc-text">fastbin corruption</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fastbin-sanity-check"><span class="toc-text">Fastbin sanity check</span></a></li></ol></li></ol></li></ol>
 </div>
     
 </div>
@@ -233,7 +233,63 @@
 </ul>
 </li>
 </ul>
-<h3 id="利用-Chunk-的回收特性"><a href="#利用-Chunk-的回收特性" class="headerlink" title="利用 Chunk 的回收特性"></a>利用 Chunk 的回收特性</h3>
+<h3 id="利用-Chunk-的回收特性"><a href="#利用-Chunk-的回收特性" class="headerlink" title="利用 Chunk 的回收特性"></a>利用 Chunk 的回收特性</h3><ul>
+<li>所谓 use after free，是指 free(=p) 掉后还继续使用它<ul>
+<li>例：linked list remove 掉chunk后，忘了把指向它的指针置0，导致以为此 chunk 还存在 list 中</li>
+</ul>
+</li>
+<li>重新 malloc(=p) 一样的大小，会拿到曾经 free 掉的 chunk，此时就存在两个指针 p、q 指向同一块 chunk，使用这两个指针的操作会混在一起<ul>
+<li>例：其中一个是 C++ chunk，有个 vtable 指针用来找出实际的 function。如果另一个是可写入的 data buffer，就可以改掉 function pointer</li>
+</ul>
+</li>
+<li>只要实际的 chunk size 相同，malloc 要求的大小不同也没关系。</li>
+<li>会拿出哪个 chunk，取决于 heap 里 bin 的运作方式，不一定是最近 free 的那一个。</li>
+</ul>
+<h2 id="fastbin-corruption"><a href="#fastbin-corruption" class="headerlink" title="fastbin corruption"></a>fastbin corruption</h2><p><strong>基础知识</strong></p>
+<ul>
+<li><code>chunk size &lt;= get_max_fast()</code> 的 chunk，会被放在一系列称为 fastbin 的 bin 里<ul>
+<li>64 bit 是 128 bytes，32bit 是 64 bytes</li>
+<li>global_max_fast 一开始是 0</li>
+</ul>
+</li>
+<li>fastbin 是 single linked list，只使用 fd，以 NULL 结尾</li>
+<li>chunk size 从 32 开始，共 7 个可用的 fastbin</li>
+<li>free 时不取消下个 chunk 的 prev_inuse bit，因为 fastbin chunk 不会与其他 chunk 合并</li>
+<li>malloc、free 操作时 glibc 会有一些检查，确认 heap metadata 是否正确，避免一些可能的攻击方式</li>
+<li>为了执行效率，fastbin 里的检查比其他类型的 bin 少很多</li>
+</ul>
+<p><strong>利用方式</strong></p>
+<ul>
+<li>让 fastbin linked list 指向任意地址，之后 malloc 时就会将该地址作为 chunk 拿出来</li>
+<li>freed(not inuse) chunk 才会存在 bin 里，修改它的 fd 才会造成 corruption<ul>
+<li>double free</li>
+<li>overflow</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fastbin[0] ---&gt; chunk1   +---&gt; chunk2   +---&gt; chunk3</span><br><span class="line">									  fd --+         fd --+         fd ---&gt; NULL</span><br><span class="line">																		.</span><br><span class="line">																		.</span><br><span class="line">																		........&gt; arbitrary address</span><br></pre></td></tr></table></figure>
+
+<h3 id="Fastbin-sanity-check"><a href="#Fastbin-sanity-check" class="headerlink" title="Fastbin sanity check"></a>Fastbin sanity check</h3><ul>
+<li>malloc 从 bin 里取出时，要从正确的 bin 里拿出来，即 chunk size 要正确</li>
+<li>free 时，nextchunk 的 size 要对</li>
+<li>free 时会检查 bin 里第一个 chunk 是不是跟现在 free 的 chunk 是同一个（fasttop）</li>
+<li>fasttop 只检查 bin 里第一个 chunk，只要不是连续 free 同一个 chunk 就没关系<ul>
+<li><code>free(p);free(q);free(p)</code></li>
+</ul>
+</li>
+<li>Double free 造成类似 use after free 的效果，可以改掉还在 bin 里的 chunk fd 的值<ul>
+<li>bin 是由 fd 串起来的 linked list，改掉 fd 可以让 linked list 接往任意地址</li>
+<li>多次 malloc 后，就会拿到一个地址可控制的 chunk</li>
+</ul>
+</li>
+<li>取出的 chunk 其 size 要正确，所以并非是完全任意地址，要能构造假的 size<ul>
+<li>用 stack 上的变量当作 size，可以 malloc 出一个 stack 上的地址</li>
+<li>GOT上，用 64 bit 地址常见的 0x40 当作 size</li>
+</ul>
+</li>
+<li>取得 chunk 后，由机会对该地址任意读写</li>
+</ul>
+
         
             <div class="donate-container">
     <div class="donate-button">
