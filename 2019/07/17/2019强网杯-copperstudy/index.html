@@ -1,147 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta name="generator" content="Hexo 3.9.0">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="聂小涛的博客">
-    <meta name="keyword" content="腾讯">
-    <link rel="shortcut icon" href="/img/favicon.ico">
+<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>2019强网杯-copperstudy · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
 
-    <title>
-        
-        2019强网杯-copperstudy - pumpkin9&#39;s Blog
-        
-    </title>
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/aircloud.css">
-    <link rel="stylesheet" href="/css/gitment.css">
-    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
-    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
-    <!-- ga & ba script hoook -->
-    <script></script>
-</head>
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
 
-<body>
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
 
-<div class="site-nav-toggle" id="site-nav-toggle">
-    <button>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
-    </button>
-</div>
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
 
-<div class="index-about">
-    <i> When it has is lost, brave to give up. </i>
-</div>
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
 
-<div class="index-container">
-    
-    <div class="index-left">
-        
-<div class="nav" id="nav">
-    <div class="avatar-name">
-        <div class="avatar radius">
-            <img src="/img/avatar.jpg" />
-        </div>
-        <div class="name">
-            <i>pumpkin9</i>
-        </div>
-    </div>
-    <div class="contents" id="nav-content">
-        <ul>
-            <li >
-                <a href="/">
-                    <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
-                </a>
-            </li>
-            <li >
-                <a href="/tags">
-                    <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
-                </a>
-            </li>
-            <li >
-                <a href="/archive">
-                    <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
-                </a>
-            </li>
-            <li >
-                <a href="/about/">
-                    <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
-                </a>
-            </li>
-            
-            <li>
-                <a id="search">
-                    <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
-                </a>
-            </li>
-            
-        </ul>
-    </div>
-    
-        <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#copperstudy-–-coppersmith"><span class="toc-text">copperstudy – coppersmith</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge1-–-Known-High-Bits-Message-Attack"><span class="toc-text">challenge1 – Known High Bits Message Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge2-–-Factoring-with-High-Bits-Known"><span class="toc-text">challenge2 – Factoring with High Bits Known</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge3-–-Patial-Key-Exposure-Attack"><span class="toc-text">challenge3 – Patial Key Exposure Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge4-–-Basic-Broadcast-Attack"><span class="toc-text">challenge4 – Basic Broadcast Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge5-–-Related-Message-Attack"><span class="toc-text">challenge5 – Related Message Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge6-–-Boneh-and-Durfee-attack"><span class="toc-text">challenge6 – Boneh and Durfee attack</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-text">参考链接</span></a></li></ol>
-</div>
-    
-</div>
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
 
 
-<div class="search-field" id="search-field">
-    <div class="search-container">
-        <div class="search-input">
-            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
-            <input id="search-input"/>
-            <span id="begin-search">搜索</span>
-        </div>
-        <div class="search-result-container" id="search-result-container">
-
-        </div>
-    </div>
-</div>
-
-        <div class="index-about-mobile">
-            <i> When it has is lost, brave to give up. </i>
-        </div>
-    </div>
-    
-    <div class="index-middle">
-        <!-- Main Content -->
-        
-
-
-<div class="post-container">
-    <div class="post-title">
-        2019强网杯-copperstudy
-    </div>
-
-    <div class="post-meta">
-        <span class="attr">发布于：<span>2019-07-17 12:32:28</span></span>
-        
-        <span class="attr">标签：/
-        
-        <a class="tag" href="/tags/#Crypto" title="Crypto">Crypto</a>
-        <span>/</span>
-        
-        <a class="tag" href="/tags/#RSA" title="RSA">RSA</a>
-        <span>/</span>
-        
-        
-        </span>
-        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
-</span>
-</span>
-    </div>
-    <div class="post-content no-indent">
-        <h2 id="copperstudy-–-coppersmith"><a href="#copperstudy-–-coppersmith" class="headerlink" title="copperstudy – coppersmith"></a>copperstudy – coppersmith</h2><p>解题脚本</p>
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">........</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">2019强网杯-copperstudy</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-07-17</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="Crypto"> Crypto</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="RSA"> RSA</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h2 id="copperstudy-–-coppersmith"><a href="#copperstudy-–-coppersmith" class="headerlink" title="copperstudy – coppersmith"></a>copperstudy – coppersmith</h2><p>解题脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cha1</span><span class="params">(s,s256)</span>:</span></span><br><span class="line">	ss = <span class="string">''</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">		ss = ss + chr(int((s[<span class="number">2</span> * i] + s[<span class="number">2</span> * i + <span class="number">1</span>]),<span class="number">16</span>))</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">256</span>):</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">256</span>):</span><br><span class="line">			<span class="keyword">for</span> h <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">256</span>):</span><br><span class="line">				a = ss + chr(i) + chr(j) + chr(h)</span><br><span class="line">				<span class="keyword">if</span> hashlib.sha256(a).hexdigest() == s256:</span><br><span class="line">					<span class="keyword">return</span> a.encode(<span class="string">'hex'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">	ip = <span class="string">'119.3.245.36'</span></span><br><span class="line">	port = <span class="number">12345</span></span><br><span class="line">	teamtoken = <span class="string">'dde3f26577d8d7816378038885943de1'</span></span><br><span class="line">	s = remote(ip,port)</span><br><span class="line">	s.recvuntil(<span class="string">'[+]hashlib.sha256(skr).hexdigest()='</span>)</span><br><span class="line">	d256 = s.recvline()</span><br><span class="line">	s.recvuntil(<span class="string">"[+]skr[0:5].encode('hex')="</span>)</span><br><span class="line">	d = s.recvline()</span><br><span class="line">	data = cha1(d.strip(),d256.strip())</span><br><span class="line">	s.recvuntil(<span class="string">"[-]skr.encode('hex')="</span>)</span><br><span class="line">	s.sendline(data)</span><br><span class="line">	s.recvuntil(<span class="string">"[+]teamtoken:"</span>)</span><br><span class="line">	s.sendline(teamtoken)</span><br><span class="line">	time.sleep(<span class="number">2</span>）</span><br><span class="line">    <span class="comment">#challenge1 -- Known High Bits Message Attack</span></span><br><span class="line">	m = <span class="string">'858be94f2f6253ac4586da573086221c8256bf7fe7c7f6d0d4e459fd28abf8883cfa225f5cbb519d2c8e0427aab1dc03979886ac104018ddec85e8edb7bbc590'</span></span><br><span class="line">	s.recvuntil(<span class="string">"_bytes(m).encode('hex')="</span>)</span><br><span class="line">	s.sendline(m)</span><br><span class="line">	time.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="comment">#challenge2 -- Factoring with High Bits Known</span></span><br><span class="line">	m2 = <span class="string">"7e2a3378b47f389134bda8811e253ace33c6978fbb5d0022ab312cf1f5246648516b320bf749e71a1d8cbdcab64fdb5ce8159022ea96484949152d31a9f17665"</span></span><br><span class="line">	s.recvuntil(<span class="string">"_bytes(m).encode('hex')="</span>)</span><br><span class="line">	s.sendline(m2)</span><br><span class="line">	time.sleep(<span class="number">2</span>)</span><br><span class="line">	<span class="comment">#challenge3 -- Patial Key Exposure Attack</span></span><br><span class="line">	m3 = <span class="string">"86ee347cbeec999564c0615d33ea5e3cfb5e66f5d00b172194c0f86915de3ff19d2dffc2217caaa608ea6556b18e8f420fc1b287871475a0cd5c8f2d97e4c12c"</span></span><br><span class="line">	s.recvuntil(<span class="string">"_bytes(m).encode('hex')="</span>)</span><br><span class="line">	s.sendline(m3)</span><br><span class="line">	time.sleep(<span class="number">4</span>)</span><br><span class="line">	<span class="comment">#challenge4 -- Basic Broadcast Attack</span></span><br><span class="line">	m4 = <span class="string">"380185242a03c9d6ca7a2e117490ebaf03a493b1250f4e248c732c2714eb6b9fd2fa4c90a4f1d8120ffbafb3b7fda85fff46a67a1da3e316392ec267e1fa7c27"</span></span><br><span class="line">	s.recvuntil(<span class="string">"_bytes(m).encode('hex')="</span>)</span><br><span class="line">	s.sendline(m4)			  			       </span><br><span class="line">	time.sleep(<span class="number">20</span>)</span><br><span class="line">	<span class="comment">#challenge5 -- Related Message Attack</span></span><br><span class="line">    m5 = <span class="string">"0811b179ddbc246fc00ad94b6251c818e331941732fdfce9979c015ca7f0ec873641338c5814f3e8e50dfab04bd6aa0689334b517de10d7bac398aef23f929b3"</span></span><br><span class="line">	s.sendlineafter(<span class="string">"[-]long_to_bytes(m).encode('hex')="</span>,m5)</span><br><span class="line">	time.sleep(<span class="number">4</span>)</span><br><span class="line">	<span class="comment">#challenge6 -- Boneh and Durfee attack</span></span><br><span class="line">	m6 = <span class="string">"6b3bb0cdc72a7f2ce89902e19db0fb2c0514c76874b2ca4113b86e6dc128d44cc859283db4ca8b0b5d9ee35032aec8cc8bb96e8c11547915fc9ef05aa2d72b28"</span></span><br><span class="line">	s.sendlineafter(<span class="string">"[-]long_to_bytes(m).encode('hex')="</span>,m6)</span><br><span class="line">	time.sleep(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">print</span> s.recv()</span><br></pre></td></tr></table></figure>
 
 <h3 id="challenge1-–-Known-High-Bits-Message-Attack"><a href="#challenge1-–-Known-High-Bits-Message-Attack" class="headerlink" title="challenge1 – Known High Bits Message Attack"></a>challenge1 – Known High Bits Message Attack</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[++++++++++++++++]proof completed[++++++++++++++++]</span><br><span class="line">[+]Generating challenge 1</span><br><span class="line">[+]n=0x331e53d1808798def926bc2c8081b3a959cec19c04ad6dd3a25357b5e3889dc0bbb8618b80ddecca89494eec6015080cf4402fcef0971f76d978c517ab1e3019ae65fdc443a99036d4adcda780dd662ae3eb5d3c6ce68adfe38137689df75a6196a7a6dc94a681dfb5437439c810416112b250402f53eb2341df2145c569c135L</span><br><span class="line">[+]e=3</span><br><span class="line">[+]m=random.getrandbits(512)</span><br><span class="line">[+]c=pow(m,e,n)=0xab7b8544dc18a13c221d33b8ea84ee69ea3c74a1ce123e6f0a565e6afaff3d2682dfa254170a1200d66e9c017727c43b3c1af221f81d90598741454f68448cef4128ff56bb9929ffd3edaaa8069c08293463ad20486b6e6bee654ab471a3b364122d41f4570f6aa1084eb1eda5eebde1436a488e0390f8057df835f323802d4L</span><br><span class="line">[+]((m&gt;&gt;72)&lt;&lt;72)=0x858be94f2f6253ac4586da573086221c8256bf7fe7c7f6d0d4e459fd28abf8883cfa225f5cbb519d2c8e0427aab1dc03979886ac104018000000000000000000L</span><br><span class="line">[-]long_to_bytes(m).encode(&apos;hex&apos;)=</span><br></pre></td></tr></table></figure>
@@ -173,88 +129,4 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> libnum</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">n = <span class="number">0x1bda683489ec09b15aa5ab9356db56e8586f03879e19bf4b2316b56332fd2d994ae8682d121373b21771eda5246b3565c52266e83bada43723bb8f4457d712f339d350d02bcd257923fb6b7ad265bafd4b9429943ba56f0d27b123962adf60b809f886a090e3472abe01e194dbc3ec1ecba2550d695e771d3f0edb9ada77f29</span></span><br><span class="line">e = <span class="number">3</span></span><br><span class="line"></span><br><span class="line">c1 = <span class="number">0x22573b528e5ca137dc93b7f17f04d4efbf82124215a9c28ae6823fe5c7b6fb5eb5d328d9f6dbf73f88f59add74630d0721a822f8fb884b314f4c45aae1358fc8a19c59bbc370463541d58bd9cda1d77575a443cfbd85bdba48ae3e01642811a0b9824e3c8df8c02caed7a0606ceb6695dca7372e4291c60a98ed56b9442434</span></span><br><span class="line">c2 = <span class="number">0xe5ac2d53cd385143472febb8d7ba4acb7697bd494ef9ea0d165dd2ba7e451d803e45076ded5ef44bec0b72052b932348a50f0c66c6641159518f5137140a4db9fc497982930801715468932913e257f8b2abe287244d1d087c0ecf679cb46b1957bef678dee094d650a97d5a9d53cab80986571d890fbcd024528d6a321ac9</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = <span class="number">1</span></span><br><span class="line">b = <span class="number">-1</span></span><br><span class="line">padding2 = <span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getM2</span><span class="params">(a,b,c1,c2,n)</span>:</span></span><br><span class="line">    a3 = pow(a,<span class="number">3</span>,n)</span><br><span class="line">    b3 = pow(b,<span class="number">3</span>,n)</span><br><span class="line">    first = c1-a3*c2+<span class="number">2</span>*b3</span><br><span class="line">    first = first % n</span><br><span class="line">    second = <span class="number">3</span>*b*(a3*c2-b3)</span><br><span class="line">    second = second % n</span><br><span class="line">    third = second*gmpy2.invert(first,n)</span><br><span class="line">    third = third % n</span><br><span class="line">    fourth = (third+b)*gmpy2.invert(a,n)</span><br><span class="line">    <span class="keyword">return</span> fourth % n</span><br><span class="line">m = getM2(a,b,c1,c2,n)-padding2</span><br><span class="line"><span class="keyword">print</span> long_to_bytes(m).encode(<span class="string">'hex'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#print m</span></span><br><span class="line">c = pow(m,e,n)</span><br><span class="line"><span class="comment">#print hex(c)</span></span><br><span class="line"><span class="keyword">if</span> c == c1:</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"yeah"</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="http://www.realwz.com/2018/03/rsainctf.html" target="_blank" rel="noopener">http://www.realwz.com/2018/03/rsainctf.html</a><br><a href="http://inaz2.hatenablog.com/entry/2016/01/20/022936" target="_blank" rel="noopener">http://inaz2.hatenablog.com/entry/2016/01/20/022936</a><br><a href="https://findneo.github.io/180727rsa-attack/" target="_blank" rel="noopener">https://findneo.github.io/180727rsa-attack/</a><br><a href="https://www.cnblogs.com/WangAoBo/p/7541481.html" target="_blank" rel="noopener">https://www.cnblogs.com/WangAoBo/p/7541481.html</a><br><a href="https://code.felinae98.cn/ctf/crypto/rsa%e5%a4%a7%e7%a4%bc%e5%8c%85%ef%bc%88%e4%ba%8c%ef%bc%89coppersmith-%e7%9b%b8%e5%85%b3/" target="_blank" rel="noopener">https://code.felinae98.cn/ctf/crypto/rsa%e5%a4%a7%e7%a4%bc%e5%8c%85%ef%bc%88%e4%ba%8c%ef%bc%89coppersmith-%e7%9b%b8%e5%85%b3/</a><br><a href="https://www.anquanke.com/post/id/158944#h2-4" target="_blank" rel="noopener">https://www.anquanke.com/post/id/158944#h2-4</a><br><a href="https://altman.vip/2018/07/23/RSA-STUDY/#0x06-Lattice-based-attacks-on-RSA" target="_blank" rel="noopener">https://altman.vip/2018/07/23/RSA-STUDY/#0x06-Lattice-based-attacks-on-RSA</a></p>
-
-        
-            <div class="donate-container">
-    <div class="donate-button">
-        <button id="donate-button">赞赏</button>
-    </div>
-    <div class="donate-img-container hide" id="donate-img-container">
-        <img id="donate-img" src="" data-src="/img/donate.jpg">
-        <p> 感谢鼓励 </p>
-    </div>
-</div>
-        
-        <br />
-        <div id="comment-container">
-        </div>
-        <div id="disqus_thread"></div>
-
-        <div id="lv-container">
-        </div>
-
-    </div>
-</div>
-
-    </div>
-</div>
-
-
-<footer class="footer">
-    <ul class="list-inline text-center">
-        
-        
-
-        
-
-        
-
-        
-
-        
-
-    </ul>
-    
-    <p>
-        <span>/</span>
-        
-        <span><a href="https://venenof.com/">venenof7</a></span>
-        <span>/</span>
-        
-        <span><a href="https://www.rayi.vip">Rayi</a></span>
-        <span>/</span>
-        
-        <span><a href="https://www.zhaoj.in/">glzjin</a></span>
-        <span>/</span>
-        
-    </p>
-    
-    <p>
-        <span id="busuanzi_container_site_pv">
-            <span id="busuanzi_value_site_pv"></span>PV
-        </span>
-        <span id="busuanzi_container_site_uv">
-            <span id="busuanzi_value_site_uv"></span>UV
-        </span>
-        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
-</footer>
-
-
-
-
-</body>
-
-<script>
-    // We expose some of the variables needed by the front end
-    window.hexo_search_path = "search.json"
-    window.hexo_root = "/"
-    window.isPost = true
-</script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-<script src="/js/index.js"></script>
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-
-</html>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/07/17/2019强网杯-copperstudy/">http://pumpkin9.github.io/2019/07/17/2019强网杯-copperstudy/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/09/02/TokyoWesternsCTF-2019-writeup/" title="TokyoWesternsCTF 2019 writeup"><span>< PreviousPost</span><br><span class="prevTitle">TokyoWesternsCTF 2019 writeup</span></a><a class="nextSlogan" href="/2019/07/13/BUGKUCTF-代码审计/" title="BUGKUCTF-代码审计"><span>NextPost ></span><br><span class="nextTitle">BUGKUCTF-代码审计</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#copperstudy-–-coppersmith"><span class="toc-number">1.</span> <span class="toc-text">copperstudy – coppersmith</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge1-–-Known-High-Bits-Message-Attack"><span class="toc-number">1.1.</span> <span class="toc-text">challenge1 – Known High Bits Message Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge2-–-Factoring-with-High-Bits-Known"><span class="toc-number">1.2.</span> <span class="toc-text">challenge2 – Factoring with High Bits Known</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge3-–-Patial-Key-Exposure-Attack"><span class="toc-number">1.3.</span> <span class="toc-text">challenge3 – Patial Key Exposure Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge4-–-Basic-Broadcast-Attack"><span class="toc-number">1.4.</span> <span class="toc-text">challenge4 – Basic Broadcast Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge5-–-Related-Message-Attack"><span class="toc-number">1.5.</span> <span class="toc-text">challenge5 – Related Message Attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#challenge6-–-Boneh-and-Durfee-attack"><span class="toc-number">1.6.</span> <span class="toc-text">challenge6 – Boneh and Durfee attack</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">2.</span> <span class="toc-text">参考链接</span></a></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>

@@ -1,144 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta name="generator" content="Hexo 3.9.0">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="聂小涛的博客">
-    <meta name="keyword" content="腾讯">
-    <link rel="shortcut icon" href="/img/favicon.ico">
+<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>BUGKUCTF-代码审计 · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
 
-    <title>
-        
-        BUGKUCTF-代码审计 - pumpkin9&#39;s Blog
-        
-    </title>
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/aircloud.css">
-    <link rel="stylesheet" href="/css/gitment.css">
-    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
-    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
-    <!-- ga & ba script hoook -->
-    <script></script>
-</head>
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
 
-<body>
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
 
-<div class="site-nav-toggle" id="site-nav-toggle">
-    <button>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
-        <span class="btn-bar"></span>
-    </button>
-</div>
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
 
-<div class="index-about">
-    <i> When it has is lost, brave to give up. </i>
-</div>
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
 
-<div class="index-container">
-    
-    <div class="index-left">
-        
-<div class="nav" id="nav">
-    <div class="avatar-name">
-        <div class="avatar radius">
-            <img src="/img/avatar.jpg" />
-        </div>
-        <div class="name">
-            <i>pumpkin9</i>
-        </div>
-    </div>
-    <div class="contents" id="nav-content">
-        <ul>
-            <li >
-                <a href="/">
-                    <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
-                </a>
-            </li>
-            <li >
-                <a href="/tags">
-                    <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
-                </a>
-            </li>
-            <li >
-                <a href="/archive">
-                    <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
-                </a>
-            </li>
-            <li >
-                <a href="/about/">
-                    <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
-                </a>
-            </li>
-            
-            <li>
-                <a id="search">
-                    <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
-                </a>
-            </li>
-            
-        </ul>
-    </div>
-    
-        <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#extract变量覆盖"><span class="toc-text">extract变量覆盖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strcmp比较字符串"><span class="toc-text">strcmp比较字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#urldecode二次编码绕过"><span class="toc-text">urldecode二次编码绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#md5-函数"><span class="toc-text">md5()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组返回NULL绕过"><span class="toc-text">数组返回NULL绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#弱类型整数大小比较绕过"><span class="toc-text">弱类型整数大小比较绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sha-函数比较绕过"><span class="toc-text">sha()函数比较绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#md5加密相等绕过"><span class="toc-text">md5加密相等绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#十六进制与数字比较"><span class="toc-text">十六进制与数字比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#变量覆盖"><span class="toc-text">变量覆盖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x11-ereg正则-00截断"><span class="toc-text">0x11 - ereg正则%00截断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strpos数组绕过"><span class="toc-text">strpos数组绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数字验证正则绕过"><span class="toc-text">数字验证正则绕过</span></a></li></ol>
-</div>
-    
-</div>
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
 
 
-<div class="search-field" id="search-field">
-    <div class="search-container">
-        <div class="search-input">
-            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
-            <input id="search-input"/>
-            <span id="begin-search">搜索</span>
-        </div>
-        <div class="search-result-container" id="search-result-container">
-
-        </div>
-    </div>
-</div>
-
-        <div class="index-about-mobile">
-            <i> When it has is lost, brave to give up. </i>
-        </div>
-    </div>
-    
-    <div class="index-middle">
-        <!-- Main Content -->
-        
-
-
-<div class="post-container">
-    <div class="post-title">
-        BUGKUCTF-代码审计
-    </div>
-
-    <div class="post-meta">
-        <span class="attr">发布于：<span>2019-07-13 12:40:54</span></span>
-        
-        <span class="attr">标签：/
-        
-        <a class="tag" href="/tags/#web" title="web">web</a>
-        <span>/</span>
-        
-        
-        </span>
-        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
-</span>
-</span>
-    </div>
-    <div class="post-content no-indent">
-        <h3 id="extract变量覆盖"><a href="#extract变量覆盖" class="headerlink" title="extract变量覆盖"></a>extract变量覆盖</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$flag=<span class="string">'xxx'</span>;</span><br><span class="line">extract($_GET);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($shiyan))</span><br><span class="line">&#123;</span><br><span class="line">$content=trim(file_get_contents($flag));</span><br><span class="line"><span class="comment">#trim() 函数移除字符串两侧的空白字符或其他预定义字符。</span></span><br><span class="line"><span class="comment">#file_get_contents() 函数是用于将文件的内容读入到一个字符串中的首选方法。</span></span><br><span class="line"><span class="keyword">if</span>($shiyan==$content)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">echo</span><span class="string">'flag&#123;xxx&#125;'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">echo</span><span class="string">'Oh.no'</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">........</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">BUGKUCTF-代码审计</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-07-13</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="web"> web</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h3 id="extract变量覆盖"><a href="#extract变量覆盖" class="headerlink" title="extract变量覆盖"></a>extract变量覆盖</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$flag=<span class="string">'xxx'</span>;</span><br><span class="line">extract($_GET);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($shiyan))</span><br><span class="line">&#123;</span><br><span class="line">$content=trim(file_get_contents($flag));</span><br><span class="line"><span class="comment">#trim() 函数移除字符串两侧的空白字符或其他预定义字符。</span></span><br><span class="line"><span class="comment">#file_get_contents() 函数是用于将文件的内容读入到一个字符串中的首选方法。</span></span><br><span class="line"><span class="keyword">if</span>($shiyan==$content)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">echo</span><span class="string">'flag&#123;xxx&#125;'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">echo</span><span class="string">'Oh.no'</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>extract()函数, 将GET方式获得的变量导入到当前的符号表中<br>如果变量shiyan和变量content的值相同，<br>就输出flag的值<br>否则就输出Oh,no<br>因为extract()会把符号表中已存在的变量名的值替换掉，所以Payload ：<code>?shiyan=&amp;content=</code></p>
 <p>那么在使用函数extract()的时候, 如何防止这种漏洞呢<br>可以在使用的时候加上参数EXTR_SKIP<br>这个参数表示如果有冲突，不覆盖已有的变量<br>或者还有EXTR_PREFIX_SAME - 如果有冲突，在变量名前加上前缀 prefix。</p>
@@ -213,88 +172,4 @@ http://123.206.87.240:9009/5.php?password[]=</code></p>
 <h3 id="数字验证正则绕过"><a href="#数字验证正则绕过" class="headerlink" title="数字验证正则绕过"></a>数字验证正则绕过</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">$flag = <span class="string">'flag&#123;test&#125;'</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="string">"POST"</span> == $_SERVER[<span class="string">'REQUEST_METHOD'</span>])</span><br><span class="line">&#123;</span><br><span class="line">$password = $_POST[<span class="string">'password'</span>];</span><br><span class="line"><span class="keyword">if</span> (<span class="number">0</span> &gt;= preg_match(<span class="string">'/^[[:graph:]]&#123;12,&#125;$/'</span>, $password)) <span class="comment">//preg_match — 执行一个正则表达式匹配</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'flag'</span>;</span><br><span class="line"><span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">while</span> (<span class="keyword">TRUE</span>)</span><br><span class="line">&#123;</span><br><span class="line">$reg = <span class="string">'/([[:punct:]]+|[[:digit:]]+|[[:upper:]]+|[[:lower:]]+)/'</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="number">6</span> &gt; preg_match_all($reg, $password, $arr))</span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line">$c = <span class="number">0</span>;</span><br><span class="line">$ps = <span class="keyword">array</span>(<span class="string">'punct'</span>, <span class="string">'digit'</span>, <span class="string">'upper'</span>, <span class="string">'lower'</span>); <span class="comment">//[[:punct:]] 任何标点符号 [[:digit:]] 任何数字 [[:upper:]] 任何大写字母 [[:lower:]] 任何小写字母</span></span><br><span class="line"><span class="keyword">foreach</span> ($ps <span class="keyword">as</span> $pt)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">if</span> (preg_match(<span class="string">"/[[:$pt:]]+/"</span>, $password))</span><br><span class="line">$c += <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ($c &lt; <span class="number">3</span>) <span class="keyword">break</span>;</span><br><span class="line"><span class="comment">//&gt;=3，必须包含四种类型三种与三种以上</span></span><br><span class="line"><span class="keyword">if</span> (<span class="string">"42"</span> == $password) <span class="keyword">echo</span> $flag;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">echo</span> <span class="string">'Wrong password'</span>;</span><br><span class="line"><span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>利用preg_match()函数不能处理数组进行构造payload<br>payload<code>post : password[]=</code></p>
-
-        
-            <div class="donate-container">
-    <div class="donate-button">
-        <button id="donate-button">赞赏</button>
-    </div>
-    <div class="donate-img-container hide" id="donate-img-container">
-        <img id="donate-img" src="" data-src="/img/donate.jpg">
-        <p> 感谢鼓励 </p>
-    </div>
-</div>
-        
-        <br />
-        <div id="comment-container">
-        </div>
-        <div id="disqus_thread"></div>
-
-        <div id="lv-container">
-        </div>
-
-    </div>
-</div>
-
-    </div>
-</div>
-
-
-<footer class="footer">
-    <ul class="list-inline text-center">
-        
-        
-
-        
-
-        
-
-        
-
-        
-
-    </ul>
-    
-    <p>
-        <span>/</span>
-        
-        <span><a href="https://venenof.com/">venenof7</a></span>
-        <span>/</span>
-        
-        <span><a href="https://www.rayi.vip">Rayi</a></span>
-        <span>/</span>
-        
-        <span><a href="https://www.zhaoj.in/">glzjin</a></span>
-        <span>/</span>
-        
-    </p>
-    
-    <p>
-        <span id="busuanzi_container_site_pv">
-            <span id="busuanzi_value_site_pv"></span>PV
-        </span>
-        <span id="busuanzi_container_site_uv">
-            <span id="busuanzi_value_site_uv"></span>UV
-        </span>
-        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
-</footer>
-
-
-
-
-</body>
-
-<script>
-    // We expose some of the variables needed by the front end
-    window.hexo_search_path = "search.json"
-    window.hexo_root = "/"
-    window.isPost = true
-</script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-<script src="/js/index.js"></script>
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-
-</html>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/07/13/BUGKUCTF-代码审计/">http://pumpkin9.github.io/2019/07/13/BUGKUCTF-代码审计/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/07/17/2019强网杯-copperstudy/" title="2019强网杯-copperstudy"><span>< PreviousPost</span><br><span class="prevTitle">2019强网杯-copperstudy</span></a><a class="nextSlogan" href="/2019/04/10/2019掘安杯-write-up/" title="2019掘安杯-write up"><span>NextPost ></span><br><span class="nextTitle">2019掘安杯-write up</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#extract变量覆盖"><span class="toc-number">1.</span> <span class="toc-text">extract变量覆盖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strcmp比较字符串"><span class="toc-number">2.</span> <span class="toc-text">strcmp比较字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#urldecode二次编码绕过"><span class="toc-number">3.</span> <span class="toc-text">urldecode二次编码绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#md5-函数"><span class="toc-number">4.</span> <span class="toc-text">md5()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数组返回NULL绕过"><span class="toc-number">5.</span> <span class="toc-text">数组返回NULL绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#弱类型整数大小比较绕过"><span class="toc-number">6.</span> <span class="toc-text">弱类型整数大小比较绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sha-函数比较绕过"><span class="toc-number">7.</span> <span class="toc-text">sha()函数比较绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#md5加密相等绕过"><span class="toc-number">8.</span> <span class="toc-text">md5加密相等绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#十六进制与数字比较"><span class="toc-number">9.</span> <span class="toc-text">十六进制与数字比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#变量覆盖"><span class="toc-number">10.</span> <span class="toc-text">变量覆盖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x11-ereg正则-00截断"><span class="toc-number">11.</span> <span class="toc-text">0x11 - ereg正则%00截断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strpos数组绕过"><span class="toc-number">12.</span> <span class="toc-text">strpos数组绕过</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数字验证正则绕过"><span class="toc-number">13.</span> <span class="toc-text">数字验证正则绕过</span></a></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
