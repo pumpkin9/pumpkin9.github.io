@@ -1,109 +1,218 @@
-<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>2019掘安杯-write up · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
-  "use strict";
-  // rel=preload support test
-  if( !w.loadCSS ){
-    w.loadCSS = function(){};
-  }
-  // define on the loadCSS obj
-  var rp = loadCSS.relpreload = {};
-  // rel=preload feature support test
-  // runs once and returns a function for compat purposes
-  rp.support = (function(){
-    var ret;
-    try {
-      ret = w.document.createElement( "link" ).relList.supports( "preload" );
-    } catch (e) {
-      ret = false;
-    }
-    return function(){
-      return ret;
-    };
-  })();
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+      <script>
+  var _hmt = _hmt || []
+  ;(function() {
+    var hm = document.createElement('script')
+    hm.src = 'https://hm.baidu.com/hm.js?5a0acc897fd96474a2c8f4deac84611a'
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(hm, s)
+  })()
+</script> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content>
+    <meta name="description" content>
+    
+    <title>
+      2019掘安杯-write up - pumpkin9
+    </title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style/style.css">
+  </head>
+  <body>
+    
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Reverse"><span class="toc-text">Reverse</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#baby-reverse"><span class="toc-text">baby_reverse</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Replace"><span class="toc-text">Replace</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#真的不是图片"><span class="toc-text">真的不是图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#what"><span class="toc-text">what</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目描述"><span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程"><span class="toc-text">解题过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小梳子"><span class="toc-text">小梳子</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Crypto"><span class="toc-text">Crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#贝斯家族三英战群魔"><span class="toc-text">贝斯家族三英战群魔</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#罗马帝国的奠基者"><span class="toc-text">罗马帝国的奠基者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绝密情报"><span class="toc-text">绝密情报</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目描述-1"><span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-1"><span class="toc-text">解题过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#贝叶斯"><span class="toc-text">贝叶斯</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-2"><span class="toc-text">解题过程</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div id="fixed-menu-wrap">
+      <span class="iconfont icon-sousuo search-box menu-reset"></span>
+      <span class="icon-toc menu-reset">Toc</span>
+      <span class="iconfont icon-arrowup menu-reset"></span>
+    </div>
+    <div id="fixed-menu">
+      <span class="iconfont icon-menu-"></span>
+    </div>
+    <div id="progress">
+      <div class="line"></div>
+    </div>
+    <div id="search-shade" class="animated hiddenSearch hide">
+      <div class="input-wrap">
+        <span class="iconfont icon-sousuo search-box"></span>
+        <input type="text" placeholder="Search">
+        <span class="iconfont icon-close"></span>
+      </div>
+      <div class="search-result">
+        <div class="meta">
+          <span><b id="result-count">0</b> results found</span>
+          <img src="/images/logo.jpeg">
+        </div>
+        <ul id="result-box"></ul>
+      </div>
+    </div>
+    <div id="menu-mask" class="animated hideMenuMask hide">
+      <span class="iconfont icon-close"></span>
+      <div class="nav">
+        
+        <a href="/" class>
+          Home
+        </a>
+        
+        <a href="/archives" class>
+          Archives
+        </a>
+        
+        <a href="/categories" class>
+          Categories
+        </a>
+        
+        <a href="/tags" class>
+          Tags
+        </a>
+        
+        <a href="/friends" class>
+          Friends
+        </a>
+        
+        <a href="/about" class>
+          About
+        </a>
+        
+      </div>
+    </div>
+    <div id="header">
+      <div class="intro">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <div class="author">pumpkin9</div>
+      </div>
+      <div class="nav">
+        <span class="iconfont icon-menu menu-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+    </div>
+    <div id="side" class="animated bounceInLeft">
+      <div class="shrink">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <span class="iconfont icon-menu toggle-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+      <div class="magnify">
+        <div class="about">
+          <div class="author">pumpkin9</div>
+          <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        </div>
 
-  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
-  // then change that media back to its intended value on load
-  rp.bindMediaToggle = function( link ){
-    // remember existing media attr for ultimate state, or default to 'all'
-    var finalMedia = link.media || "all";
+        <div class="nav">
+          
+          <a href="/" class>
+            Home
+          </a>
+          
+          <a href="/archives" class>
+            Archives
+          </a>
+          
+          <a href="/categories" class>
+            Categories
+          </a>
+          
+          <a href="/tags" class>
+            Tags
+          </a>
+          
+          <a href="/friends" class>
+            Friends
+          </a>
+          
+          <a href="/about" class>
+            About
+          </a>
+          
+          <a href="#" class="search-box">
+            <span class="iconfont icon-sousuo"></span>
+          </a>
+        </div>
+        <div class="bottom">
+          <div class="follow">
+            
+            <a href="https://github.com/shixiaohu2206" target="_block">
+              <span class="iconfont icon-github"></span>
+            </a>
+            
+            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
+              <span class="iconfont icon-facebook"></span>
+            </a>
+            
+            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
+              <span class="iconfont icon-instagram"></span>
+            </a>
+             
+            <a href="/atom.xml" target="_block">
+              <span class="iconfont icon-rss"></span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="container">
+      <div class="main animated bounceInRight delay-0.7s">
+        <article class="post-entry">
+    <div class="header">
+      
+      <div class="title">2019掘安杯-write up</div>
+      <div class="meta">
+        <span class="item">
+          <span class="iconfont icon-time-circle"></span>
+          <span>2019/04/10</span>
+        </span>
 
-    function enableStylesheet(){
-      link.media = finalMedia;
-    }
+        
 
-    // bind load handlers to enable media
-    if( link.addEventListener ){
-      link.addEventListener( "load", enableStylesheet );
-    } else if( link.attachEvent ){
-      link.attachEvent( "onload", enableStylesheet );
-    }
-
-    // Set rel and non-applicable media type to start an async request
-    // note: timeout allows this to happen async to let rendering continue in IE
-    setTimeout(function(){
-      link.rel = "stylesheet";
-      link.media = "only x";
-    });
-    // also enable media after 3 seconds,
-    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
-    setTimeout( enableStylesheet, 3000 );
-  };
-
-  // loop through link elements in DOM
-  rp.poly = function(){
-    // double check this to prevent external calls from running
-    if( rp.support() ){
-      return;
-    }
-    var links = w.document.getElementsByTagName( "link" );
-    for( var i = 0; i < links.length; i++ ){
-      var link = links[ i ];
-      // qualify links to those with rel=preload and as=style attrs
-      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
-        // prevent rerunning on link
-        link.setAttribute( "data-loadcss", true );
-        // bind listeners to toggle media back
-        rp.bindMediaToggle( link );
-      }
-    }
-  };
-
-  // if unsupported, run the polyfill
-  if( !rp.support() ){
-    // run once at least
-    rp.poly();
-
-    // rerun poly on an interval until onload
-    var run = w.setInterval( rp.poly, 500 );
-    if( w.addEventListener ){
-      w.addEventListener( "load", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    } else if( w.attachEvent ){
-      w.attachEvent( "onload", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    }
-  }
-
-
-  // commonjs
-  if( typeof exports !== "undefined" ){
-    exports.loadCSS = loadCSS;
-  }
-  else {
-    w.loadCSS = loadCSS;
-  }
-}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
-  i.fa.fa-comment
-  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">你不关注花，花永远只是花</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">2019掘安杯-write up</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-04-10</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="write up"> write up</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h1 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h1><h2 id="baby-reverse"><a href="#baby-reverse" class="headerlink" title="baby_reverse"></a>baby_reverse</h2><p>加密函数如下</p>
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
+        
+        
+         
+          <span class="item">
+            <span class="iconfont icon-tag1"></span>
+            <span>
+                
+                  
+                    <a href="/tags/write up">write up</a>
+                  
+                
+            </span>
+          </span>
+         
+      </div>
+      <div>
+      </div>
+    </div>
+    <h1 id="Reverse">Reverse<a class="post-anchor" href="#Reverse"></a></h1><h2 id="baby-reverse">baby_reverse<a class="post-anchor" href="#baby-reverse"></a></h2><p>加密函数如下</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">fastcall <span class="title">encode</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *a1, __int64 a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v3[<span class="number">32</span>]; <span class="comment">// [rsp+10h] [rbp-70h]</span></span><br><span class="line">  <span class="keyword">char</span> v4[<span class="number">32</span>]; <span class="comment">// [rsp+30h] [rbp-50h]</span></span><br><span class="line">  <span class="keyword">char</span> v5[<span class="number">36</span>]; <span class="comment">// [rsp+50h] [rbp-30h]</span></span><br><span class="line">  <span class="keyword">int</span> v6; <span class="comment">// [rsp+74h] [rbp-Ch]</span></span><br><span class="line">  <span class="keyword">int</span> v7; <span class="comment">// [rsp+78h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+7Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  v7 = <span class="number">18</span>;</span><br><span class="line">  i = <span class="number">0</span>;</span><br><span class="line">  v6 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">strlen</span>(a1) != <span class="number">18</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"Your Length is Wrong"</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"flag&#123;This_1s_f4cker_flag&#125;"</span>);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; v7; i += <span class="number">3</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v5[i] = v7 ^ (a1[i] + <span class="number">6</span>);</span><br><span class="line">    v4[i + <span class="number">1</span>] = (a1[i + <span class="number">1</span>] - <span class="number">6</span>) ^ v7;</span><br><span class="line">    v3[i + <span class="number">2</span>] = a1[i + <span class="number">2</span>] ^ <span class="number">6</span> ^ v7;</span><br><span class="line">    *(_BYTE *)(a2 + i) = v5[i];</span><br><span class="line">    *(_BYTE *)(a2 + i + <span class="number">1L</span>L) = v4[i + <span class="number">1</span>];</span><br><span class="line">    *(_BYTE *)(a2 + i + <span class="number">2L</span>L) = v3[i + <span class="number">2</span>];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> a2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>很简单得加密函数<br>一共分为三组</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">key = <span class="string">'bIwhroo8cwqgwrxusi'</span></span><br><span class="line">flag = <span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">18</span>,<span class="number">3</span>):</span><br><span class="line">  flag += chr((ord(key[i])^<span class="number">18</span>) - <span class="number">6</span>) + chr((ord(key[i+<span class="number">1</span>])^<span class="number">18</span>) + <span class="number">6</span>) + chr(ord(key[i+<span class="number">2</span>])^<span class="number">6</span>^<span class="number">18</span>)</span><br><span class="line"><span class="keyword">print</span> flag</span><br><span class="line"><span class="comment">#jactf&#123;w0w_is_flag&#125;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Replace"><a href="#Replace" class="headerlink" title="Replace"></a>Replace</h2><p>加密函数如下</p>
+<h2 id="Replace">Replace<a class="post-anchor" href="#Replace"></a></h2><p>加密函数如下</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">v2 = a1;</span><br><span class="line">  <span class="keyword">if</span> ( a2 != <span class="number">35</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  v4 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v5 = *(_BYTE *)(v4 + v2);</span><br><span class="line">    v6 = (v5 &gt;&gt; <span class="number">4</span>) % <span class="number">16</span>;</span><br><span class="line">    v7 = (<span class="number">16</span> * v5 &gt;&gt; <span class="number">4</span>) % <span class="number">16</span>;</span><br><span class="line">    v8 = byte_402150[<span class="number">2</span> * v4];</span><br><span class="line">    <span class="keyword">if</span> ( v8 &lt; <span class="number">48</span> || v8 &gt; <span class="number">57</span> )</span><br><span class="line">      v9 = v8 - <span class="number">87</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      v9 = v8 - <span class="number">48</span>;</span><br><span class="line">    v10 = byte_402151[<span class="number">2</span> * v4];</span><br><span class="line">    v11 = <span class="number">16</span> * v9;</span><br><span class="line">    <span class="keyword">if</span> ( v10 &lt; <span class="number">48</span> || v10 &gt; <span class="number">57</span> )</span><br><span class="line">      v12 = v10 - <span class="number">87</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      v12 = v10 - <span class="number">48</span>;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> __int8)byte_4021A0[<span class="number">16</span> * v6 + v7] != ((v11 + v12) ^ <span class="number">0x19</span>) )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">if</span> ( ++v4 &gt;= <span class="number">35</span> )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br></pre></td></tr></table></figure>
 
 <p>这是爆破的思路</p>
@@ -112,43 +221,152 @@
 <p>贴一下<a href="https://seanachao.github.io/2018/11/29/%E6%B9%96%E6%B9%98%E6%9D%AFre%E9%A2%98%E7%9B%AE%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener">大佬</a>用z3解的脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*-coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#flag&#123;Th1s_1s_Simple_Rep1ac3_Enc0d3&#125;</span></span><br><span class="line">list_flag = [<span class="number">51</span>, <span class="number">80</span>, <span class="number">239</span>, <span class="number">133</span>, <span class="number">33</span>, <span class="number">32</span>, <span class="number">69</span>, <span class="number">199</span>, <span class="number">143</span>, <span class="number">207</span>, <span class="number">199</span>, <span class="number">143</span>, <span class="number">207</span>, <span class="number">237</span>, <span class="number">249</span>, <span class="number">60</span>, <span class="number">81</span>, <span class="number">80</span>, <span class="number">77</span>, <span class="number">207</span>, <span class="number">0</span>, <span class="number">77</span>, <span class="number">81</span>, <span class="number">199</span>, <span class="number">239</span>, <span class="number">251</span>, <span class="number">195</span>, <span class="number">207</span>, <span class="number">110</span>, <span class="number">159</span>, <span class="number">251</span>, <span class="number">4</span>, <span class="number">67</span>, <span class="number">195</span>, <span class="number">255</span>]</span><br><span class="line">byte_4021A0 = [<span class="number">99</span>, <span class="number">124</span>, <span class="number">119</span>, <span class="number">123</span>, <span class="number">242</span>, <span class="number">107</span>, <span class="number">111</span>, <span class="number">197</span>, <span class="number">48</span>, <span class="number">1</span>, <span class="number">103</span>, <span class="number">43</span>, <span class="number">254</span>, <span class="number">215</span>, <span class="number">171</span>, <span class="number">118</span>, <span class="number">202</span>, <span class="number">130</span>, <span class="number">201</span>, <span class="number">125</span>, <span class="number">250</span>, <span class="number">89</span>, <span class="number">71</span>, <span class="number">240</span>, <span class="number">173</span>, <span class="number">212</span>, <span class="number">162</span>, <span class="number">175</span>, <span class="number">156</span>, <span class="number">164</span>, <span class="number">114</span>, <span class="number">192</span>, <span class="number">183</span>, <span class="number">253</span>, <span class="number">147</span>, <span class="number">38</span>, <span class="number">54</span>, <span class="number">63</span>, <span class="number">247</span>, <span class="number">204</span>, <span class="number">52</span>, <span class="number">165</span>, <span class="number">229</span>, <span class="number">241</span>, <span class="number">113</span>, <span class="number">216</span>, <span class="number">49</span>, <span class="number">21</span>, <span class="number">4</span>, <span class="number">199</span>, <span class="number">35</span>, <span class="number">195</span>, <span class="number">24</span>, <span class="number">150</span>, <span class="number">5</span>, <span class="number">154</span>, <span class="number">7</span>, <span class="number">18</span>, <span class="number">128</span>, <span class="number">226</span>, <span class="number">235</span>, <span class="number">39</span>, <span class="number">178</span>, <span class="number">117</span>, <span class="number">9</span>, <span class="number">131</span>, <span class="number">44</span>, <span class="number">26</span>, <span class="number">27</span>, <span class="number">110</span>, <span class="number">90</span>, <span class="number">160</span>, <span class="number">82</span>, <span class="number">59</span>, <span class="number">214</span>, <span class="number">179</span>, <span class="number">41</span>, <span class="number">227</span>, <span class="number">47</span>, <span class="number">132</span>, <span class="number">83</span>, <span class="number">209</span>, <span class="number">0</span>, <span class="number">237</span>, <span class="number">32</span>, <span class="number">252</span>, <span class="number">177</span>, <span class="number">91</span>, <span class="number">106</span>, <span class="number">203</span>, <span class="number">190</span>, <span class="number">57</span>, <span class="number">74</span>, <span class="number">76</span>, <span class="number">88</span>, <span class="number">207</span>, <span class="number">208</span>, <span class="number">239</span>, <span class="number">170</span>, <span class="number">251</span>, <span class="number">67</span>, <span class="number">77</span>, <span class="number">51</span>, <span class="number">133</span>, <span class="number">69</span>, <span class="number">249</span>, <span class="number">2</span>, <span class="number">127</span>, <span class="number">80</span>, <span class="number">60</span>, <span class="number">159</span>, <span class="number">168</span>, <span class="number">81</span>, <span class="number">163</span>, <span class="number">64</span>, <span class="number">143</span>, <span class="number">146</span>, <span class="number">157</span>, <span class="number">56</span>, <span class="number">245</span>, <span class="number">188</span>, <span class="number">182</span>, <span class="number">218</span>, <span class="number">33</span>, <span class="number">16</span>, <span class="number">255</span>, <span class="number">243</span>, <span class="number">210</span>, <span class="number">205</span>, <span class="number">12</span>, <span class="number">19</span>, <span class="number">236</span>, <span class="number">95</span>, <span class="number">151</span>, <span class="number">68</span>, <span class="number">23</span>, <span class="number">196</span>, <span class="number">167</span>, <span class="number">126</span>, <span class="number">61</span>, <span class="number">100</span>, <span class="number">93</span>, <span class="number">25</span>, <span class="number">115</span>, <span class="number">96</span>, <span class="number">129</span>, <span class="number">79</span>, <span class="number">220</span>, <span class="number">34</span>, <span class="number">42</span>, <span class="number">144</span>, <span class="number">136</span>, <span class="number">70</span>, <span class="number">238</span>, <span class="number">184</span>, <span class="number">20</span>, <span class="number">222</span>, <span class="number">94</span>, <span class="number">11</span>, <span class="number">219</span>, <span class="number">224</span>, <span class="number">50</span>, <span class="number">58</span>, <span class="number">10</span>, <span class="number">73</span>, <span class="number">6</span>, <span class="number">36</span>, <span class="number">92</span>, <span class="number">194</span>, <span class="number">211</span>, <span class="number">172</span>, <span class="number">98</span>, <span class="number">145</span>, <span class="number">149</span>, <span class="number">228</span>, <span class="number">121</span>, <span class="number">231</span>, <span class="number">200</span>, <span class="number">55</span>, <span class="number">109</span>, <span class="number">141</span>, <span class="number">213</span>, <span class="number">78</span>, <span class="number">169</span>, <span class="number">108</span>, <span class="number">86</span>, <span class="number">244</span>, <span class="number">234</span>, <span class="number">101</span>, <span class="number">122</span>, <span class="number">174</span>, <span class="number">8</span>, <span class="number">186</span>, <span class="number">120</span>, <span class="number">37</span>, <span class="number">46</span>, <span class="number">28</span>, <span class="number">166</span>, <span class="number">180</span>, <span class="number">198</span>, <span class="number">232</span>, <span class="number">221</span>, <span class="number">116</span>, <span class="number">31</span>, <span class="number">75</span>, <span class="number">189</span>, <span class="number">139</span>, <span class="number">138</span>, <span class="number">112</span>, <span class="number">62</span>, <span class="number">181</span>, <span class="number">102</span>, <span class="number">72</span>, <span class="number">3</span>, <span class="number">246</span>, <span class="number">14</span>, <span class="number">97</span>, <span class="number">53</span>, <span class="number">87</span>, <span class="number">185</span>, <span class="number">134</span>, <span class="number">193</span>, <span class="number">29</span>, <span class="number">158</span>, <span class="number">225</span>, <span class="number">248</span>, <span class="number">152</span>, <span class="number">17</span>, <span class="number">105</span>, <span class="number">217</span>, <span class="number">142</span>, <span class="number">148</span>, <span class="number">155</span>, <span class="number">30</span>, <span class="number">135</span>, <span class="number">233</span>, <span class="number">206</span>, <span class="number">85</span>, <span class="number">40</span>, <span class="number">223</span>, <span class="number">140</span>, <span class="number">161</span>, <span class="number">137</span>, <span class="number">13</span>, <span class="number">191</span>, <span class="number">230</span>, <span class="number">66</span>, <span class="number">104</span>, <span class="number">65</span>, <span class="number">153</span>, <span class="number">45</span>, <span class="number">15</span>, <span class="number">176</span>, <span class="number">84</span>, <span class="number">187</span>]</span><br><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">z3_solve</span><span class="params">(res_flag,byte_4021A0,flag1)</span>:</span></span><br><span class="line"></span><br><span class="line">	solve_flag = Solver()</span><br><span class="line">	flag2 = []</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">35</span>):</span><br><span class="line">		flag2.append(BitVec(<span class="string">'v'</span>+str(i),<span class="number">8</span>))</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">35</span>):</span><br><span class="line">		solve_flag.add(( (<span class="number">16</span> * ((flag2[i] &gt;&gt; <span class="number">4</span>) % <span class="number">16</span>))+(<span class="number">16</span> * flag2[i] &gt;&gt; <span class="number">4</span>) % <span class="number">16</span>)== flag1[i])</span><br><span class="line">	check_flag = solve_flag.check()</span><br><span class="line">	<span class="keyword">print</span> check_flag,type(check_flag)</span><br><span class="line">	res_model = solve_flag.model()</span><br><span class="line">	flag_final = <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">35</span>):</span><br><span class="line">		flag_chr =(<span class="string">"%s"</span>%(res_model[flag2[i]]))</span><br><span class="line">		flag_final  = flag_final + chr(int(flag_chr))</span><br><span class="line">	<span class="keyword">print</span> flag_final</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">res_find</span><span class="params">(list_flag,byte_4021A0)</span>:</span></span><br><span class="line">	list_find = []</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> list_flag:</span><br><span class="line">		res = byte_4021A0.index(i)</span><br><span class="line">		list_find.append(res)</span><br><span class="line">	<span class="keyword">return</span> list_find</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">	res = res_find(list_flag,byte_4021A0)</span><br><span class="line">	<span class="comment"># for i in res:</span></span><br><span class="line">	<span class="comment"># 	print i</span></span><br><span class="line">	z3_solve(list_flag,byte_4021A0,res)</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"Finish\n"</span></span><br></pre></td></tr></table></figure>
 
-<h1 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h1><h2 id="真的不是图片"><a href="#真的不是图片" class="headerlink" title="真的不是图片"></a>真的不是图片</h2><p>题目给了一张图片，binwalk一下</p>
+<h1 id="Misc">Misc<a class="post-anchor" href="#Misc"></a></h1><h2 id="真的不是图片">真的不是图片<a class="post-anchor" href="#真的不是图片"></a></h2><p>题目给了一张图片，binwalk一下</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pumpkin9@pumpkin9:/mnt/c/Users/Desktop/juean$ binwalk Misc-JASEC.png</span><br><span class="line"></span><br><span class="line">DECIMAL       HEXADECIMAL     DESCRIPTION</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">0             0x0             PNG image, 824 x 639, 8-bit/color RGB, non-interlaced</span><br><span class="line">91            0x5B            Zlib compressed data, compressed</span><br><span class="line">140598        0x22536         End of Zip archive, footer length: 22</span><br></pre></td></tr></table></figure>
 
 <p>题目中有zip，和正常压缩包图片对比一下<br>emmm<br>反正是少了个zip头了</p>
-<p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g8oaqtqp07j30ht0h544k.jpg" alt><br>可以发现 50 4B 03 04 被替换成了ja66</p>
+<p><a href="https://tva1.sinaimg.cn/large/006y8mN6ly1g8oaqtqp07j30ht0h544k.jpg" data-caption data-fancybox="images"><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g8oaqtqp07j30ht0h544k.jpg" alt></a><br>可以发现 50 4B 03 04 被替换成了ja66</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pumpkin9@pumpkin9:/mnt/c/Users/Desktop/juean$ binwalk Misc-JASEC.png</span><br><span class="line"></span><br><span class="line">DECIMAL       HEXADECIMAL     DESCRIPTION</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">0             0x0             PNG image, 824 x 639, 8-bit/color RGB, non-interlaced</span><br><span class="line">91            0x5B            Zlib compressed data, compressed</span><br><span class="line">137859        0x21A83         Zip archive data, at least v2.0 to extract, compressed size: 2605, uncompressed size: 11258, name: subject.zip</span><br><span class="line">140598        0x22536         End of Zip archive, footer length: 22</span><br></pre></td></tr></table></figure>
 
 <p>然后foremost分离<br>ja66解压缩</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>):</span><br><span class="line">	f = open(<span class="string">'./'</span>+str(i)+<span class="string">'/'</span>+str(i)+<span class="string">'.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">	flag += f.read()</span><br><span class="line"><span class="keyword">print</span> base64.b64decode(flag)</span><br><span class="line"><span class="comment">#jactf&#123;64se64_1s_50_c001&#125;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="what"><a href="#what" class="headerlink" title="what"></a>what</h2><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p><code>=E4=BD=9B=E6=9B=B0=EF=BC=9A=E6=A2=B5=E5=83=A7=E5=A5=A2=E6=A5=9E=E5=A5=A2=E5=90=89=E8=8B=A5=E5=A5=A2=E4=B8=8D=E5=B8=9D=E5=86=A5=E5=A4=9C=E6=98=AF=E7=BC=BD=E6=9C=8B=E7=BC=BD=E7=9C=9F=E7=89=B9=E4=BF=B1=E4=B8=8A=E7=BD=B0=E8=83=BD=E7=9A=A4=E5=AE=A4=E9=98=BF=E8=AB=B3=E6=98=8E=E4=B8=80=E5=88=87=E5=91=90=E9=99=A4=E6=A2=B5=E5=A7=AA=E7=BC=BD=E5=A9=86=E5=91=90=E4=BA=A6=E5=8F=83=E4=BE=84=E5=91=BC=E7=9A=A4=E4=B8=96=E5=93=86=E7=89=B9=E5=93=86=E6=95=85=E5=8B=9D=E8=AB=B3=E7=88=8D=E8=AC=B9=E6=99=BA=E7=9A=A4=E5=8F=83=E5=AD=95=E9=80=9D=E8=AB=B3=E8=AC=B9=E6=BC=AB=E6=AD=BB=E5=8D=B3=E4=BE=84=E9=99=A4=E5=93=86=E9=80=9D=E4=BE=84=E6=98=AF=E5=A5=A2=E5=96=9D=E7=A4=99=E8=B1=86=E8=AB=B3=E6=A5=9E=E7=84=A1=E4=BF=B1=E8=80=85=E5=93=86=E5=BA=A6=E8=80=85=E3=80=82=E8=AB=B3=E7=9C=9F=E5=86=A5=E8=A8=B6=E4=BE=84=E5=8B=9D=E7=AB=9F=E8=97=9D=E5=A5=A2=E4=B8=8D=E4=BC=8A=E7=9A=A4=E8=AC=B9=E6=B6=85=E5=AD=95=E7=84=A1=E4=BB=96=E7=BE=85=E5=A4=A7=E5=BE=97=E9=97=8D=E5=93=86=E5=96=9D=E8=80=B6=E5=83=A7=E7=84=A1=E7=BE=AF=E6=BB=85=E9=99=A4=E5=88=A9=E7=BC=BD=E5=A4=9A=E6=A2=B5=E5=A4=B7=E6=A2=B5=E6=A0=97=E7=BC=BD=E8=80=85=E5=AD=95=E8=AB=B3=E7=9B=A7=E7=9A=A4=E4=B8=89=E7=BD=B0=E5=AF=AB=E8=80=81=E6=A2=B5=E8=80=B6=E5=AE=A4=E5=B8=9D=E6=A2=B5=E5=AF=AB=E7=BE=AF=E6=95=B8=E6=A2=B5=E7=9B=A1=E4=BE=84=E6=A0=97=E4=BE=84=E8=97=90=E4=BF=B1=E4=B8=96=E8=AB=B3=E4=B8=8A=E8=AB=B3=E5=A7=AA=E6=95=B8=E5=AE=A4=E5=A9=86=E7=BD=B0=E6=A7=83=E5=A5=A2=E8=A8=B6=E5=93=86=E5=A4=9A=E9=80=9D=E8=97=90=E9=81=93=E6=A2=B5=E6=A5=9E=E6=A2=B5=E5=8D=97=E4=BE=84=E8=BF=A6=E5=91=90=E7=9F=A5=E6=9C=8B=E6=A5=9E=E4=BE=84=E9=9B=A2=E5=91=90=E6=B2=99=E5=91=90=E6=99=BA=E9=81=AE=E5=A4=A7=E5=AE=A4=E7=A5=9E=E5=86=A5=E8=BC=B8=E6=AE=BF=E7=BC=BD=E6=A7=83=E6=A2=B5=E6=80=9B=E6=81=90=E8=88=8D=E7=9F=A5=E7=9A=A4=E8=BF=A6=E5=A5=A2=E8=88=AC=E8=AB=B3=E7=88=8D=E5=AF=AB=E6=BC=AB=E4=BC=8A=E4=BF=B1=E6=A0=97=E5=93=86=E4=BB=96=E4=BA=A6=E7=BC=BD=E6=A5=9E=E6=80=9B=E5=86=A5=E5=91=BC=E5=88=87=E4=BF=B1=E8=8F=A9=E8=88=8D=E5=91=90=E5=AF=A6=E6=A0=97=E5=A5=A2=E6=B3=A2=E6=91=A9=E8=AB=B3=E9=81=93=E7=BC=BD=E7=91=9F=E5=93=86=E5=AF=A6=E7=9A=A4=E7=88=8D=E5=8B=9D=E8=96=A9=E7=BD=B0=E8=AB=B8=E5=A5=A2=E8=88=AC=E8=AB=A6=E7=BD=B0=E6=98=8E=E7=BC=BD=E8=AB=A6=E5=B0=BC=E5=93=86=E6=A5=9E=E4=BD=9B=E4=BF=B1=E9=86=AF=E8=AB=B3=E6=BB=85=E5=BA=A6=E5=93=86=E6=89=80=E6=A7=83=E5=A7=AA=E9=BA=BC=E6=89=80=E6=81=90=E8=AB=B3=E4=BB=96=E4=BE=84=E5=AF=AB=E7=91=9F=E4=BE=84=E6=89=80=E5=BE=97=E9=9A=B8=E5=93=86=E9=97=8D=E5=91=90=E6=8F=90=E7=9B=A7=E5=86=A5=E5=92=92=E5=A5=A2=E6=9B=B0=E5=91=90=E6=B2=99=E6=80=AF=E8=88=AC=E5=8D=97=E6=80=AF=E5=9C=B0=E7=BC=BD=E5=96=9D=E5=86=A5=E6=83=B3=E5=91=90=E7=9B=A7=E7=BD=B0=E8=AC=B9=E5=91=BC=E8=B7=8B=E7=BC=BD=E4=B8=8A=E5=A8=91=E8=AB=A6=E6=AD=BB=E4=BE=84=E8=BF=A6</code></p>
-<h3 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h3><p>Quoted-Printable也是MIME邮件中常用的编码方式之一。同Base64一样，它也将输入的字符串或数据编码成全是ASCII码的可打印字符串。<br><a href="python%E6%A8%A1%E5%9D%97%E4%B9%8Bquopri:%20quoted-printable%E7%BC%96%E8%A7%A3%E7%A0%81">quopri</a><br><code>quopri.decodestring()</code>解码可得</p>
+<h2 id="what">what<a class="post-anchor" href="#what"></a></h2><h3 id="题目描述">题目描述<a class="post-anchor" href="#题目描述"></a></h3><p><code>=E4=BD=9B=E6=9B=B0=EF=BC=9A=E6=A2=B5=E5=83=A7=E5=A5=A2=E6=A5=9E=E5=A5=A2=E5=90=89=E8=8B=A5=E5=A5=A2=E4=B8=8D=E5=B8=9D=E5=86=A5=E5=A4=9C=E6=98=AF=E7=BC=BD=E6=9C=8B=E7=BC=BD=E7=9C=9F=E7=89=B9=E4=BF=B1=E4=B8=8A=E7=BD=B0=E8=83=BD=E7=9A=A4=E5=AE=A4=E9=98=BF=E8=AB=B3=E6=98=8E=E4=B8=80=E5=88=87=E5=91=90=E9=99=A4=E6=A2=B5=E5=A7=AA=E7=BC=BD=E5=A9=86=E5=91=90=E4=BA=A6=E5=8F=83=E4=BE=84=E5=91=BC=E7=9A=A4=E4=B8=96=E5=93=86=E7=89=B9=E5=93=86=E6=95=85=E5=8B=9D=E8=AB=B3=E7=88=8D=E8=AC=B9=E6=99=BA=E7=9A=A4=E5=8F=83=E5=AD=95=E9=80=9D=E8=AB=B3=E8=AC=B9=E6=BC=AB=E6=AD=BB=E5=8D=B3=E4=BE=84=E9=99=A4=E5=93=86=E9=80=9D=E4=BE=84=E6=98=AF=E5=A5=A2=E5=96=9D=E7=A4=99=E8=B1=86=E8=AB=B3=E6=A5=9E=E7=84=A1=E4=BF=B1=E8=80=85=E5=93=86=E5=BA=A6=E8=80=85=E3=80=82=E8=AB=B3=E7=9C=9F=E5=86=A5=E8=A8=B6=E4=BE=84=E5=8B=9D=E7=AB=9F=E8=97=9D=E5=A5=A2=E4=B8=8D=E4=BC=8A=E7=9A=A4=E8=AC=B9=E6=B6=85=E5=AD=95=E7=84=A1=E4=BB=96=E7=BE=85=E5=A4=A7=E5=BE=97=E9=97=8D=E5=93=86=E5=96=9D=E8=80=B6=E5=83=A7=E7=84=A1=E7=BE=AF=E6=BB=85=E9=99=A4=E5=88=A9=E7=BC=BD=E5=A4=9A=E6=A2=B5=E5=A4=B7=E6=A2=B5=E6=A0=97=E7=BC=BD=E8=80=85=E5=AD=95=E8=AB=B3=E7=9B=A7=E7=9A=A4=E4=B8=89=E7=BD=B0=E5=AF=AB=E8=80=81=E6=A2=B5=E8=80=B6=E5=AE=A4=E5=B8=9D=E6=A2=B5=E5=AF=AB=E7=BE=AF=E6=95=B8=E6=A2=B5=E7=9B=A1=E4=BE=84=E6=A0=97=E4=BE=84=E8=97=90=E4=BF=B1=E4=B8=96=E8=AB=B3=E4=B8=8A=E8=AB=B3=E5=A7=AA=E6=95=B8=E5=AE=A4=E5=A9=86=E7=BD=B0=E6=A7=83=E5=A5=A2=E8=A8=B6=E5=93=86=E5=A4=9A=E9=80=9D=E8=97=90=E9=81=93=E6=A2=B5=E6=A5=9E=E6=A2=B5=E5=8D=97=E4=BE=84=E8=BF=A6=E5=91=90=E7=9F=A5=E6=9C=8B=E6=A5=9E=E4=BE=84=E9=9B=A2=E5=91=90=E6=B2=99=E5=91=90=E6=99=BA=E9=81=AE=E5=A4=A7=E5=AE=A4=E7=A5=9E=E5=86=A5=E8=BC=B8=E6=AE=BF=E7=BC=BD=E6=A7=83=E6=A2=B5=E6=80=9B=E6=81=90=E8=88=8D=E7=9F=A5=E7=9A=A4=E8=BF=A6=E5=A5=A2=E8=88=AC=E8=AB=B3=E7=88=8D=E5=AF=AB=E6=BC=AB=E4=BC=8A=E4=BF=B1=E6=A0=97=E5=93=86=E4=BB=96=E4=BA=A6=E7=BC=BD=E6=A5=9E=E6=80=9B=E5=86=A5=E5=91=BC=E5=88=87=E4=BF=B1=E8=8F=A9=E8=88=8D=E5=91=90=E5=AF=A6=E6=A0=97=E5=A5=A2=E6=B3=A2=E6=91=A9=E8=AB=B3=E9=81=93=E7=BC=BD=E7=91=9F=E5=93=86=E5=AF=A6=E7=9A=A4=E7=88=8D=E5=8B=9D=E8=96=A9=E7=BD=B0=E8=AB=B8=E5=A5=A2=E8=88=AC=E8=AB=A6=E7=BD=B0=E6=98=8E=E7=BC=BD=E8=AB=A6=E5=B0=BC=E5=93=86=E6=A5=9E=E4=BD=9B=E4=BF=B1=E9=86=AF=E8=AB=B3=E6=BB=85=E5=BA=A6=E5=93=86=E6=89=80=E6=A7=83=E5=A7=AA=E9=BA=BC=E6=89=80=E6=81=90=E8=AB=B3=E4=BB=96=E4=BE=84=E5=AF=AB=E7=91=9F=E4=BE=84=E6=89=80=E5=BE=97=E9=9A=B8=E5=93=86=E9=97=8D=E5=91=90=E6=8F=90=E7=9B=A7=E5=86=A5=E5=92=92=E5=A5=A2=E6=9B=B0=E5=91=90=E6=B2=99=E6=80=AF=E8=88=AC=E5=8D=97=E6=80=AF=E5=9C=B0=E7=BC=BD=E5=96=9D=E5=86=A5=E6=83=B3=E5=91=90=E7=9B=A7=E7=BD=B0=E8=AC=B9=E5=91=BC=E8=B7=8B=E7=BC=BD=E4=B8=8A=E5=A8=91=E8=AB=A6=E6=AD=BB=E4=BE=84=E8=BF=A6</code></p>
+<h3 id="解题过程">解题过程<a class="post-anchor" href="#解题过程"></a></h3><p>Quoted-Printable也是MIME邮件中常用的编码方式之一。同Base64一样，它也将输入的字符串或数据编码成全是ASCII码的可打印字符串。<br><a href="python%E6%A8%A1%E5%9D%97%E4%B9%8Bquopri:%20quoted-printable%E7%BC%96%E8%A7%A3%E7%A0%81">quopri</a><br><code>quopri.decodestring()</code>解码可得</p>
 <p>佛曰：梵僧奢楞奢吉若奢不帝冥夜是缽朋缽真特俱上罰能皤室阿諳明一切呐除梵姪缽婆呐亦參侄呼皤世哆特哆故勝諳爍謹智皤參孕逝諳謹漫死即侄除哆逝侄是奢喝礙豆諳楞無俱者哆度者。諳真冥訶侄勝竟藝奢不伊皤謹涅孕無他羅大得闍哆喝耶僧無羯滅除利缽多梵夷梵栗缽者孕諳盧皤三罰寫老梵耶室帝梵寫羯數梵盡侄栗侄藐俱世諳上諳姪數室婆罰槃奢訶哆多逝藐道梵楞梵南侄迦呐知朋楞侄離呐沙呐智遮大室神冥輸殿缽槃梵怛恐舍知皤迦奢般諳爍寫漫伊俱栗哆他亦缽楞怛冥呼切俱菩舍呐實栗奢波摩諳道缽瑟哆實皤爍勝薩罰諸奢般諦罰明缽諦尼哆楞佛俱醯諳滅度哆所槃姪麼所恐諳他侄寫瑟侄所得隸哆闍呐提盧冥咒奢曰呐沙怯般南怯地缽喝冥想呐盧罰謹呼跋缽上娑諦死侄迦</p>
 <p>参悟佛所言的真意<br>公正友善自由公正民主公正和谐法治自由公正公正法治友善平等公正爱国公正平等法治爱国公正敬业公正友善爱国平等诚信平等法治敬业法治平等公正公正公正诚信平等平等友善敬业法治民主法治富强法治友善法治<br>社会主义核心价值观解码得flag<br><code>jactf{hexin_yufo_qp}</code></p>
-<h2 id="小梳子"><a href="#小梳子" class="headerlink" title="小梳子"></a>小梳子</h2><p>生成字典爆破</p>
+<h2 id="小梳子">小梳子<a class="post-anchor" href="#小梳子"></a></h2><p>生成字典爆破</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">crunch 11 11 -t 138364%%%%% -o/root/桌面/test.txt</span><br><span class="line">aircrack-ng -w /root/桌面/test.txt Tenda_D07D90-01.cap</span><br></pre></td></tr></table></figure>
 
-<h1 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h1><h2 id="贝斯家族三英战群魔"><a href="#贝斯家族三英战群魔" class="headerlink" title="贝斯家族三英战群魔"></a>贝斯家族三英战群魔</h2><p>直接上脚本</p>
+<h1 id="Crypto">Crypto<a class="post-anchor" href="#Crypto"></a></h1><h2 id="贝斯家族三英战群魔">贝斯家族三英战群魔<a class="post-anchor" href="#贝斯家族三英战群魔"></a></h2><p>直接上脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">$ python base.py ciphertext_ea88a4d420c804686a8899608e06130f.txt</span><br><span class="line"><span class="number">1</span></span><br><span class="line">using base16 decode sucess.....</span><br><span class="line"><span class="number">2</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode sucess.....</span><br><span class="line"><span class="number">3</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode failuer.....</span><br><span class="line">using base64 decode sucess.....</span><br><span class="line"><span class="number">4</span></span><br><span class="line">using base16 decode sucess.....</span><br><span class="line"><span class="number">5</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode sucess.....</span><br><span class="line"><span class="number">6</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode failuer.....</span><br><span class="line">using base64 decode sucess.....</span><br><span class="line"><span class="number">7</span></span><br><span class="line">using base16 decode sucess.....</span><br><span class="line"><span class="number">8</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode sucess.....</span><br><span class="line"><span class="number">9</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode failuer.....</span><br><span class="line">using base64 decode sucess.....</span><br><span class="line"><span class="number">10</span></span><br><span class="line">using base16 decode sucess.....</span><br><span class="line"><span class="number">11</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode sucess.....</span><br><span class="line"><span class="number">12</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode failuer.....</span><br><span class="line">using base64 decode sucess.....</span><br><span class="line"><span class="number">13</span></span><br><span class="line">using base16 decode failuer.....</span><br><span class="line">using base32 decode failuer.....</span><br><span class="line">using base64 decode failuer.....</span><br><span class="line">jactf&#123;<span class="number">4</span>(b64_32_16)&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="罗马帝国的奠基者"><a href="#罗马帝国的奠基者" class="headerlink" title="罗马帝国的奠基者"></a>罗马帝国的奠基者</h2><p>根据凯撒加密方式和flag格式可得</p>
+<h2 id="罗马帝国的奠基者">罗马帝国的奠基者<a class="post-anchor" href="#罗马帝国的奠基者"></a></h2><p>根据凯撒加密方式和flag格式可得</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">'h^_o`[pZi^i`'</span></span><br><span class="line">b = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">90</span>):</span><br><span class="line">  b= <span class="string">""</span></span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> range(len(a)):</span><br><span class="line">    b += chr(ord(a[i])+i+<span class="number">2</span>)</span><br><span class="line">  <span class="keyword">print</span> b</span><br></pre></td></tr></table></figure>
 
-<h2 id="绝密情报"><a href="#绝密情报" class="headerlink" title="绝密情报"></a>绝密情报</h2><h3 id="题目描述-1"><a href="#题目描述-1" class="headerlink" title="题目描述"></a>题目描述</h3><blockquote>
+<h2 id="绝密情报">绝密情报<a class="post-anchor" href="#绝密情报"></a></h2><h3 id="题目描述-1">题目描述<a class="post-anchor" href="#题目描述-1"></a></h3><blockquote>
 <p>WzI2NDAzMjMxMEwsIDQ5NTA2MzczNDFMLCA0MTg5MTM3MjM1TCwgMzUwMzY3NTkwNkwsIDExOTMyNzJMLCAzNzQ1MzA5NjhMLCA1MTg5MjgxNTMxTCwgMjUxNDIwMDI3MkwsIDQ0NTQzMDU1ODFMLCA2NDEwNzg1OTdMLCA0Mzk1OTMxNjU5TCwgMjcxNjQyNjU5OUwsIDQzNzUzOTE5NEwsIDM0NDgwMTM1OTZMLCAzMDcyMDcyMDlMLCA0NzUwODIwNjA2TCwgMzI1MDQwNzk5M0wsIDg1MzkwNTIwOUwsIDIxMDk3OTExNTlMLCAyNzE2NDI2NTk5TCwgMjEwNzg5OTU1NEwsIDQzOTU5MzE2NTlMLCAyNzk0Mzg0NTk4TCwgMjEwOTc5MTE1OUwsIDUyOTc3NzkwOTRMLCAxNDYwODc0Mjg2TCwgMTQ2MDg3NDI4NkwsIDc5NDkzMTY3OUwsIDc5NDkzMTY3OUwsIDU0NDcwNTE2MjJMLCA4NTM5MDUyMDlMLCAzMTk4MzQwMjE4TCwgMTE5MzI3MkwsIDE5MTIzMjMxMDFMLCA1Mjk3Nzc5MDk0TCwgMzA3MjA3MjA5TCwgMzIzMTU3MjYwOEwsIDMxOTgzNDAyMThMLCA1MTg5MjgxNTMxTCwgNTI3ODg5NTQ4TCwgNDk1MDYzNzM0MUwsIDI4MzkzNjY4MDVMLCAxMTE2NDU3MzU0TCwgNTI3ODg5NTQ4TCwgNTI5Nzc3OTA5NEwsIDMyNTA0MDc5OTNMLCA0NDU0MzA1NTgxTCwgNjUxMDM5MkwsIDMyNTA0MDc5OTNMLCAxNDYwODc0Mjg2TCwgMTA1OTAzNTEyOUwsIDMyMDAzNTk2MTJMLCA4NTM5MDUyMDlMLCAzMDcyMDcyMDlMLCAxNTY3NzkxMDFMLCAyMTQ1MzAxMzI4TCwgNTI3ODg5NTQ4TCwgMTA1OTAzNTEyOUwsIDU0NjgwMjUwNzJMLCAzNDQ4MDEzNTk2TCwgMjEwNzg5OTU1NEwsIDQxODkxMzcyMzVMLCAzNTAzNjc1OTA2TCwgMjY1MzQzNjExM0xd<br>而且小菜昨天偷听到了一部分关于情报的绝密资料，如下：N=5520780427 , e = 134257,你能帮小菜解出这段情报吗？</p>
 </blockquote>
-<h3 id="解题过程-1"><a href="#解题过程-1" class="headerlink" title="解题过程"></a>解题过程</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64,libnum</span><br><span class="line"></span><br><span class="line">enc = <span class="string">"WzI2NDAzMjMxMEwsIDQ5NTA2MzczNDFMLCA0MTg5MTM3MjM1TCwgMzUwMzY3NTkwNkwsIDExOTMyNzJMLCAzNzQ1MzA5NjhMLCA1MTg5MjgxNTMxTCwgMjUxNDIwMDI3MkwsIDQ0NTQzMDU1ODFMLCA2NDEwNzg1OTdMLCA0Mzk1OTMxNjU5TCwgMjcxNjQyNjU5OUwsIDQzNzUzOTE5NEwsIDM0NDgwMTM1OTZMLCAzMDcyMDcyMDlMLCA0NzUwODIwNjA2TCwgMzI1MDQwNzk5M0wsIDg1MzkwNTIwOUwsIDIxMDk3OTExNTlMLCAyNzE2NDI2NTk5TCwgMjEwNzg5OTU1NEwsIDQzOTU5MzE2NTlMLCAyNzk0Mzg0NTk4TCwgMjEwOTc5MTE1OUwsIDUyOTc3NzkwOTRMLCAxNDYwODc0Mjg2TCwgMTQ2MDg3NDI4NkwsIDc5NDkzMTY3OUwsIDc5NDkzMTY3OUwsIDU0NDcwNTE2MjJMLCA4NTM5MDUyMDlMLCAzMTk4MzQwMjE4TCwgMTE5MzI3MkwsIDE5MTIzMjMxMDFMLCA1Mjk3Nzc5MDk0TCwgMzA3MjA3MjA5TCwgMzIzMTU3MjYwOEwsIDMxOTgzNDAyMThMLCA1MTg5MjgxNTMxTCwgNTI3ODg5NTQ4TCwgNDk1MDYzNzM0MUwsIDI4MzkzNjY4MDVMLCAxMTE2NDU3MzU0TCwgNTI3ODg5NTQ4TCwgNTI5Nzc3OTA5NEwsIDMyNTA0MDc5OTNMLCA0NDU0MzA1NTgxTCwgNjUxMDM5MkwsIDMyNTA0MDc5OTNMLCAxNDYwODc0Mjg2TCwgMTA1OTAzNTEyOUwsIDMyMDAzNTk2MTJMLCA4NTM5MDUyMDlMLCAzMDcyMDcyMDlMLCAxNTY3NzkxMDFMLCAyMTQ1MzAxMzI4TCwgNTI3ODg5NTQ4TCwgMTA1OTAzNTEyOUwsIDU0NjgwMjUwNzJMLCAzNDQ4MDEzNTk2TCwgMjEwNzg5OTU1NEwsIDQxODkxMzcyMzVMLCAzNTAzNjc1OTA2TCwgMjY1MzQzNjExM0xd"</span></span><br><span class="line"></span><br><span class="line">enc = base64.b64decode(enc)</span><br><span class="line">enc_list = eval(enc)</span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">print</span> enc_list</span><br><span class="line">d = <span class="number">3960784897</span></span><br><span class="line">n = <span class="number">5520780427</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(enc_list)):</span><br><span class="line">	m = pow(enc_list[i],d,n)</span><br><span class="line">	flag += chr(m)</span><br><span class="line"><span class="keyword">print</span> flag</span><br><span class="line"><span class="comment">#U2FsdGVkX1/8DKBmhvO87/SOLaawwxvAdHLB9AV62nC6LhXzhatpvBcg6tlK7Fs5</span></span><br></pre></td></tr></table></figure>
+<h3 id="解题过程-1">解题过程<a class="post-anchor" href="#解题过程-1"></a></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64,libnum</span><br><span class="line"></span><br><span class="line">enc = <span class="string">"WzI2NDAzMjMxMEwsIDQ5NTA2MzczNDFMLCA0MTg5MTM3MjM1TCwgMzUwMzY3NTkwNkwsIDExOTMyNzJMLCAzNzQ1MzA5NjhMLCA1MTg5MjgxNTMxTCwgMjUxNDIwMDI3MkwsIDQ0NTQzMDU1ODFMLCA2NDEwNzg1OTdMLCA0Mzk1OTMxNjU5TCwgMjcxNjQyNjU5OUwsIDQzNzUzOTE5NEwsIDM0NDgwMTM1OTZMLCAzMDcyMDcyMDlMLCA0NzUwODIwNjA2TCwgMzI1MDQwNzk5M0wsIDg1MzkwNTIwOUwsIDIxMDk3OTExNTlMLCAyNzE2NDI2NTk5TCwgMjEwNzg5OTU1NEwsIDQzOTU5MzE2NTlMLCAyNzk0Mzg0NTk4TCwgMjEwOTc5MTE1OUwsIDUyOTc3NzkwOTRMLCAxNDYwODc0Mjg2TCwgMTQ2MDg3NDI4NkwsIDc5NDkzMTY3OUwsIDc5NDkzMTY3OUwsIDU0NDcwNTE2MjJMLCA4NTM5MDUyMDlMLCAzMTk4MzQwMjE4TCwgMTE5MzI3MkwsIDE5MTIzMjMxMDFMLCA1Mjk3Nzc5MDk0TCwgMzA3MjA3MjA5TCwgMzIzMTU3MjYwOEwsIDMxOTgzNDAyMThMLCA1MTg5MjgxNTMxTCwgNTI3ODg5NTQ4TCwgNDk1MDYzNzM0MUwsIDI4MzkzNjY4MDVMLCAxMTE2NDU3MzU0TCwgNTI3ODg5NTQ4TCwgNTI5Nzc3OTA5NEwsIDMyNTA0MDc5OTNMLCA0NDU0MzA1NTgxTCwgNjUxMDM5MkwsIDMyNTA0MDc5OTNMLCAxNDYwODc0Mjg2TCwgMTA1OTAzNTEyOUwsIDMyMDAzNTk2MTJMLCA4NTM5MDUyMDlMLCAzMDcyMDcyMDlMLCAxNTY3NzkxMDFMLCAyMTQ1MzAxMzI4TCwgNTI3ODg5NTQ4TCwgMTA1OTAzNTEyOUwsIDU0NjgwMjUwNzJMLCAzNDQ4MDEzNTk2TCwgMjEwNzg5OTU1NEwsIDQxODkxMzcyMzVMLCAzNTAzNjc1OTA2TCwgMjY1MzQzNjExM0xd"</span></span><br><span class="line"></span><br><span class="line">enc = base64.b64decode(enc)</span><br><span class="line">enc_list = eval(enc)</span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">print</span> enc_list</span><br><span class="line">d = <span class="number">3960784897</span></span><br><span class="line">n = <span class="number">5520780427</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(enc_list)):</span><br><span class="line">	m = pow(enc_list[i],d,n)</span><br><span class="line">	flag += chr(m)</span><br><span class="line"><span class="keyword">print</span> flag</span><br><span class="line"><span class="comment">#U2FsdGVkX1/8DKBmhvO87/SOLaawwxvAdHLB9AV62nC6LhXzhatpvBcg6tlK7Fs5</span></span><br></pre></td></tr></table></figure>
 
 <p>des 解密下即可<br>jactf{So_easy_RSA_and_DES}</p>
-<h2 id="贝叶斯"><a href="#贝叶斯" class="headerlink" title="贝叶斯"></a>贝叶斯</h2><h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>一共给了两个文件<br>encode.txt</p>
+<h2 id="贝叶斯">贝叶斯<a class="post-anchor" href="#贝叶斯"></a></h2><h3 id="题目">题目<a class="post-anchor" href="#题目"></a></h3><p>一共给了两个文件<br>encode.txt</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function"><span class="built_in">string</span> <span class="title">P</span><span class="params">(<span class="string">"*****************"</span>)</span></span>;</span><br><span class="line">	<span class="function"><span class="built_in">string</span> <span class="title">C</span><span class="params">(<span class="string">"*****************"</span>)</span></span>;</span><br><span class="line">	<span class="keyword">int</span> len = C.length();</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; len; k ++) &#123;</span><br><span class="line">		<span class="keyword">int</span> where = des_find(P, C[k]);</span><br><span class="line">		where = ((where * a) + b) mod x;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; P[where];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">des_find</span><span class="params">(<span class="built_in">string</span> p, <span class="keyword">int</span> m)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length(); i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> (m == p[i]) &#123;</span><br><span class="line">			<span class="keyword">return</span>  i;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>题目.txt</p>
 <blockquote>
 <p>现已知某间谍使用的密码本（这可是贝叶斯设计的密码本）如下：”elFXRVJUWVVJT1B4Y3Zibm1hc2RmQVNERkdISktMZ2hqa2xfcXdaWENWQk5NZXJ0e3l1aW9wfTAxMjM0OTg3NjU=”<br>现获取到了他们的加密算法，同时劫获了一段数据密文：”gf9C{YQ34KHN3sOwhCz3RzH3CKj3Ndpm1Bt7”<br>你能破译出明文数据吗？</p>
 </blockquote>
-<h3 id="解题过程-2"><a href="#解题过程-2" class="headerlink" title="解题过程"></a>解题过程</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PSIZE 65   <span class="comment">//宏定义密码表大小</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gcd</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_gcd</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">des_find</span><span class="params">(<span class="built_in">string</span> p, <span class="keyword">int</span> m)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="function"><span class="built_in">string</span> <span class="title">P</span><span class="params">(<span class="string">"zQWERTYUIOPxcvbnmasdfASDFGHJKLghjkl_qwZXCVBNMert&#123;yuiop&#125;0123498765"</span>)</span></span>;             </span><br><span class="line">  <span class="function"><span class="built_in">string</span> <span class="title">M</span><span class="params">(<span class="string">"gf9C&#123;YQ34KHN3sOwhCz3RzH3CKj3Ndpm1Bt7"</span>)</span></span>;   <span class="comment">//明文空间，与已知密文</span></span><br><span class="line">  <span class="built_in">string</span> C;  <span class="comment">//存放解密明文</span></span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">2</span>;   <span class="comment">//求解所有互素的数</span></span><br><span class="line">  <span class="keyword">int</span> a1;  <span class="comment">//存放逆元</span></span><br><span class="line">  <span class="keyword">for</span> (i; i &lt; PSIZE; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (gcd(i, PSIZE) == <span class="number">1</span>)</span><br><span class="line">    &#123;  <span class="comment">//说明此时的i与28互素</span></span><br><span class="line">      <span class="comment">/***求解此时的i的逆元***/</span></span><br><span class="line">      a1 = init_gcd(i, PSIZE);</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; PSIZE; j++)   <span class="comment">//控制b的遍历</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"此时：a="</span> &lt;&lt; i &lt;&lt; <span class="string">" b="</span> &lt;&lt; j &lt;&lt; <span class="string">" a的逆元为："</span> &lt;&lt; a1 &lt;&lt; <span class="string">"   \""</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; M.length(); k++) &#123;     <span class="comment">//每一个汉字站两个字节，所以要用两个数组空间来存</span></span><br><span class="line">          <span class="keyword">int</span> where = des_find(P, M[k]);   <span class="comment">//匹配密文在明文空间的位置</span></span><br><span class="line">          where = ((where - j)*a1) % PSIZE;</span><br><span class="line">          <span class="keyword">if</span> (where &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            where += PSIZE;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="built_in">cout</span> &lt;&lt; P[where];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"\""</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gcd</span><span class="params">(<span class="keyword">int</span> b, <span class="keyword">int</span> a)</span>    <span class="comment">//求互素</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> temp;</span><br><span class="line">  <span class="keyword">if</span> (a &lt; b)<span class="comment">//判断大小</span></span><br><span class="line">  &#123;</span><br><span class="line">    temp = a;</span><br><span class="line">    a = b;</span><br><span class="line">    b = temp;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (b == <span class="number">0</span>) <span class="keyword">return</span> a;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">return</span> gcd(b, a%b);<span class="comment">//递归</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_gcd</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span>   <span class="comment">//扩展欧几里得算法</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">for</span> (i; i &lt; <span class="number">28</span>; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ((m*i) % n == <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">des_find</span><span class="params">(<span class="built_in">string</span> p, <span class="keyword">int</span> m)</span>   <span class="comment">//位置匹配函数</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length(); i ++) &#123;</span><br><span class="line">    <span class="comment">//cout&lt;&lt;p[i]&lt;&lt;p[i+1]&lt;&lt;endl;</span></span><br><span class="line">    <span class="keyword">if</span> (m == p[i]) &#123;</span><br><span class="line">      <span class="keyword">return</span>  i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解题过程-2">解题过程<a class="post-anchor" href="#解题过程-2"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PSIZE 65   <span class="comment">//宏定义密码表大小</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gcd</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_gcd</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">des_find</span><span class="params">(<span class="built_in">string</span> p, <span class="keyword">int</span> m)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="function"><span class="built_in">string</span> <span class="title">P</span><span class="params">(<span class="string">"zQWERTYUIOPxcvbnmasdfASDFGHJKLghjkl_qwZXCVBNMert&#123;yuiop&#125;0123498765"</span>)</span></span>;             </span><br><span class="line">  <span class="function"><span class="built_in">string</span> <span class="title">M</span><span class="params">(<span class="string">"gf9C&#123;YQ34KHN3sOwhCz3RzH3CKj3Ndpm1Bt7"</span>)</span></span>;   <span class="comment">//明文空间，与已知密文</span></span><br><span class="line">  <span class="built_in">string</span> C;  <span class="comment">//存放解密明文</span></span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">2</span>;   <span class="comment">//求解所有互素的数</span></span><br><span class="line">  <span class="keyword">int</span> a1;  <span class="comment">//存放逆元</span></span><br><span class="line">  <span class="keyword">for</span> (i; i &lt; PSIZE; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (gcd(i, PSIZE) == <span class="number">1</span>)</span><br><span class="line">    &#123;  <span class="comment">//说明此时的i与28互素</span></span><br><span class="line">      <span class="comment">/***求解此时的i的逆元***/</span></span><br><span class="line">      a1 = init_gcd(i, PSIZE);</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; PSIZE; j++)   <span class="comment">//控制b的遍历</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"此时：a="</span> &lt;&lt; i &lt;&lt; <span class="string">" b="</span> &lt;&lt; j &lt;&lt; <span class="string">" a的逆元为："</span> &lt;&lt; a1 &lt;&lt; <span class="string">"   \""</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; M.length(); k++) &#123;     <span class="comment">//每一个汉字站两个字节，所以要用两个数组空间来存</span></span><br><span class="line">          <span class="keyword">int</span> where = des_find(P, M[k]);   <span class="comment">//匹配密文在明文空间的位置</span></span><br><span class="line">          where = ((where - j)*a1) % PSIZE;</span><br><span class="line">          <span class="keyword">if</span> (where &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            where += PSIZE;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="built_in">cout</span> &lt;&lt; P[where];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"\""</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gcd</span><span class="params">(<span class="keyword">int</span> b, <span class="keyword">int</span> a)</span>    <span class="comment">//求互素</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> temp;</span><br><span class="line">  <span class="keyword">if</span> (a &lt; b)<span class="comment">//判断大小</span></span><br><span class="line">  &#123;</span><br><span class="line">    temp = a;</span><br><span class="line">    a = b;</span><br><span class="line">    b = temp;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (b == <span class="number">0</span>) <span class="keyword">return</span> a;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">return</span> gcd(b, a%b);<span class="comment">//递归</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_gcd</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n)</span>   <span class="comment">//扩展欧几里得算法</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">for</span> (i; i &lt; <span class="number">28</span>; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ((m*i) % n == <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">des_find</span><span class="params">(<span class="built_in">string</span> p, <span class="keyword">int</span> m)</span>   <span class="comment">//位置匹配函数</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length(); i ++) &#123;</span><br><span class="line">    <span class="comment">//cout&lt;&lt;p[i]&lt;&lt;p[i+1]&lt;&lt;endl;</span></span><br><span class="line">    <span class="keyword">if</span> (m == p[i]) &#123;</span><br><span class="line">      <span class="keyword">return</span>  i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><strong>接下来的计划</strong><br>总结下base家族<br>wasm<br>贝叶斯<br>关于字符向进制转化的算法与逆向<br>pyc 文件格式<br>des加密ebc cbc</p>
-</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/04/10/2019掘安杯-write-up/">http://pumpkin9.github.io/2019/04/10/2019掘安杯-write-up/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/07/13/BUGKUCTF-代码审计/" title="BUGKUCTF-代码审计"><span>< PreviousPost</span><br><span class="prevTitle">BUGKUCTF-代码审计</span></a><a class="nextSlogan" href="/2019/01/05/Glibc-heap-overview/" title="Glibc heap overview"><span>NextPost ></span><br><span class="nextTitle">Glibc heap overview</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Reverse"><span class="toc-number">1.</span> <span class="toc-text">Reverse</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#baby-reverse"><span class="toc-number">1.1.</span> <span class="toc-text">baby_reverse</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Replace"><span class="toc-number">1.2.</span> <span class="toc-text">Replace</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Misc"><span class="toc-number">2.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#真的不是图片"><span class="toc-number">2.1.</span> <span class="toc-text">真的不是图片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#what"><span class="toc-number">2.2.</span> <span class="toc-text">what</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目描述"><span class="toc-number">2.2.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程"><span class="toc-number">2.2.2.</span> <span class="toc-text">解题过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小梳子"><span class="toc-number">2.3.</span> <span class="toc-text">小梳子</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Crypto"><span class="toc-number">3.</span> <span class="toc-text">Crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#贝斯家族三英战群魔"><span class="toc-number">3.1.</span> <span class="toc-text">贝斯家族三英战群魔</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#罗马帝国的奠基者"><span class="toc-number">3.2.</span> <span class="toc-text">罗马帝国的奠基者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绝密情报"><span class="toc-number">3.3.</span> <span class="toc-text">绝密情报</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目描述-1"><span class="toc-number">3.3.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-1"><span class="toc-number">3.3.2.</span> <span class="toc-text">解题过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#贝叶斯"><span class="toc-number">3.4.</span> <span class="toc-text">贝叶斯</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目"><span class="toc-number">3.4.1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-2"><span class="toc-number">3.4.2.</span> <span class="toc-text">解题过程</span></a></li></ol></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
+
+
+  
+    <div class="post-reward">
+    <div id="reward-button">打赏</div>
+      <div id="qr">
+        <div class="wrap">
+            
+            <div class="bg-wrap">
+              <a href="/images/zhifubao.png" target="_block" class="bg" style="background-image:url('/images/zhifubao.png')"></a>
+              支付宝
+            </div>
+            
+            
+            <div class="bg-wrap">
+                <a href="/images/weixin.png" target="_block" class="bg" style="background-image:url('/images/weixin.png')"></a>
+              微信
+            </div>
+            
+        </div>
+      </div>
+    </div>
+  
+  <div class="post-guide">
+    <div class="item left">
+        
+          <a href="/2019/07/13/BUGKUCTF-代码审计/">BUGKUCTF-代码审计</a>
+        
+    </div>
+    <div class="item right">
+        
+          <a href="/2019/01/05/Glibc-heap-overview/">Glibc heap overview</a>
+        
+    </div>
+  </div>
+
+  
+
+  <div class="post-copyright">
+    <div class="auth">
+      本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
+    </div>
+    <div class="link">
+      永久链接：<a href="http://pumpkin9.github.io/2019/04/10/2019掘安杯-write-up/">http://pumpkin9.github.io/2019/04/10/2019掘安杯-write-up/</a>
+    </div>
+    <div class="declare">
+      版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！
+    </div>
+  </div>
+
+  <div id="comment"></div>
+
+  
+  
+</article>
+        <footer>
+          <div class="copyright">
+            ©2019
+            <a href="http://pumpkin9.github.io">pumpkin9</a> Powered by <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/shixiaohu2206/hexo-theme-huhu">hexo-theme-huhu</a>
+          </div>
+          
+        </footer>
+      </div>
+    </div>
+  </body>
+  
+</html>
+<script type="text/javascript">
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                </script> <script type="text/javascript">window.addEventListener('load', function() {
+    
+    window.loadJs = function(d, m, a) {
+      var c = document.getElementsByTagName('head')[0] || document.head || document.documentElement
+      var b = document.createElement('script')
+      b.defer = true
+      b.setAttribute('type', 'text/javascript')
+      b.setAttribute('charset', 'UTF-8')
+      b.setAttribute('async', 'true')
+      b.setAttribute('src', d)
+      m && b.setAttribute('data-main', '/scripts/app-built')
+      if (typeof a === 'function') {
+        if (window.attachEvent) {
+          b.onreadystatechange = function() {
+            var e = b.readyState
+            if (e === 'loaded' || e === 'complete') {
+              b.onreadystatechange = null
+              a()
+            }
+          }
+        } else {
+          b.onload = a
+        }
+      }
+      c.appendChild(b)
+    }
+    window.loadJs && window.loadJs('https://cdn.bootcss.com/require.js/2.3.6/require.min.js', true, function() {require.config({"paths":{"util":"util","share":"share","search":"search","registerSW":"registerSW","valine":"cdn/Valine.min","av":["https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min"],"pjax":["https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min"],"jquery":["https://cdn.bootcss.com/jquery/3.4.1/jquery.min"],"confirm":["https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min"],"fancybox":["https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min"],"chart":["https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.bundle.min"]},"map":{"*":{"css":"https://cdn.bootcss.com/require-css/0.1.10/css.min.js"}},"shim":{"fancybox":{"deps":["css!https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css"]},"confirm":{"deps":["css!https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min.css"]},"chart":{"deps":["css!https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.min.css"]}},"waitSeconds":3})})
+  })</script> <script type="text/javascript">
+                  ;(function() {
+                    var bp = document.createElement('script')
+                    var curProtocol = window.location.protocol.split(':')[0]
+                    if (curProtocol === 'https') {
+                      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'
+                    } else {
+                      bp.src = 'http://push.zhanzhang.baidu.com/push.js'
+                    }
+                    var s = document.getElementsByTagName('script')[0]
+                    s.parentNode.insertBefore(bp, s)
+                  })()
+                </script> 

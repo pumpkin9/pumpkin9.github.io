@@ -1,103 +1,216 @@
-<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Glibc heap overview · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
-  "use strict";
-  // rel=preload support test
-  if( !w.loadCSS ){
-    w.loadCSS = function(){};
-  }
-  // define on the loadCSS obj
-  var rp = loadCSS.relpreload = {};
-  // rel=preload feature support test
-  // runs once and returns a function for compat purposes
-  rp.support = (function(){
-    var ret;
-    try {
-      ret = w.document.createElement( "link" ).relList.supports( "preload" );
-    } catch (e) {
-      ret = false;
-    }
-    return function(){
-      return ret;
-    };
-  })();
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+      <script>
+  var _hmt = _hmt || []
+  ;(function() {
+    var hm = document.createElement('script')
+    hm.src = 'https://hm.baidu.com/hm.js?5a0acc897fd96474a2c8f4deac84611a'
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(hm, s)
+  })()
+</script> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content>
+    <meta name="description" content>
+    
+    <title>
+      Glibc heap overview - pumpkin9
+    </title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style/style.css">
+  </head>
+  <body>
+    
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-text">size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Heap-操作"><span class="toc-text">Heap 操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-use-after-free"><span class="toc-text">Exploit : use after free</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用-Chunk-的回收特性"><span class="toc-text">利用 Chunk 的回收特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastbin-corruption"><span class="toc-text">fastbin corruption</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fastbin-sanity-check"><span class="toc-text">Fastbin sanity check</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div id="fixed-menu-wrap">
+      <span class="iconfont icon-sousuo search-box menu-reset"></span>
+      <span class="icon-toc menu-reset">Toc</span>
+      <span class="iconfont icon-arrowup menu-reset"></span>
+    </div>
+    <div id="fixed-menu">
+      <span class="iconfont icon-menu-"></span>
+    </div>
+    <div id="progress">
+      <div class="line"></div>
+    </div>
+    <div id="search-shade" class="animated hiddenSearch hide">
+      <div class="input-wrap">
+        <span class="iconfont icon-sousuo search-box"></span>
+        <input type="text" placeholder="Search">
+        <span class="iconfont icon-close"></span>
+      </div>
+      <div class="search-result">
+        <div class="meta">
+          <span><b id="result-count">0</b> results found</span>
+          <img src="/images/logo.jpeg">
+        </div>
+        <ul id="result-box"></ul>
+      </div>
+    </div>
+    <div id="menu-mask" class="animated hideMenuMask hide">
+      <span class="iconfont icon-close"></span>
+      <div class="nav">
+        
+        <a href="/" class>
+          Home
+        </a>
+        
+        <a href="/archives" class>
+          Archives
+        </a>
+        
+        <a href="/categories" class>
+          Categories
+        </a>
+        
+        <a href="/tags" class>
+          Tags
+        </a>
+        
+        <a href="/friends" class>
+          Friends
+        </a>
+        
+        <a href="/about" class>
+          About
+        </a>
+        
+      </div>
+    </div>
+    <div id="header">
+      <div class="intro">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <div class="author">pumpkin9</div>
+      </div>
+      <div class="nav">
+        <span class="iconfont icon-menu menu-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+    </div>
+    <div id="side" class="animated bounceInLeft">
+      <div class="shrink">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <span class="iconfont icon-menu toggle-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+      <div class="magnify">
+        <div class="about">
+          <div class="author">pumpkin9</div>
+          <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        </div>
 
-  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
-  // then change that media back to its intended value on load
-  rp.bindMediaToggle = function( link ){
-    // remember existing media attr for ultimate state, or default to 'all'
-    var finalMedia = link.media || "all";
+        <div class="nav">
+          
+          <a href="/" class>
+            Home
+          </a>
+          
+          <a href="/archives" class>
+            Archives
+          </a>
+          
+          <a href="/categories" class>
+            Categories
+          </a>
+          
+          <a href="/tags" class>
+            Tags
+          </a>
+          
+          <a href="/friends" class>
+            Friends
+          </a>
+          
+          <a href="/about" class>
+            About
+          </a>
+          
+          <a href="#" class="search-box">
+            <span class="iconfont icon-sousuo"></span>
+          </a>
+        </div>
+        <div class="bottom">
+          <div class="follow">
+            
+            <a href="https://github.com/shixiaohu2206" target="_block">
+              <span class="iconfont icon-github"></span>
+            </a>
+            
+            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
+              <span class="iconfont icon-facebook"></span>
+            </a>
+            
+            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
+              <span class="iconfont icon-instagram"></span>
+            </a>
+             
+            <a href="/atom.xml" target="_block">
+              <span class="iconfont icon-rss"></span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="container">
+      <div class="main animated bounceInRight delay-0.7s">
+        <article class="post-entry">
+    <div class="header">
+      
+      <div class="title">Glibc heap overview</div>
+      <div class="meta">
+        <span class="item">
+          <span class="iconfont icon-time-circle"></span>
+          <span>2019/01/05</span>
+        </span>
 
-    function enableStylesheet(){
-      link.media = finalMedia;
-    }
+        
 
-    // bind load handlers to enable media
-    if( link.addEventListener ){
-      link.addEventListener( "load", enableStylesheet );
-    } else if( link.attachEvent ){
-      link.attachEvent( "onload", enableStylesheet );
-    }
-
-    // Set rel and non-applicable media type to start an async request
-    // note: timeout allows this to happen async to let rendering continue in IE
-    setTimeout(function(){
-      link.rel = "stylesheet";
-      link.media = "only x";
-    });
-    // also enable media after 3 seconds,
-    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
-    setTimeout( enableStylesheet, 3000 );
-  };
-
-  // loop through link elements in DOM
-  rp.poly = function(){
-    // double check this to prevent external calls from running
-    if( rp.support() ){
-      return;
-    }
-    var links = w.document.getElementsByTagName( "link" );
-    for( var i = 0; i < links.length; i++ ){
-      var link = links[ i ];
-      // qualify links to those with rel=preload and as=style attrs
-      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
-        // prevent rerunning on link
-        link.setAttribute( "data-loadcss", true );
-        // bind listeners to toggle media back
-        rp.bindMediaToggle( link );
-      }
-    }
-  };
-
-  // if unsupported, run the polyfill
-  if( !rp.support() ){
-    // run once at least
-    rp.poly();
-
-    // rerun poly on an interval until onload
-    var run = w.setInterval( rp.poly, 500 );
-    if( w.addEventListener ){
-      w.addEventListener( "load", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    } else if( w.attachEvent ){
-      w.attachEvent( "onload", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    }
-  }
-
-
-  // commonjs
-  if( typeof exports !== "undefined" ){
-    exports.loadCSS = loadCSS;
-  }
-  else {
-    w.loadCSS = loadCSS;
-  }
-}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
-  i.fa.fa-comment
-  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">你不关注花，花永远只是花</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Glibc heap overview</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-01-05</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="pwn"> pwn</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="heap"> heap</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h1 id="Glibc-Heap"><a href="#Glibc-Heap" class="headerlink" title="Glibc Heap"></a>Glibc Heap</h1><ul>
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
+        
+        
+         
+          <span class="item">
+            <span class="iconfont icon-tag1"></span>
+            <span>
+                
+                  
+                    <a href="/tags/pwn">pwn</a>
+                  
+                
+                  
+                    <a href="/tags/heap">heap</a>
+                  
+                
+            </span>
+          </span>
+         
+      </div>
+      <div>
+      </div>
+    </div>
+    <h1 id="Glibc-Heap">Glibc Heap<a class="post-anchor" href="#Glibc-Heap"></a></h1><ul>
 <li>负责维护动态分配内存的数据结构称为 heap</li>
 <li>libc 里面比较常用到的是 malloc 、free 、realloc<ul>
 <li>C++ 里的 new、delete，底层的操作仍是上述的几个</li>
@@ -105,7 +218,7 @@
 </li>
 <li>分配新内存空间、释放并回收不需要的部分，在分配内存的时候尽量避免<code>碎片化</code></li>
 </ul>
-<h2 id="Glibc-heap-实际操作概述"><a href="#Glibc-heap-实际操作概述" class="headerlink" title="Glibc heap 实际操作概述"></a>Glibc heap 实际操作概述</h2><ul>
+<h2 id="Glibc-heap-实际操作概述">Glibc heap 实际操作概述<a class="post-anchor" href="#Glibc-heap-实际操作概述"></a></h2><ul>
 <li><code>glibc/malloc/malloc.c</code></li>
 <li>要做到堆内存的管理，需要知道<ul>
 <li>有哪些位置的堆内存是可以被分配的</li>
@@ -122,7 +235,7 @@
 <li><code>malloc</code> 时，优先从 bin 里面找出可以使用的 chunk，如果找不到才会真的分配新的内存给程序使用。分配时可以去找到足够大的 chunk 只切出需要的部分，剩下的部分形成新的 chunk<code>(last_remainder)</code>。</li>
 <li>找不到可用空间时会从 top chunk 分配，top chunk 是一个很大的 chunk，代表可使用但未分配的内存，malloc 分配时会从里面切一小块下来，剩下的部分重新设为 top</li>
 </ul>
-<h2 id="Chunk"><a href="#Chunk" class="headerlink" title="Chunk"></a>Chunk</h2><ul>
+<h2 id="Chunk">Chunk<a class="post-anchor" href="#Chunk"></a></h2><ul>
 <li><p>存放 chunk metadata 的 chunk 结构 （header）</p>
 </li>
 <li><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>&#123;</span></span><br><span class="line">  <span class="keyword">size_t</span> prev_size;</span><br><span class="line">  <span class="keyword">size_t</span> size;</span><br><span class="line">  malloc_chunk* fd;</span><br><span class="line">  malloc_chunk* bk;</span><br><span class="line">  malloc_chunk* fd_nextsize;</span><br><span class="line">  malloc_chunk* bk_nextsize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -139,7 +252,7 @@
 
 </li>
 </ul>
-<h3 id="chunk-header"><a href="#chunk-header" class="headerlink" title="chunk header"></a>chunk header</h3><ul>
+<h3 id="chunk-header">chunk header<a class="post-anchor" href="#chunk-header"></a></h3><ul>
 <li>size：这个 chunk 在内存里的大小，非 malloc size</li>
 <li>fd，bk：指向 bin 里的前一、后一个 chunk<ul>
 <li>一般来说 bin 是 double linked list</li>
@@ -153,7 +266,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="size"><a href="#size" class="headerlink" title="size"></a>size</h3><ul>
+<h3 id="size">size<a class="post-anchor" href="#size"></a></h3><ul>
 <li>size 位置 包含 chunk size 和 flag bits</li>
 <li>chunk size 把 size 最低位 3bits 归 0<ul>
 <li>fastbin &lt;= 128</li>
@@ -167,7 +280,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="Heap-操作"><a href="#Heap-操作" class="headerlink" title="Heap 操作"></a>Heap 操作</h3><ul>
+<h3 id="Heap-操作">Heap 操作<a class="post-anchor" href="#Heap-操作"></a></h3><ul>
 <li>p = malloc(size)<ul>
 <li>找出一个可用的 chunk，或从 top chunk 切一块下来</li>
 <li>如果这个 chunk 是回收的，要先从 bin 里面 unlink，即移出这个 linked list</li>
@@ -181,7 +294,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="Exploit-use-after-free"><a href="#Exploit-use-after-free" class="headerlink" title="Exploit : use after free"></a>Exploit : use after free</h2><ul>
+<h2 id="Exploit-use-after-free">Exploit : use after free<a class="post-anchor" href="#Exploit-use-after-free"></a></h2><ul>
 <li>跟 chunk bin 等 heap 的内部操作没什么关系</li>
 <li>让程序里有两个指针指向同一块内存<ul>
 <li>一块是 structure，另一块是用作 data buffer</li>
@@ -189,7 +302,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="利用-Chunk-的回收特性"><a href="#利用-Chunk-的回收特性" class="headerlink" title="利用 Chunk 的回收特性"></a>利用 Chunk 的回收特性</h3><ul>
+<h3 id="利用-Chunk-的回收特性">利用 Chunk 的回收特性<a class="post-anchor" href="#利用-Chunk-的回收特性"></a></h3><ul>
 <li>所谓 use after free，是指 free(=p) 掉后还继续使用它<ul>
 <li>例：linked list remove 掉chunk后，忘了把指向它的指针置0，导致以为此 chunk 还存在 list 中</li>
 </ul>
@@ -201,7 +314,7 @@
 <li>只要实际的 chunk size 相同，malloc 要求的大小不同也没关系。</li>
 <li>会拿出哪个 chunk，取决于 heap 里 bin 的运作方式，不一定是最近 free 的那一个。</li>
 </ul>
-<h2 id="fastbin-corruption"><a href="#fastbin-corruption" class="headerlink" title="fastbin corruption"></a>fastbin corruption</h2><p><strong>基础知识</strong></p>
+<h2 id="fastbin-corruption">fastbin corruption<a class="post-anchor" href="#fastbin-corruption"></a></h2><p><strong>基础知识</strong></p>
 <ul>
 <li><code>chunk size &lt;= get_max_fast()</code> 的 chunk，会被放在一系列称为 fastbin 的 bin 里<ul>
 <li>64 bit 是 128 bytes，32bit 是 64 bytes</li>
@@ -225,7 +338,7 @@
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fastbin[0] ---&gt; chunk1   +---&gt; chunk2   +---&gt; chunk3</span><br><span class="line">									  fd --+         fd --+         fd ---&gt; NULL</span><br><span class="line">																		.</span><br><span class="line">																		.</span><br><span class="line">																		........&gt; arbitrary address</span><br></pre></td></tr></table></figure>
 
-<h3 id="Fastbin-sanity-check"><a href="#Fastbin-sanity-check" class="headerlink" title="Fastbin sanity check"></a>Fastbin sanity check</h3><ul>
+<h3 id="Fastbin-sanity-check">Fastbin sanity check<a class="post-anchor" href="#Fastbin-sanity-check"></a></h3><ul>
 <li>malloc 从 bin 里取出时，要从正确的 bin 里拿出来，即 chunk size 要正确</li>
 <li>free 时，nextchunk 的 size 要对</li>
 <li>free 时会检查 bin 里第一个 chunk 是不是跟现在 free 的 chunk 是同一个（fasttop）</li>
@@ -245,4 +358,113 @@
 </li>
 <li>取得 chunk 后，由机会对该地址任意读写</li>
 </ul>
-</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/01/05/Glibc-heap-overview/">http://pumpkin9.github.io/2019/01/05/Glibc-heap-overview/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/04/10/2019掘安杯-write-up/" title="2019掘安杯-write up"><span>< PreviousPost</span><br><span class="prevTitle">2019掘安杯-write up</span></a><a class="nextSlogan" href="/2018/10/10/hello-world/" title="Hello World"><span>NextPost ></span><br><span class="nextTitle">Hello World</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Glibc-Heap"><span class="toc-number">1.</span> <span class="toc-text">Glibc Heap</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Glibc-heap-实际操作概述"><span class="toc-number">1.1.</span> <span class="toc-text">Glibc heap 实际操作概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunk"><span class="toc-number">1.2.</span> <span class="toc-text">Chunk</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chunk-header"><span class="toc-number">1.2.1.</span> <span class="toc-text">chunk header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#size"><span class="toc-number">1.2.2.</span> <span class="toc-text">size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Heap-操作"><span class="toc-number">1.2.3.</span> <span class="toc-text">Heap 操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exploit-use-after-free"><span class="toc-number">1.3.</span> <span class="toc-text">Exploit : use after free</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用-Chunk-的回收特性"><span class="toc-number">1.3.1.</span> <span class="toc-text">利用 Chunk 的回收特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastbin-corruption"><span class="toc-number">1.4.</span> <span class="toc-text">fastbin corruption</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fastbin-sanity-check"><span class="toc-number">1.4.1.</span> <span class="toc-text">Fastbin sanity check</span></a></li></ol></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
+
+
+  
+    <div class="post-reward">
+    <div id="reward-button">打赏</div>
+      <div id="qr">
+        <div class="wrap">
+            
+            <div class="bg-wrap">
+              <a href="/images/zhifubao.png" target="_block" class="bg" style="background-image:url('/images/zhifubao.png')"></a>
+              支付宝
+            </div>
+            
+            
+            <div class="bg-wrap">
+                <a href="/images/weixin.png" target="_block" class="bg" style="background-image:url('/images/weixin.png')"></a>
+              微信
+            </div>
+            
+        </div>
+      </div>
+    </div>
+  
+  <div class="post-guide">
+    <div class="item left">
+        
+          <a href="/2019/04/10/2019掘安杯-write-up/">2019掘安杯-write up</a>
+        
+    </div>
+    <div class="item right">
+        
+          <a href="/2018/10/10/hello-world/">Hello World</a>
+        
+    </div>
+  </div>
+
+  
+
+  <div class="post-copyright">
+    <div class="auth">
+      本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
+    </div>
+    <div class="link">
+      永久链接：<a href="http://pumpkin9.github.io/2019/01/05/Glibc-heap-overview/">http://pumpkin9.github.io/2019/01/05/Glibc-heap-overview/</a>
+    </div>
+    <div class="declare">
+      版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！
+    </div>
+  </div>
+
+  <div id="comment"></div>
+
+  
+  
+</article>
+        <footer>
+          <div class="copyright">
+            ©2019
+            <a href="http://pumpkin9.github.io">pumpkin9</a> Powered by <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/shixiaohu2206/hexo-theme-huhu">hexo-theme-huhu</a>
+          </div>
+          
+        </footer>
+      </div>
+    </div>
+  </body>
+  
+</html>
+<script type="text/javascript">
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                </script> <script type="text/javascript">window.addEventListener('load', function() {
+    
+    window.loadJs = function(d, m, a) {
+      var c = document.getElementsByTagName('head')[0] || document.head || document.documentElement
+      var b = document.createElement('script')
+      b.defer = true
+      b.setAttribute('type', 'text/javascript')
+      b.setAttribute('charset', 'UTF-8')
+      b.setAttribute('async', 'true')
+      b.setAttribute('src', d)
+      m && b.setAttribute('data-main', '/scripts/app-built')
+      if (typeof a === 'function') {
+        if (window.attachEvent) {
+          b.onreadystatechange = function() {
+            var e = b.readyState
+            if (e === 'loaded' || e === 'complete') {
+              b.onreadystatechange = null
+              a()
+            }
+          }
+        } else {
+          b.onload = a
+        }
+      }
+      c.appendChild(b)
+    }
+    window.loadJs && window.loadJs('https://cdn.bootcss.com/require.js/2.3.6/require.min.js', true, function() {require.config({"paths":{"util":"util","share":"share","search":"search","registerSW":"registerSW","valine":"cdn/Valine.min","av":["https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min"],"pjax":["https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min"],"jquery":["https://cdn.bootcss.com/jquery/3.4.1/jquery.min"],"confirm":["https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min"],"fancybox":["https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min"],"chart":["https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.bundle.min"]},"map":{"*":{"css":"https://cdn.bootcss.com/require-css/0.1.10/css.min.js"}},"shim":{"fancybox":{"deps":["css!https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css"]},"confirm":{"deps":["css!https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min.css"]},"chart":{"deps":["css!https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.min.css"]}},"waitSeconds":3})})
+  })</script> <script type="text/javascript">
+                  ;(function() {
+                    var bp = document.createElement('script')
+                    var curProtocol = window.location.protocol.split(':')[0]
+                    if (curProtocol === 'https') {
+                      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'
+                    } else {
+                      bp.src = 'http://push.zhanzhang.baidu.com/push.js'
+                    }
+                    var s = document.getElementsByTagName('script')[0]
+                    s.parentNode.insertBefore(bp, s)
+                  })()
+                </script> 

