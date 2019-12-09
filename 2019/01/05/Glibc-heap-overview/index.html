@@ -142,18 +142,6 @@
         </div>
         <div class="bottom">
           <div class="follow">
-            
-            <a href="https://github.com/shixiaohu2206" target="_block">
-              <span class="iconfont icon-github"></span>
-            </a>
-            
-            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
-              <span class="iconfont icon-facebook"></span>
-            </a>
-            
-            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
-              <span class="iconfont icon-instagram"></span>
-            </a>
              
             <a href="/atom.xml" target="_block">
               <span class="iconfont icon-rss"></span>
@@ -175,6 +163,11 @@
           <span>2019/01/05</span>
         </span>
 
+        
+          <span class="item leancloud-visitors" id="/2019/01/05/Glibc-heap-overview/" data-flag-title="Glibc heap overview">
+            <span class="iconfont icon-eye1"></span>
+            <span class="leancloud-visitors-count"></span>
+          </span>
         
 
          
@@ -238,7 +231,14 @@
 <h2 id="Chunk">Chunk<a class="post-anchor" href="#Chunk"></a></h2><ul>
 <li><p>存放 chunk metadata 的 chunk 结构 （header）</p>
 </li>
-<li><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>&#123;</span></span><br><span class="line">  <span class="keyword">size_t</span> prev_size;</span><br><span class="line">  <span class="keyword">size_t</span> size;</span><br><span class="line">  malloc_chunk* fd;</span><br><span class="line">  malloc_chunk* bk;</span><br><span class="line">  malloc_chunk* fd_nextsize;</span><br><span class="line">  malloc_chunk* bk_nextsize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span>&#123;</span>
+  <span class="hljs-keyword">size_t</span> prev_size;
+  <span class="hljs-keyword">size_t</span> size;
+  malloc_chunk* fd;
+  malloc_chunk* bk;
+  malloc_chunk* fd_nextsize;
+  malloc_chunk* bk_nextsize;
+&#125;</code></pre>
 </li>
 <li><p>64 bit</p>
 <ul>
@@ -248,7 +248,23 @@
 </ul>
 </li>
 <li><p>chunk 已回收（not inuse）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Size of previous chunk, if unallocated (P clear)  |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">`head:&apos; |             Size of chunk, in bytes                     |A|0|P|</span><br><span class="line">  mem-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Forward pointer to next chunk in list             |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Back pointer to previous chunk in list            |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Unused space (may be 0 bytes long)                .</span><br><span class="line">        .                                                               .</span><br><span class="line"> next   .                                                               |</span><br><span class="line">chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">`foot:&apos; |             Size of chunk, in bytes                           |</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br><span class="line">        |             Size of next chunk, in bytes                |A|0|0|</span><br><span class="line">        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs undefined">chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |             Size of previous chunk, if unallocated (P clear)  |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+`head:&apos; |             Size of chunk, in bytes                     |A|0|P|
+  mem-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |             Forward pointer to next chunk in list             |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |             Back pointer to previous chunk in list            |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |             Unused space (may be 0 bytes long)                .
+        .                                                               .
+ next   .                                                               |
+chunk-&gt; +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+`foot:&apos; |             Size of chunk, in bytes                           |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |             Size of next chunk, in bytes                |A|0|0|
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</code></pre>
 
 </li>
 </ul>
@@ -336,7 +352,11 @@
 </ul>
 </li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fastbin[0] ---&gt; chunk1   +---&gt; chunk2   +---&gt; chunk3</span><br><span class="line">									  fd --+         fd --+         fd ---&gt; NULL</span><br><span class="line">																		.</span><br><span class="line">																		.</span><br><span class="line">																		........&gt; arbitrary address</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python">fastbin[0] ---&gt; chunk1   +---&gt; chunk2   +---&gt; chunk3
+									  fd --+         fd --+         fd ---&gt; NULL
+																		.
+																		.
+																		........&gt; arbitrary address</code></pre>
 
 <h3 id="Fastbin-sanity-check">Fastbin sanity check<a class="post-anchor" href="#Fastbin-sanity-check"></a></h3><ul>
 <li>malloc 从 bin 里取出时，要从正确的 bin 里拿出来，即 chunk size 要正确</li>
@@ -427,7 +447,7 @@
   
 </html>
 <script type="text/javascript">
-                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"valine\":{\"API_ID\":\"vVaPNFdcK9dSGbIzRRK8Lynz-gzGzoHsz\",\"API_KEY\":\"dPlqFhVLg4CTqpRKmq7I0cQw\"},\"service_worker\":{\"open\":false}}")
                 </script> <script type="text/javascript">window.addEventListener('load', function() {
     
     window.loadJs = function(d, m, a) {

