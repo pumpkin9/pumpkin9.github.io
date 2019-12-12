@@ -165,6 +165,17 @@
           </span>
         
 
+         
+        <span class="item">
+          <span class="iconfont icon-folder"></span>
+          <span>
+              
+                
+                  <a href="/categories/CTF">CTF</a>
+                
+              
+          </span>
+        </span>
         
         
          
@@ -183,7 +194,22 @@
       <div>
       </div>
     </div>
-    <pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+    <p>切割unsortedbin中的大chunk时：<br>当unsortedbin有对应的freechunk可以给malloc切割使用时，unsortedbin会发生以下步骤：</p>
+<ol>
+<li>先将这些freechunk放置到对应大小的bins链上（放入smallbin或largebin）</li>
+<li>放置到对应的bins链上之后，切割此freechunk</li>
+<li>切割之后会产生last remainder，再将last remainder放到unsortedbin上<blockquote>
+<p>例如：<br>此时，unsortedbin有两个0x800的freechunk<br>此时申请一个0x600的chunk<br>那么unsortedbin会先consolidate，把两个0x800的freechunk先移动到largebin中<br>然后再切割largebin的freechunk，将切割后余留下的0x200放入unsortedbin</p>
+</blockquote>
+</li>
+</ol>
+<p>切割smallbins、largebins中的大chunk时：</p>
+<ol>
+<li>切割smallbins或者largebins中的大freechunk，产生last remainder</li>
+<li>将last remainder放入到unsortedbin中<br>注意（重点）：malloc永远不会去检测切割fastbins（详情见_int_malloc函数的执行顺序）</li>
+</ol>
+<p>这里需要使用一种不需要伪造prevsize来构造overlap的技巧。当申请chunk时，若chunk是从last_remainder上切割下来，那么这个过程中将不会调用到unlink宏，也就不会检测下一chunk的prevsize是否等于当前chunk的size，这样就可以实现无prevsize触发overlap。</p>
+<pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
 <span class="hljs-comment">#encoding:utf-8</span>
 <span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
 
