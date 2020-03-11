@@ -16,7 +16,7 @@
     <meta name="description" content>
     
     <title>
-      JEB3 动态调试 - pumpkin9
+      Android 动态调试 - pumpkin9
     </title>
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
@@ -26,7 +26,7 @@
     
     <div id="post-toc" class="animated hiddenToc hide">
       <span class="title">Toc</span>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#准备"><span class="toc-text">准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置"><span class="toc-text">配置</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#准备"><span class="toc-text">准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JEB3-动态调试"><span class="toc-text">JEB3 动态调试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IDA-动态调试-so文件"><span class="toc-text">IDA 动态调试 so文件</span></a></li></ol>
     </div>
     
     <div id="fixed-menu-wrap">
@@ -156,7 +156,7 @@
         <article class="post-entry">
     <div class="header">
       
-      <div class="title">JEB3 动态调试</div>
+      <div class="title">Android 动态调试</div>
       <div class="meta">
         <span class="item">
           <span class="iconfont icon-time-circle"></span>
@@ -164,7 +164,7 @@
         </span>
 
         
-          <span class="item leancloud-visitors" id="/2020/03/02/JEB3-动态调试/" data-flag-title="JEB3 动态调试">
+          <span class="item leancloud-visitors" id="/2020/03/02/JEB3-动态调试/" data-flag-title="Android 动态调试">
             <span class="iconfont icon-eye1"></span>
             <span class="leancloud-visitors-count"></span>
           </span>
@@ -199,11 +199,12 @@
       <div>
       </div>
     </div>
-    <h1 id="准备">准备<a class="post-anchor" href="#准备"></a></h1><p>jdk1.8.0_221.jdk</p>
+    <p>被北辰狗坑了一天，写一下方便学习</p>
+<h1 id="准备">准备<a class="post-anchor" href="#准备"></a></h1><p>jdk1.8.0_221.jdk</p>
 <p>JEB3</p>
 <p>网易mumu模拟器</p>
 <p>adb</p>
-<h1 id="配置">配置<a class="post-anchor" href="#配置"></a></h1><p>首先启动网易mumu浏览器</p>
+<h1 id="JEB3-动态调试">JEB3 动态调试<a class="post-anchor" href="#JEB3-动态调试"></a></h1><p>首先启动网易mumu浏览器</p>
 <ol>
 <li><p>command + ，打开root权限</p>
 </li>
@@ -218,7 +219,7 @@
 </ol>
 <p><a href="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/00831rSTly1gcfvhn1gauj30jm070whc.jpg" data-caption data-fancybox="images"><img src="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/00831rSTly1gcfvhn1gauj30jm070whc.jpg" alt></a></p>
 <ol start="4">
-<li><code>adb shell start am start -D -n com.a.easyjava/.MainActivity</code> 可以去 JEB 查看 <code>&lt;activity android:name=&quot;com.a.easyjava.MainActivity&quot;&gt;</code></li>
+<li><code>adb shell start am start -D -n com.a.easyjava/.MainActivity</code> 可以去 JEB manifest 查看 <code>&lt;activity android:name=&quot;com.a.easyjava.MainActivity&quot;&gt;</code></li>
 <li>这是 模拟器就会开启 apk 等待debug</li>
 </ol>
 <p>JEB</p>
@@ -228,6 +229,34 @@
 </ol>
 <p><a href="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/image-20200302205326519.png" data-caption="image-20200302205326519" data-fancybox="images"><img src="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/image-20200302205326519.png" alt="image-20200302205326519"></a></p>
 <p>基本上到这里就ok了</p>
+<h1 id="IDA-动态调试-so文件">IDA 动态调试 so文件<a class="post-anchor" href="#IDA-动态调试-so文件"></a></h1><pre><code class="hljs bash">╭─   ~/Documents/Tools/dbgsrv                                                           21:36:20 
+╰ adb push android_server /data/<span class="hljs-built_in">local</span>/tmp
+android_server: 1 file pushed. 15.1 MB/s (589588 bytes <span class="hljs-keyword">in</span> 0.037s)
+╭─   ~/Documents/Tools/dbgsrv                                                           21:36:50 
+╰ adb push android_x86_server /data/<span class="hljs-built_in">local</span>/tmp
+android_server64: 1 file pushed. 20.4 MB/s (1243456 bytes <span class="hljs-keyword">in</span> 0.058s)
+╭─   ~/Documents/Tools/dbgsrv                                                           21:37:01 
+╰ adb shell ls /data/<span class="hljs-built_in">local</span>/tmp
+android_x86_server
+android_server
+android_server64
+setpropex-pie</code></pre>
+
+<p><a href="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/image-20200302213751342.png" data-caption="image-20200302213751342" data-fancybox="images"><img src="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/image-20200302213751342.png" alt="image-20200302213751342"></a></p>
+<p><strong>然后赋予可执行权限</strong></p>
+<pre><code class="hljs bash">adb shell chmod -R 777 /data/<span class="hljs-built_in">local</span>/tmp</code></pre>
+
+<p><strong>执行</strong></p>
+<p><code>adb shell /data/local/tmp/android_x86_server</code></p>
+<p><a href="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/image-20200302214527921.png" data-caption="image-20200302214527921" data-fancybox="images"><img src="assets/JEB3-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95/image-20200302214527921.png" alt="image-20200302214527921"></a></p>
+<p><strong>端口转发</strong></p>
+<pre><code class="hljs bash">adb forward tcp:23946 tcp:23946
+官方描述是这样的：“adb forward <span class="hljs-built_in">local</span> remote 将来自指定本地端口的套接字连接转发到模拟器/设备实例上的指定远程端口。”</code></pre>
+
+<p><strong>附加调试软件</strong></p>
+<pre><code class="hljs bash">adb shell am start -D -n com.a.easyjava/.MainActivity
+jdb -connect com.sun.jdi.SocketAttach:port=8900,hostname=localhost</code></pre>
+
 
 
   
